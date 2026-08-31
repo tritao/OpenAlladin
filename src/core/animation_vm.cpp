@@ -1,5 +1,7 @@
 #include "core/animation_vm.hpp"
 
+#include "core/actor.hpp"
+
 #include <cstdlib>
 
 namespace openaladdin::core {
@@ -27,12 +29,6 @@ std::uint8_t advance_random(GenesisRam& ram) {
     const std::uint16_t folded = static_cast<std::uint16_t>(
         (state & 0xFFFFU) ^ (state >> 16));
     return static_cast<std::uint8_t>(folded);
-}
-
-void clear_actor_record(GenesisRam& ram, std::size_t slot) {
-    for (std::size_t offset = 0; offset < kActorRecordSize; ++offset) {
-        write8(ram, actor_address(slot, offset), 0);
-    }
 }
 
 void decrement_ascii_counter(GenesisRam& ram) {
@@ -102,12 +98,11 @@ void animation_callback(GenesisRam& ram, std::size_t slot, std::uint32_t callbac
                      static_cast<std::uint8_t>(actor_read8(actor, kActorMovementFlagsOffset) & ~0x01U));
         break;
     case 0x001ACBD8: {
-        const std::uint32_t linked_slot = actor_read32(
-            actor, kActorLinkedSlotOffset);
-        if (linked_slot < kActorSlotCount) {
+        const auto linked_slot = actor_slot_for_address(actor_read32(
+            actor, kActorLinkedRecordPointerOffset));
+        if (linked_slot) {
             const ConstActorView linked = actor_view(
-                static_cast<const GenesisRam&>(ram),
-                static_cast<std::size_t>(linked_slot));
+                static_cast<const GenesisRam&>(ram), *linked_slot);
             actor_write16(actor, kActorXOffset,
                           actor_read16(linked, kActorXOffset));
             actor_write16(actor, kActorYOffset,
@@ -306,7 +301,7 @@ VmRunResult animation_vm_run_actor(CoreRuntime& core, std::size_t actor_slot) {
             continue;
         case 0xF6:
             if (actor_slot != 0) {
-                clear_actor_record(core.ram, actor_slot);
+                actor_clear_and_release(core, actor_slot);
                 result.stopped = true;
                 result.completed = true;
                 result.cursor = 0;

@@ -99,12 +99,12 @@ void movement_callback(GenesisRam& ram, std::size_t slot, std::uint32_t callback
                      static_cast<std::uint8_t>(actor_read8(actor, kActorRuntimeField07Offset) & ~0x20U));
         break;
     case 0x001ACBD8: {
-        const std::uint32_t linked_slot = actor_read32(
-            actor, kActorLinkedSlotOffset);
-        if (linked_slot < kActorSlotCount) {
+        const auto linked_slot = actor_slot_for_address(actor_read32(
+            actor, kActorLinkedRecordPointerOffset));
+        if (linked_slot) {
             const ConstActorView linked = actor_view(
                 static_cast<const GenesisRam&>(ram),
-                static_cast<std::size_t>(linked_slot));
+                *linked_slot);
             actor_write16(actor, kActorXOffset,
                           actor_read16(linked, kActorXOffset));
             actor_write16(actor, kActorYOffset,

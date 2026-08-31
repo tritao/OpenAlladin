@@ -89,6 +89,15 @@ ConstActorView actor_view(const GenesisRam& ram, std::size_t slot) {
         slot)};
 }
 
+std::optional<std::size_t> actor_slot_for_address(RamAddress address) {
+    if (address < kActorTableBase || address > kActorTableEnd) {
+        return std::nullopt;
+    }
+    const RamAddress offset = address - kActorTableBase;
+    if (offset % kActorRecordSize != 0) return std::nullopt;
+    return static_cast<std::size_t>(offset / kActorRecordSize);
+}
+
 std::uint8_t actor_read8(ConstActorView actor, std::size_t offset) {
     if (actor.ram == nullptr || offset >= kActorRecordSize) return 0;
     return read8(*actor.ram, actor_address(actor.slot, offset));

@@ -97,11 +97,16 @@ void write_actor(std::ostream& output, const GenesisRam& ram, std::size_t slot) 
            << ",\"velocity_x\":" << read_i16(*actor.ram, actor_address(slot, 0x18))
            << ",\"velocity_y\":" << read_i16(*actor.ram, actor_address(slot, 0x1A))
            << ",\"animation_pc\":" << actor_read32(actor, 0x20)
+           << ",\"resource_count\":" << static_cast<unsigned>(actor_read8(actor, kActorResourceCountOffset))
+           << ",\"resource_pointer\":" << actor_read32(actor, kActorResourcePointerOffset)
+           << ",\"sprite_vram_base\":" << actor_read32(actor, kActorSpriteVramBaseOffset)
            << ",\"facing_y_flip\":" << static_cast<unsigned>(actor_read8(actor, 0x35))
            << ",\"movement_command_timer\":" << static_cast<unsigned>(actor_read8(actor, 0x36))
            << ",\"animation_timer\":" << static_cast<unsigned>(actor_read8(actor, 0x37))
            << ",\"movement_return_pc\":" << actor_read32(actor, 0x38)
            << ",\"flags\":" << static_cast<unsigned>(actor_read8(actor, 0x3C))
+           << ",\"terrain_response\":" << static_cast<unsigned>(actor_read8(actor, kActorTerrainResponseOffset))
+           << ",\"linked_record_pointer\":" << actor_read32(actor, kActorLinkedRecordPointerOffset)
            << ",\"record\":";
     write_hex_record(output, ram, slot);
     output << "}";

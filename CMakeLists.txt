@@ -122,6 +122,8 @@ openaladdin_enable_warnings(openaladdin_core)
 # intentionally independent of SDL, audio, assets, and the old semantic
 # projection so it can be exercised as a clean procedural core from day one.
 add_library(openaladdin_clean_core STATIC
+    src/core/actor.cpp
+    src/core/actor.hpp
     src/core/animation_vm.cpp
     src/core/animation_vm.hpp
     src/core/frame.cpp
@@ -309,6 +311,12 @@ if(BUILD_TESTING AND OPENALADDIN_BUILD_TESTS)
     openaladdin_enable_warnings(clean_core_player_test)
     openaladdin_enable_test_assertions(clean_core_player_test)
 
+    add_executable(clean_core_actor_test tests/clean_core_actor.cpp)
+    target_link_libraries(clean_core_actor_test PRIVATE openaladdin_clean_core)
+    target_compile_features(clean_core_actor_test PRIVATE cxx_std_20)
+    openaladdin_enable_warnings(clean_core_actor_test)
+    openaladdin_enable_test_assertions(clean_core_actor_test)
+
     add_executable(sprite_renderer_test tests/sprite_renderer.cpp)
     target_link_libraries(sprite_renderer_test PRIVATE openaladdin_core)
     target_compile_features(sprite_renderer_test PRIVATE cxx_std_20)
@@ -456,6 +464,8 @@ if(BUILD_TESTING AND OPENALADDIN_BUILD_TESTS)
     add_test(NAME clean_core_vm COMMAND clean_core_vm_test)
 
     add_test(NAME clean_core_player COMMAND clean_core_player_test)
+
+    add_test(NAME clean_core_actor COMMAND clean_core_actor_test)
 
     add_test(NAME player_animation COMMAND player_animation_test)
     set_tests_properties(player_animation PROPERTIES

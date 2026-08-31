@@ -3,6 +3,7 @@
 #include <array>
 #include <cstddef>
 #include <cstdint>
+#include <optional>
 
 namespace openaladdin::core {
 
@@ -125,12 +126,20 @@ constexpr std::size_t kActorVelocityXOffset = 0x18;
 constexpr std::size_t kActorVelocityYOffset = 0x1A;
 constexpr std::size_t kActorAnimationPcOffset = 0x20;
 constexpr std::size_t kActorAnimationScratchOffset = 0x28;
+constexpr std::size_t kActorResourceCountOffset = 0x29;
+constexpr std::size_t kActorResourcePointerOffset = 0x2A;
+constexpr std::size_t kActorSpriteVramBaseOffset = 0x2E;
+constexpr std::size_t kActorTerrainResponseOffset = 0x3D;
 constexpr std::size_t kActorFacingYOffset = 0x35;
 constexpr std::size_t kActorMovementCommandTimerOffset = 0x36;
 constexpr std::size_t kActorAnimationTimerOffset = 0x37;
 constexpr std::size_t kActorMovementReturnPcOffset = 0x38;
 constexpr std::size_t kActorFlagsOffset = 0x3C;
-constexpr std::size_t kActorLinkedSlotOffset = 0x3E;
+constexpr std::size_t kActorLinkedRecordPointerOffset = 0x3E;
+
+constexpr RamAddress kActorResourceBitmapBase = 0x00FFF008;
+constexpr std::size_t kActorResourceBitmapSize = 0x74;
+constexpr RamAddress kActorSpriteVramBaseTable = 0x0011F500;
 
 // The gameplay image is the complete 68000 work-RAM address space. No
 // semantic field is stored elsewhere; these helpers are only named views.
@@ -185,6 +194,7 @@ constexpr RamAddress actor_address(std::size_t slot, std::size_t offset) {
 
 ActorView actor_view(GenesisRam& ram, std::size_t slot);
 ConstActorView actor_view(const GenesisRam& ram, std::size_t slot);
+std::optional<std::size_t> actor_slot_for_address(RamAddress address);
 
 std::uint8_t actor_read8(ConstActorView actor, std::size_t offset);
 std::uint16_t actor_read16(ConstActorView actor, std::size_t offset);
