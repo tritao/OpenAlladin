@@ -636,6 +636,14 @@ def test_type1d_type1e_interaction_spawn_handlers_have_semantic_names_and_aliase
         assert symbol.confidence == confidence
 
 
+def test_type46_interaction_spawn_gate_has_semantic_name_and_alias():
+    symbol = SymbolStore().at(0x001B742A, include_ranges=False)
+    assert symbol is not None
+    assert symbol.name == "InteractionGate_CreateType46Actor_AF"
+    assert "InteractionGate_Type46_AF" in symbol.aliases
+    assert symbol.confidence == "decompiled"
+
+
 def test_type79_type7a_interaction_spawn_handlers_have_semantic_names_and_aliases():
     expected = {
         0x001B6F1E: ("InteractionSpawn_CreateType79InteractionActor_0A0C", "InteractionSpawn_Type79_0A0C"),

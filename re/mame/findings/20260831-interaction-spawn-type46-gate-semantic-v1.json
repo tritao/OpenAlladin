@@ -1,0 +1,30 @@
+{
+  "format": "openaladdin-recorded-semantic-promotion-v1",
+  "recorded_at": "2026-08-31",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "target_manifest": "re/ghidra/targets/interaction-spawn-type46-gate-semantic-targets.json",
+  "promoted_symbols": [
+    "InteractionGate_CreateType46Actor_AF"
+  ],
+  "legacy_aliases": [
+    "InteractionGate_Type46_AF"
+  ],
+  "contracts": [
+    "Selector 0xAF retains the generic-gate and difficulty-counter checks before invoking the forward-slot allocator.",
+    "The allocator receives the established ACTOR_TEMPLATE_TYPE_46_SHARED_SPAWN at 0x001B79CC."
+  ],
+  "evidence": [
+    "Exact INTERACTION_HANDLER_TABLE selector and handler body",
+    "interaction_spawn_type46_gate_semantic_v1"
+  ],
+  "limitations": [
+    "No user-facing actor or scene role is claimed.",
+    "Dynamic reachability and the higher-level meaning of the generic gate remain unresolved."
+  ],
+  "conclusion": "The selector-0xAF Type-0x46 interaction gate now has a stable creation identity while preserving its historical alias and exact gate/template/allocator contract.",
+  "confidence": "decompiled",
+  "status": "recorded-semantic-promotion"
+}

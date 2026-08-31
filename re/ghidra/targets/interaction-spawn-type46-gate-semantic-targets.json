@@ -1,0 +1,39 @@
+{
+  "format": "openaladdin-semantic-promotion-target-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "focus": {
+    "name": "interaction-spawn-type46-gate-semantic",
+    "purpose": "Promote the selector-0xAF Type-0x46 interaction gate to a stable creation identity while retaining its historical gate name."
+  },
+  "dispatch": {
+    "table": "0x004154 INTERACTION_HANDLER_TABLE",
+    "handler": {
+      "address": "0x001B742A",
+      "selectors": ["0xAF"],
+      "name": "InteractionGate_CreateType46Actor_AF",
+      "legacy_name": "InteractionGate_Type46_AF",
+      "gates": [
+        "0x00FFF172 INTERACTION_GATE_GENERIC != 0",
+        "0x00FF7E3C GAME_DIFFICULTY_COUNTER != ASCII '9'"
+      ],
+      "template": "0x001B79CC ACTOR_TEMPLATE_TYPE_46_SHARED_SPAWN",
+      "allocator": "0x001B524E InteractionSpawn_ForwardSlot"
+    }
+  },
+  "contracts": [
+    "Selector 0xAF first requires INTERACTION_GATE_GENERIC to be nonzero.",
+    "The handler then suppresses creation when GAME_DIFFICULTY_COUNTER equals ASCII '9'.",
+    "When both gates permit execution, the handler forward-spawns the established Type-0x46 shared actor template at 0x001B79CC through InteractionSpawn_ForwardSlot."
+  ],
+  "evidence": [
+    "Exact handler body and INTERACTION_HANDLER_TABLE membership",
+    "interaction-spawn-type46-5a-response-targets",
+    "interaction-spawn-type46-5a-response-static-decompilation",
+    "difficulty_counter_consumer_closure_static_v1"
+  ],
+  "limitations": [
+    "The name identifies the Type-0x46 creation gate and direct allocator contract, not the user-facing interaction role.",
+    "The runtime meaning of the generic gate and selector reachability remain unresolved."
+  ],
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+}

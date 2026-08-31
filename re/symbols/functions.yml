@@ -6051,7 +6051,8 @@
     - interaction-spawn-runtime3c-40-targets
     - interaction-spawn-runtime3c-40-static-decompilation
 0x001B742A:
-  name: InteractionGate_Type46_AF
+  name: InteractionGate_CreateType46Actor_AF
+  aliases: [InteractionGate_Type46_AF]
   confidence: decompiled
   description: Interaction selector 0xAF gate that requires 0x00FFF172 set and GAME_DIFFICULTY_COUNTER not equal to ASCII '9', then forward-spawns from ACTOR_TEMPLATE_TYPE_46_SHARED_SPAWN at 0x001B79CC.
   evidence:
@@ -6059,6 +6060,7 @@
     - interaction-spawn-type46-5a-response-targets
     - interaction-spawn-type46-5a-response-static-decompilation
     - difficulty_counter_consumer_closure_static_v1
+    - interaction_spawn_type46_gate_semantic_v1
 0x001B744A:
   name: InteractionGate_CreateType44FromSelectorAB
   aliases: [InteractionSpawn_RuntimeType44_AB]
