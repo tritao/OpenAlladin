@@ -1745,7 +1745,8 @@
     - scene_palette_bank_extents_static_v1
 
 0x00129012:
-  name: MENU_PALETTE_BAND_SOURCE_129012
+  name: MENU_OPTIONS_PALETTE_BAND2_SOURCE
+  aliases: [MENU_PALETTE_BAND_SOURCE_129012]
   type: palette_data
   size: 0x20
   confidence: decompiled
@@ -1886,7 +1887,8 @@
   evidence: [ghidra_palette_band2_consumers, fixed_palette_source_extents_static_v1]
 
 0x001292B2:
-  name: INTERACTION_PALETTE_SOURCE_1292B2
+  name: INTERACTION_SHARED_PALETTE_SOURCE
+  aliases: [INTERACTION_PALETTE_SOURCE_1292B2]
   type: palette_data
   size: 0x20
   confidence: decompiled
@@ -2058,7 +2060,8 @@
   evidence: [ghidra_scene_resource_palette_loader, scene_resource_palette_source_extents_static_v1]
 
 0x00129812:
-  name: SCENE_RESOURCE_PALETTE_BAND2_SOURCE_129812
+  name: SCENE_RESOURCE_PALETTE_BAND2_FOR_C000_RESOURCE_VARIANT
+  aliases: [SCENE_RESOURCE_PALETTE_BAND2_SOURCE_129812]
   type: palette_data
   size: 0x20
   confidence: decompiled
@@ -2085,7 +2088,8 @@
   evidence: [ghidra_scene_resource_palette_loader, scene_resource_palette_source_extents_static_v1]
 
 0x001298D2:
-  name: SCENE_RESOURCE_PALETTE_BAND2_SOURCE_1298D2
+  name: SCENE_RESOURCE_PALETTE_BAND2_FOR_COMMON_BASE_RESOURCE
+  aliases: [SCENE_RESOURCE_PALETTE_BAND2_SOURCE_1298D2]
   type: palette_data
   size: 0x20
   confidence: decompiled
@@ -2093,7 +2097,8 @@
   evidence: [ghidra_scene_resource_palette_loader, scene_resource_palette_source_extents_static_v1]
 
 0x001298F2:
-  name: SCENE_RESOURCE_PALETTE_BAND2_SOURCE_1298F2
+  name: SCENE_RESOURCE_PALETTE_BAND2_FOR_E000_RESOURCE_PAIR_A
+  aliases: [SCENE_RESOURCE_PALETTE_BAND2_SOURCE_1298F2]
   type: palette_data
   size: 0x20
   confidence: decompiled
@@ -2155,7 +2160,8 @@
   evidence: [ghidra_scene_resource_palette_loader, scene_resource_palette_source_extents_static_v1]
 
 0x001299D2:
-  name: SCENE_RESOURCE_PALETTE_BAND2_SOURCE_1299D2
+  name: SCENE_RESOURCE_PALETTE_BAND2_FOR_E000_RESOURCE_PAIR_B
+  aliases: [SCENE_RESOURCE_PALETTE_BAND2_SOURCE_1299D2]
   type: palette_data
   size: 0x20
   confidence: decompiled
@@ -2171,7 +2177,8 @@
   evidence: [ghidra_scene_resource_palette_loader, scene_resource_palette_source_extents_static_v1]
 
 0x00129A12:
-  name: SCENE_RESOURCE_PALETTE_BAND2_SOURCE_129A12
+  name: SCENE_RESOURCE_PALETTE_BAND2_FOR_COMMON_VRAM_PAIR
+  aliases: [SCENE_RESOURCE_PALETTE_BAND2_SOURCE_129A12]
   type: palette_data
   size: 0x20
   confidence: decompiled

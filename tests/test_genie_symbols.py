@@ -749,6 +749,23 @@ def test_scene_palette_sources_have_stable_graphics_consumer_names():
         assert legacy in symbol.aliases
 
 
+def test_direct_palette_sources_have_stable_loader_names():
+    expected = {
+        0x00129012: ("MENU_OPTIONS_PALETTE_BAND2_SOURCE", "MENU_PALETTE_BAND_SOURCE_129012"),
+        0x001292B2: ("INTERACTION_SHARED_PALETTE_SOURCE", "INTERACTION_PALETTE_SOURCE_1292B2"),
+        0x00129812: ("SCENE_RESOURCE_PALETTE_BAND2_FOR_C000_RESOURCE_VARIANT", "SCENE_RESOURCE_PALETTE_BAND2_SOURCE_129812"),
+        0x001298D2: ("SCENE_RESOURCE_PALETTE_BAND2_FOR_COMMON_BASE_RESOURCE", "SCENE_RESOURCE_PALETTE_BAND2_SOURCE_1298D2"),
+        0x001298F2: ("SCENE_RESOURCE_PALETTE_BAND2_FOR_E000_RESOURCE_PAIR_A", "SCENE_RESOURCE_PALETTE_BAND2_SOURCE_1298F2"),
+        0x001299D2: ("SCENE_RESOURCE_PALETTE_BAND2_FOR_E000_RESOURCE_PAIR_B", "SCENE_RESOURCE_PALETTE_BAND2_SOURCE_1299D2"),
+        0x00129A12: ("SCENE_RESOURCE_PALETTE_BAND2_FOR_COMMON_VRAM_PAIR", "SCENE_RESOURCE_PALETTE_BAND2_SOURCE_129A12"),
+    }
+    for address, (name, legacy) in expected.items():
+        symbol = SymbolStore().at(address, include_ranges=False)
+        assert symbol is not None
+        assert symbol.name == name
+        assert legacy in symbol.aliases
+
+
 def test_symbol_review_queue_keeps_named_open_questions_actionable(tmp_path):
     database_root = tmp_path / "full-rom"
     _write_database(database_root)

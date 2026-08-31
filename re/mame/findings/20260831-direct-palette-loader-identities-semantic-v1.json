@@ -1,0 +1,21 @@
+{
+  "format": "openaladdin-recorded-semantic-promotion-v1",
+  "recorded_at": "2026-08-31",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "target_manifest": "re/ghidra/targets/direct-palette-loader-identities-semantic-targets.json",
+  "promotions": [
+    { "address": "0x00129012", "old_name": "MENU_PALETTE_BAND_SOURCE_129012", "name": "MENU_OPTIONS_PALETTE_BAND2_SOURCE", "alias": "MENU_PALETTE_BAND_SOURCE_129012" },
+    { "address": "0x001292B2", "old_name": "INTERACTION_PALETTE_SOURCE_1292B2", "name": "INTERACTION_SHARED_PALETTE_SOURCE", "alias": "INTERACTION_PALETTE_SOURCE_1292B2" },
+    { "address": "0x00129812", "old_name": "SCENE_RESOURCE_PALETTE_BAND2_SOURCE_129812", "name": "SCENE_RESOURCE_PALETTE_BAND2_FOR_C000_RESOURCE_VARIANT", "alias": "SCENE_RESOURCE_PALETTE_BAND2_SOURCE_129812" },
+    { "address": "0x001298D2", "old_name": "SCENE_RESOURCE_PALETTE_BAND2_SOURCE_1298D2", "name": "SCENE_RESOURCE_PALETTE_BAND2_FOR_COMMON_BASE_RESOURCE", "alias": "SCENE_RESOURCE_PALETTE_BAND2_SOURCE_1298D2" },
+    { "address": "0x001298F2", "old_name": "SCENE_RESOURCE_PALETTE_BAND2_SOURCE_1298F2", "name": "SCENE_RESOURCE_PALETTE_BAND2_FOR_E000_RESOURCE_PAIR_A", "alias": "SCENE_RESOURCE_PALETTE_BAND2_SOURCE_1298F2" },
+    { "address": "0x001299D2", "old_name": "SCENE_RESOURCE_PALETTE_BAND2_SOURCE_1299D2", "name": "SCENE_RESOURCE_PALETTE_BAND2_FOR_E000_RESOURCE_PAIR_B", "alias": "SCENE_RESOURCE_PALETTE_BAND2_SOURCE_1299D2" },
+    { "address": "0x00129A12", "old_name": "SCENE_RESOURCE_PALETTE_BAND2_SOURCE_129A12", "name": "SCENE_RESOURCE_PALETTE_BAND2_FOR_COMMON_VRAM_PAIR", "alias": "SCENE_RESOURCE_PALETTE_BAND2_SOURCE_129A12" }
+  ],
+  "conclusion": "Replaced address-bearing names for seven directly loaded or published palette sources with stable menu, interaction, and scene-loader identities while retaining legacy aliases.",
+  "confidence": "decompiled",
+  "status": "recorded-semantic-promotion"
+}

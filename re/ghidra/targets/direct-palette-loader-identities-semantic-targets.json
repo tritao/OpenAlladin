@@ -1,0 +1,25 @@
+{
+  "format": "openaladdin-semantic-promotion-target-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "focus": {
+    "name": "direct-palette-loader-identities",
+    "purpose": "Replace address-bearing names for fixed palette sources with identities derived from their direct loader contracts."
+  },
+  "targets": [
+    { "address": "0x00129012", "name": "MENU_OPTIONS_PALETTE_BAND2_SOURCE", "legacy_name": "MENU_PALETTE_BAND_SOURCE_129012", "range": "0x00129012-0x00129031", "consumer": "Menu_RunOptionsAndSelectNextState", "upload_band": 2 },
+    { "address": "0x001292B2", "name": "INTERACTION_SHARED_PALETTE_SOURCE", "legacy_name": "INTERACTION_PALETTE_SOURCE_1292B2", "range": "0x001292B2-0x001292D1", "consumer": "Type-0x05 and related interaction/level-event spawners", "upload_band": 2 },
+    { "address": "0x00129812", "name": "SCENE_RESOURCE_PALETTE_BAND2_FOR_C000_RESOURCE_VARIANT", "legacy_name": "SCENE_RESOURCE_PALETTE_BAND2_SOURCE_129812", "range": "0x00129812-0x00129831", "consumer": "SceneResource_LoadVRAMPairWithPalette129812", "upload_band": 2 },
+    { "address": "0x001298D2", "name": "SCENE_RESOURCE_PALETTE_BAND2_FOR_COMMON_BASE_RESOURCE", "legacy_name": "SCENE_RESOURCE_PALETTE_BAND2_SOURCE_1298D2", "range": "0x001298D2-0x001298F1", "consumer": "SceneResource_LoadCommonVRAMBase", "upload_band": 2 },
+    { "address": "0x001298F2", "name": "SCENE_RESOURCE_PALETTE_BAND2_FOR_E000_RESOURCE_PAIR_A", "legacy_name": "SCENE_RESOURCE_PALETTE_BAND2_SOURCE_1298F2", "range": "0x001298F2-0x00129911", "consumer": "SceneResource_LoadVRAMPairWithPalette1298F2", "upload_band": 2 },
+    { "address": "0x001299D2", "name": "SCENE_RESOURCE_PALETTE_BAND2_FOR_E000_RESOURCE_PAIR_B", "legacy_name": "SCENE_RESOURCE_PALETTE_BAND2_SOURCE_1299D2", "range": "0x001299D2-0x001299F1", "consumer": "SceneResource_LoadVRAMPairWithPalette1299D2", "upload_band": 2 },
+    { "address": "0x00129A12", "name": "SCENE_RESOURCE_PALETTE_BAND2_FOR_COMMON_VRAM_PAIR", "legacy_name": "SCENE_RESOURCE_PALETTE_BAND2_SOURCE_129A12", "range": "0x00129A12-0x00129A31", "consumer": "SceneResource_LoadCommonVRAMPair", "upload_band": 2 }
+  ],
+  "evidence": [
+    "direct A0 loads or published palette pointers in named loader functions",
+    "fixed 16-word palette upload contract",
+    "exact non-overlapping palette ranges",
+    "existing interaction/menu/scene loader manifests"
+  ],
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6",
+  "ghidra_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365"
+}
