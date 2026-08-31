@@ -7920,7 +7920,8 @@
     - actor_response_template_field_closure_static_v1
 
 0x001B7E54:
-  name: ACTOR_TEMPLATE_TYPE_65_BOUNCE
+  name: ACTOR_TEMPLATE_BOUNCE_RESPONSE
+  aliases: [ACTOR_TEMPLATE_TYPE_65_BOUNCE]
   type: actor_template
   size: 20
   confidence: trace_validated
@@ -8020,7 +8021,8 @@
     - animation_stream_decoder
 
 0x001B805C:
-  name: ACTOR_TEMPLATE_TERRAIN_TYPE_84
+  name: ACTOR_TEMPLATE_TERRAIN_RESPONSE_SCENE5
+  aliases: [ACTOR_TEMPLATE_TERRAIN_TYPE_84]
   type: actor_template
   size: 20
   confidence: trace_validated
@@ -8307,7 +8309,8 @@
     - actor_template_grid_xrefs
 
 0x001B7C4C:
-  name: ACTOR_TEMPLATE_TYPE_87_INTERACTION_RESPONSE
+  name: ACTOR_TEMPLATE_INTERACTION_RESPONSE_EXTENDED
+  aliases: [ACTOR_TEMPLATE_TYPE_87_INTERACTION_RESPONSE]
   type: actor_template
   size: 20
   confidence: decompiled
@@ -8370,7 +8373,8 @@
     - actor_template_grid_xrefs
 
 0x001B7A80:
-  name: ACTOR_TEMPLATE_TYPE_05_INTERACTION_VARIANT_A
+  name: ACTOR_TEMPLATE_INTERACTION_SELECTION_A
+  aliases: [ACTOR_TEMPLATE_TYPE_05_INTERACTION_VARIANT_A]
   type: actor_template
   size: 20
   confidence: decompiled
@@ -8380,7 +8384,8 @@
     - actor_template_grid_xrefs
 
 0x001B7A94:
-  name: ACTOR_TEMPLATE_TYPE_05_INTERACTION_VARIANT_B
+  name: ACTOR_TEMPLATE_INTERACTION_SELECTION_B
+  aliases: [ACTOR_TEMPLATE_TYPE_05_INTERACTION_VARIANT_B]
   type: actor_template
   size: 20
   confidence: decompiled
@@ -8390,7 +8395,8 @@
     - actor_template_grid_xrefs
 
 0x001B7AA8:
-  name: ACTOR_TEMPLATE_TYPE_05_INTERACTION_VARIANT_C
+  name: ACTOR_TEMPLATE_INTERACTION_SELECTION_C
+  aliases: [ACTOR_TEMPLATE_TYPE_05_INTERACTION_VARIANT_C]
   type: actor_template
   size: 20
   confidence: decompiled
@@ -8400,7 +8406,8 @@
     - actor_template_grid_xrefs
 
 0x001B7AE4:
-  name: ACTOR_TEMPLATE_TYPE_23_INTERACTION
+  name: ACTOR_TEMPLATE_INTERACTION_PAIR_VARIANT
+  aliases: [ACTOR_TEMPLATE_TYPE_23_INTERACTION]
   type: actor_template
   size: 20
   confidence: decompiled
@@ -8420,7 +8427,8 @@
     - actor_template_grid_xrefs
 
 0x001B7C9C:
-  name: ACTOR_TEMPLATE_TYPE_84_INTERACTION_RESPONSE
+  name: ACTOR_TEMPLATE_INTERACTION_RESPONSE_BASE
+  aliases: [ACTOR_TEMPLATE_TYPE_84_INTERACTION_RESPONSE]
   type: actor_template
   size: 20
   confidence: decompiled
@@ -8441,7 +8449,8 @@
     - actor_template_grid_xrefs
 
 0x001B78B4:
-  name: ACTOR_TEMPLATE_TYPE_5F_INTERACTION
+  name: ACTOR_TEMPLATE_INTERACTION_RESPONSE_READY
+  aliases: [ACTOR_TEMPLATE_TYPE_5F_INTERACTION]
   type: actor_template
   size: 20
   confidence: decompiled
@@ -8462,7 +8471,8 @@
     - actor_template_grid_xrefs
 
 0x001B78DC:
-  name: ACTOR_TEMPLATE_TYPE_67_INTERACTION
+  name: ACTOR_TEMPLATE_INTERACTION_THRESHOLD
+  aliases: [ACTOR_TEMPLATE_TYPE_67_INTERACTION]
   type: actor_template
   size: 20
   confidence: decompiled
@@ -8505,7 +8515,8 @@
     - actor_template_grid_xrefs
 
 0x001B7DB4:
-  name: ACTOR_TEMPLATE_TYPE_76_INTERACTION
+  name: ACTOR_TEMPLATE_TERMINAL_INTERACTION_SHARED
+  aliases: [ACTOR_TEMPLATE_TYPE_76_INTERACTION]
   type: actor_template
   size: 20
   confidence: decompiled
@@ -8526,7 +8537,8 @@
     - actor_template_grid_xrefs
 
 0x001B7DDC:
-  name: ACTOR_TEMPLATE_TYPE_84_TERRAIN_RESPONSE
+  name: ACTOR_TEMPLATE_TERRAIN_RESPONSE_PRIMARY
+  aliases: [ACTOR_TEMPLATE_TYPE_84_TERRAIN_RESPONSE]
   type: actor_template
   size: 20
   confidence: decompiled
@@ -8570,7 +8582,8 @@
     - actor_template_grid_xrefs
 
 0x001B7EF4:
-  name: ACTOR_TEMPLATE_TYPE_32_INTERACTION
+  name: ACTOR_TEMPLATE_INTERACTION_Y_OFFSET
+  aliases: [ACTOR_TEMPLATE_TYPE_32_INTERACTION]
   type: actor_template
   size: 20
   confidence: decompiled
@@ -8668,7 +8681,8 @@
     - ghidra_actor_template_initializer_001AE30A
 
 0x001B80E8:
-  name: ACTOR_TEMPLATE_TYPE_53_INTERACTION
+  name: ACTOR_TEMPLATE_INTERACTION_RESPONSE_VARIANT
+  aliases: [ACTOR_TEMPLATE_TYPE_53_INTERACTION]
   type: actor_template
   size: 20
   confidence: decompiled
@@ -8678,7 +8692,8 @@
     - actor_template_grid_xrefs
 
 0x001B8174:
-  name: ACTOR_TEMPLATE_TYPE_17_INTERACTION
+  name: ACTOR_TEMPLATE_INTERACTION_RESOURCE_VARIANT
+  aliases: [ACTOR_TEMPLATE_TYPE_17_INTERACTION]
   type: actor_template
   size: 20
   confidence: decompiled
@@ -8721,7 +8736,8 @@
     - actor_template_grid_xrefs
 
 0x001B7D14:
-  name: ACTOR_TEMPLATE_TYPE_84_INTERACTION_OFFSET
+  name: ACTOR_TEMPLATE_INTERACTION_OFFSET
+  aliases: [ACTOR_TEMPLATE_TYPE_84_INTERACTION_OFFSET]
   type: actor_template
   size: 20
   confidence: decompiled
@@ -8731,7 +8747,8 @@
     - actor_template_grid_xrefs
 
 0x001B81EC:
-  name: ACTOR_TEMPLATE_TYPE_0C_LEVEL_EVENT
+  name: ACTOR_TEMPLATE_LEVEL_EVENT_DIRECTIONAL_RESPONSE
+  aliases: [ACTOR_TEMPLATE_TYPE_0C_LEVEL_EVENT]
   type: actor_template
   size: 20
   confidence: decompiled
@@ -8751,7 +8768,8 @@
     - animation_stream_decoder
 
 0x001B8228:
-  name: ACTOR_TEMPLATE_TYPE_0B_LEVEL_EVENT
+  name: ACTOR_TEMPLATE_LEVEL_EVENT_INTERACTION
+  aliases: [ACTOR_TEMPLATE_TYPE_0B_LEVEL_EVENT]
   type: actor_template
   size: 20
   confidence: decompiled
@@ -8771,7 +8789,8 @@
     - animation_stream_decoder
 
 0x001B8250:
-  name: ACTOR_TEMPLATE_TYPE_79_INTERACTION
+  name: ACTOR_TEMPLATE_INTERACTION_STATE
+  aliases: [ACTOR_TEMPLATE_TYPE_79_INTERACTION]
   type: actor_template
   size: 20
   confidence: decompiled
@@ -8905,7 +8924,8 @@
     - actor_template_grid_xrefs
 
 0x001B8390:
-  name: ACTOR_TEMPLATE_TYPE_84_LEVEL_EVENT
+  name: ACTOR_TEMPLATE_LEVEL_EVENT_RESPONSE
+  aliases: [ACTOR_TEMPLATE_TYPE_84_LEVEL_EVENT]
   type: actor_template
   size: 20
   confidence: decompiled
@@ -9135,7 +9155,8 @@
     - actor_template_grid_xrefs
 
 0x001B7F94:
-  name: ACTOR_TEMPLATE_TYPE_4F_INTERACTION
+  name: ACTOR_TEMPLATE_INTERACTION_FRAME_VARIANT
+  aliases: [ACTOR_TEMPLATE_TYPE_4F_INTERACTION]
   type: actor_template
   size: 20
   confidence: decompiled
@@ -9254,7 +9275,8 @@
     - actor_template_grid_xrefs
 
 0x001B80FC:
-  name: ACTOR_TEMPLATE_TYPE_36_INTERACTION
+  name: ACTOR_TEMPLATE_INTERACTION_VARIANT
+  aliases: [ACTOR_TEMPLATE_TYPE_36_INTERACTION]
   type: actor_template
   size: 20
   confidence: decompiled

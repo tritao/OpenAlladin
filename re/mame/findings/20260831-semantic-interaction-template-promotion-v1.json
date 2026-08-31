@@ -1,0 +1,45 @@
+{
+  "status": "recorded-semantic-promotion",
+  "scope": "remaining-interaction-template-role-identities",
+  "promotions": [
+    "ACTOR_TEMPLATE_INTERACTION_RESPONSE_READY",
+    "ACTOR_TEMPLATE_INTERACTION_THRESHOLD",
+    "ACTOR_TEMPLATE_INTERACTION_SELECTION_A",
+    "ACTOR_TEMPLATE_INTERACTION_SELECTION_B",
+    "ACTOR_TEMPLATE_INTERACTION_SELECTION_C",
+    "ACTOR_TEMPLATE_INTERACTION_PAIR_VARIANT",
+    "ACTOR_TEMPLATE_INTERACTION_RESPONSE_EXTENDED",
+    "ACTOR_TEMPLATE_INTERACTION_RESPONSE_BASE",
+    "ACTOR_TEMPLATE_INTERACTION_OFFSET",
+    "ACTOR_TEMPLATE_TERMINAL_INTERACTION_SHARED",
+    "ACTOR_TEMPLATE_TERRAIN_RESPONSE_PRIMARY",
+    "ACTOR_TEMPLATE_BOUNCE_RESPONSE",
+    "ACTOR_TEMPLATE_INTERACTION_Y_OFFSET",
+    "ACTOR_TEMPLATE_INTERACTION_FRAME_VARIANT",
+    "ACTOR_TEMPLATE_TERRAIN_RESPONSE_SCENE5",
+    "ACTOR_TEMPLATE_INTERACTION_RESPONSE_VARIANT",
+    "ACTOR_TEMPLATE_INTERACTION_VARIANT",
+    "ACTOR_TEMPLATE_INTERACTION_RESOURCE_VARIANT",
+    "ACTOR_TEMPLATE_LEVEL_EVENT_DIRECTIONAL_RESPONSE",
+    "ACTOR_TEMPLATE_LEVEL_EVENT_INTERACTION",
+    "ACTOR_TEMPLATE_INTERACTION_STATE",
+    "ACTOR_TEMPLATE_LEVEL_EVENT_RESPONSE"
+  ],
+  "evidence": [
+    "ghidra_early_interaction_dispatch_block",
+    "ghidra_interaction_dispatch_block",
+    "ghidra_level_actor_spawn_block",
+    "ghidra_presentation_interaction_dispatch_block",
+    "ghidra_scene_level_actor_block",
+    "actor_template_scene_setup_static_decompilation",
+    "actor_template_grid_xrefs",
+    "actor_template_body_confidence_static_v1"
+  ],
+  "policy": {
+    "old_numeric_names_retained_as_aliases": true,
+    "technical_type_ids_retained": true,
+    "byte_ranges_changed": false,
+    "deasm_ownership_changed": false,
+    "semantic_scope": "proven_selector_and_stream_role"
+  }
+}
