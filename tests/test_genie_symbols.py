@@ -1158,6 +1158,21 @@ def test_real_hud_display_buffers_have_canonical_ram_symbols():
     assert active.address + 7 == pending.address
 
 
+def test_real_hud_and_milestone_ranges_cover_interior_bytes():
+    symbols = SymbolStore()
+    expected = {
+        0x00FF7E2D: "HUD_DISPLAY_DIGITS",
+        0x00FF7E35: "INTERACTION_PENDING_DISPLAY_VALUE",
+        0x00FF7E3A: "INTERACTION_RESOURCE_PROGRESS_COUNTER",
+        0x00FF7E14: "INTERACTION_RESOURCE_MODE_1B_MILESTONE",
+        0x00FF7E18: "INTERACTION_RESOURCE_MODE_1C_MILESTONE",
+    }
+    for address, name in expected.items():
+        symbol = symbols.at(address)
+        assert symbol is not None
+        assert symbol.name == name
+
+
 def test_real_apple_counter_has_a_semantic_projection_alias():
     symbols = SymbolStore()
 
