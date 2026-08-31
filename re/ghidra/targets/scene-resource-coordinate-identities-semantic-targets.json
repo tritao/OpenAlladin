@@ -1,0 +1,28 @@
+{
+  "format": "openaladdin-semantic-promotion-target-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "focus": {
+    "name": "scene-resource-coordinate-identities",
+    "purpose": "Replace the address-bearing name for the directly consumed queued-actor coordinate stream with a stable resource identity."
+  },
+  "targets": [
+    {
+      "address": "0x00006744",
+      "name": "SCENE_RESOURCE_QUEUED_ACTOR_COORDINATES",
+      "legacy_name": "SCENE_RESOURCE_ACTOR_SPAWN_COORDINATES_6744",
+      "range": "0x00006744-0x0000683D",
+      "size": 250,
+      "format": "62 big-endian X/Y word pairs followed by a zero X-word sentinel",
+      "consumer": "SceneResource_InstantiateQueuedActor",
+      "cursor": "SCENE_RESOURCE_ACTOR_RECORD_CURSOR"
+    }
+  ],
+  "evidence": [
+    "direct scene-resource allocator consumer",
+    "exact four-byte coordinate record cadence",
+    "terminal zero-X sentinel before TERRAIN_ACTOR_SURFACE_FLAGS_TABLE",
+    "existing static decompilation finding"
+  ],
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6",
+  "ghidra_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365"
+}

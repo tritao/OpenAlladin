@@ -7472,7 +7472,8 @@
     - ghidra_disassembly_001ADB5C
 
 0x00006744:
-  name: SCENE_RESOURCE_ACTOR_SPAWN_COORDINATES_6744
+  name: SCENE_RESOURCE_QUEUED_ACTOR_COORDINATES
+  aliases: [SCENE_RESOURCE_ACTOR_SPAWN_COORDINATES_6744]
   type: scene_resource_actor_coordinate_table
   entry_size: 4
   count: 62

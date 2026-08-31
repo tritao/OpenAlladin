@@ -781,6 +781,13 @@ def test_type84_scene_templates_and_terminal_animation_have_stable_names():
         assert legacy in symbol.aliases
 
 
+def test_scene_resource_coordinate_stream_has_stable_name():
+    symbol = SymbolStore().at(0x00006744, include_ranges=False)
+    assert symbol is not None
+    assert symbol.name == "SCENE_RESOURCE_QUEUED_ACTOR_COORDINATES"
+    assert "SCENE_RESOURCE_ACTOR_SPAWN_COORDINATES_6744" in symbol.aliases
+
+
 def test_symbol_review_queue_keeps_named_open_questions_actionable(tmp_path):
     database_root = tmp_path / "full-rom"
     _write_database(database_root)
