@@ -2682,6 +2682,28 @@
   evidence:
     - ghidra_disassembly_001B3C7C
 
+0xFF729A:
+  name: RENDER_SPRITE_RECORD_BUFFER_BASE
+  type: sprite_record_buffer
+  format: address
+  confidence: confirmed
+  description: Base of the shared 8-byte VDP sprite-record buffer. Render_BuildActorRecords and Render_BuildActorRecordsOnly emit four-word X/attribute/tile/Y records here, append the 1/0/0/1 terminator record, and Render_SubmitPlayerSprites streams the records from this base to the VDP.
+  evidence:
+    - ghidra_disassembly_001AB784
+    - ghidra_disassembly_001AB7A4
+    - ghidra_decompile_001AB7A4
+
+0xFFEFEC:
+  name: RENDER_SPRITE_RECORD_COUNT
+  type: u16
+  format: record_count
+  confidence: confirmed
+  description: Published count for the shared 8-byte VDP sprite-record buffer at RENDER_SPRITE_RECORD_BUFFER_BASE. The actor-record builders publish the low-byte count after appending the terminator record, and Render_SubmitPlayerSprites consumes that many records while rejecting counts at or above 0x80.
+  evidence:
+    - ghidra_disassembly_001AB78A
+    - ghidra_disassembly_001AB7A4
+    - ghidra_decompile_001AB7A4
+
 0xFF7E88:
   name: ACTOR_SLOT_1_FLAGS
   type: u8

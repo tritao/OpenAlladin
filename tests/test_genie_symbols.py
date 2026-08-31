@@ -1751,16 +1751,18 @@ def test_real_player_actor_coordinates_and_menu_gate_have_canonical_roles():
 def test_real_input_and_menu_phase_state_have_canonical_roles():
     symbols = SymbolStore()
     expected = {
-        0x00FFEFFD: ("INPUT_EDGE_LATCH", "boolean"),
-        0x00FFEFFE: ("MENU_CONTROLLER_POLL_GATE", "boolean"),
-        0x00FF7274: ("MENU_OPTIONS_SUBPHASE", "counter"),
+        0x00FFEFFD: ("INPUT_EDGE_LATCH", "boolean", "decompiled"),
+        0x00FFEFFE: ("MENU_CONTROLLER_POLL_GATE", "boolean", "decompiled"),
+        0x00FF7274: ("MENU_OPTIONS_SUBPHASE", "counter", "decompiled"),
+        0x00FF729A: ("RENDER_SPRITE_RECORD_BUFFER_BASE", "address", "confirmed"),
+        0x00FFEFEC: ("RENDER_SPRITE_RECORD_COUNT", "record_count", "confirmed"),
     }
-    for address, (name, format_name) in expected.items():
+    for address, (name, format_name, confidence) in expected.items():
         symbol = symbols.at(address, include_ranges=False)
         assert symbol is not None
         assert symbol.name == name
         assert symbol.metadata["format"] == format_name
-        assert symbol.confidence == "decompiled"
+        assert symbol.confidence == confidence
 
 
 def test_real_actor_slot_one_fields_have_canonical_roles():

@@ -1,0 +1,22 @@
+{
+  "format": "openaladdin-targeted-decompile-request-v1",
+  "recorded_at": "2026-08-31",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "focus": "Canonicalize the shared actor/HUD sprite-record buffer and its VDP submission count.",
+  "targets": [
+    { "address": "0x001AB7A4", "name": "Render_BuildActorRecordsOnly", "buffer": "0x00FF729A", "count": "0x00FFEFEC" },
+    { "address": "0x001AB7C4", "name": "Render_BuildActorRecords", "buffer": "0x00FF729A", "count": "0x00FFEFEC" },
+    { "address": "0x001AB776", "name": "Render_SubmitPlayerSprites", "buffer": "0x00FF729A", "count": "0x00FFEFEC" },
+    { "address": "0x00FF729A", "name": "RENDER_SPRITE_RECORD_BUFFER_BASE" },
+    { "address": "0x00FFEFEC", "name": "RENDER_SPRITE_RECORD_COUNT" }
+  ],
+  "contracts": [
+    "The builders use 0x00FF729A as a four-word-per-record output cursor for X, sprite attribute, tile, and Y words.",
+    "Both builders append the four-word 1/0/0/1 terminator record before publishing the record count.",
+    "Render_SubmitPlayerSprites reads the count word at 0x00FFEFEC and streams two longwords per record from 0x00FF729A to VDP data, with a 0x80-count guard."
+  ],
+  "conclusion": "The anonymous renderer addresses are a shared VDP sprite-record buffer base and its published record count."
+}
