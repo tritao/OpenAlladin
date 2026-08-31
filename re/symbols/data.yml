@@ -3592,7 +3592,7 @@
   type: movement_stream
   size: 38
   confidence: decompiled
-  description: Type-0x84 menu-presentation child-A movement entry supplied by ACTOR_TEMPLATE_MENU_TYPE_84_CHILD_A at 0x001B7D3C. Its exact 38-byte prefix runs through the staged timer/offset sequence and the terminal actor-state clear at 0x0012169C, then falls through into the child-B entry at 0x001216AA; shared continuation bytes are not claimed by this range.
+  description: Primary menu-presentation child movement entry supplied by ACTOR_TEMPLATE_MENU_PRESENTATION_CHILD_PRIMARY at 0x001B7D3C. Its exact 38-byte prefix runs through the staged timer/offset sequence and the terminal actor-state clear at 0x0012169C, then falls through into the secondary child entry at 0x001216AA; shared continuation bytes are not claimed by this range.
   evidence:
     - menu_transition_template_family_static_decompilation
     - menu_scene_animation_static_decompilation
@@ -3603,7 +3603,7 @@
   type: movement_stream
   size: 28
   confidence: decompiled
-  description: Menu-presentation child-B movement entry supplied by ACTOR_TEMPLATE_MENU_TYPE_84_CHILD_B at 0x001B7D50. Its exact 28-byte prefix repeats the staged timer/offset sequence and clears the actor state at 0x001216C2, then falls through into ACTOR_MOVE_MOVING_INTERACTION at 0x001216C6; shared continuation bytes are not claimed by this range.
+  description: Secondary menu-presentation child movement entry supplied by ACTOR_TEMPLATE_MENU_PRESENTATION_CHILD_SECONDARY at 0x001B7D50. Its exact 28-byte prefix repeats the staged timer/offset sequence and clears the actor state at 0x001216C2, then falls through into ACTOR_MOVE_MOVING_INTERACTION at 0x001216C6; shared continuation bytes are not claimed by this range.
   evidence:
     - menu_transition_template_family_static_decompilation
     - menu_scene_animation_static_decompilation
@@ -5230,28 +5230,31 @@
     - animation_stream_decoder
 
 0x00125874:
-  name: ACTOR_ANIM_TYPE42_LEVEL_ENTRY_OPENING
+  name: ACTOR_ANIM_LEVEL_ENTRY_OPENING
+  aliases: [ACTOR_ANIM_TYPE42_LEVEL_ENTRY_OPENING]
   size: 4
   confidence: decompiled
-  description: Type-0x42 level-entry opening installed by ACTOR_TEMPLATE_TYPE_42_LEVEL_ENTRY. It presents frame 0x108A, clears actor state, and continues at ACTOR_ANIM_TYPE54_LEVEL_ENTRY at 0x00125878.
+  description: Level-entry opening installed by ACTOR_TEMPLATE_LEVEL_ENTRY_ACTOR. It presents frame 0x108A, clears actor state, and continues at ACTOR_ANIM_LEVEL_ENTRY_RESPONSE at 0x00125878.
   evidence:
     - actor_template_level_entry_family_static_decompilation
     - animation_stream_decoder
 
 0x00125878:
-  name: ACTOR_ANIM_TYPE54_LEVEL_ENTRY
+  name: ACTOR_ANIM_LEVEL_ENTRY_RESPONSE
+  aliases: [ACTOR_ANIM_TYPE54_LEVEL_ENTRY]
   size: 46
   confidence: decompiled
-  description: Type-0x54 level-entry animation installed by ACTOR_TEMPLATE_TYPE_54. It clears actor state, cycles the 0x128A-0x129E frame sequence, and loops from 0x001258A0 to 0x0012587C.
+  description: Level-entry response animation installed by ACTOR_TEMPLATE_LEVEL_ENTRY_RESPONSE. It clears actor state, cycles the 0x128A-0x129E frame sequence, and loops from 0x001258A0 to 0x0012587C.
   evidence:
     - actor_template_level_entry_family_static_decompilation
     - animation_stream_decoder
 
 0x001258A6:
-  name: ACTOR_ANIM_TYPE84_LEVEL_EVENT_CHILD_OPENING
+  name: ACTOR_ANIM_LEVEL_EVENT_CHILD_OPENING
+  aliases: [ACTOR_ANIM_TYPE84_LEVEL_EVENT_CHILD_OPENING]
   size: 44
   confidence: decompiled
-  description: Type-0x84 level-event child animation opening supplied by ACTOR_TEMPLATE_TYPE_84_LEVEL_EVENT_CHILD. It presents the 0x10B6-0x10D2 lead-in and clears the actor at 0x001258D0 before continuing at PLAYER_ANIM_LEVEL_EVENT_PRESENTATION.
+  description: Level-event child opening supplied by ACTOR_TEMPLATE_LEVEL_EVENT_CHILD_OPENING. It presents the 0x10B6-0x10D2 lead-in and clears the actor at 0x001258D0 before continuing at PLAYER_ANIM_LEVEL_EVENT_PRESENTATION.
   evidence:
     - actor_template_scene_level_family_static_decompilation
     - animation_stream_decoder
@@ -5261,16 +5264,17 @@
   aliases: [ACTOR_ANIM_TYPE7C_LEVEL_EVENT_SHARED]
   size: 42
   confidence: decompiled
-  description: Shared level-event animation installed by ACTOR_TEMPLATE_LEVEL05_TIMED_SPAWN, ACTOR_TEMPLATE_WIDE_RANDOM_EVENT, and ACTOR_TEMPLATE_LEVEL07_CALLBACK_SPAWN. It presents the exact 0x0F9A-0x0FB2 sequence, writes actor type 0x84 through the VM write command at 0x00125932, and clears the actor at 0x0012593E before the adjacent ACTOR_ANIM_TYPE7D_LEVEL_ENTRY owner.
+  description: Shared level-event animation installed by ACTOR_TEMPLATE_LEVEL05_TIMED_SPAWN, ACTOR_TEMPLATE_WIDE_RANDOM_EVENT, and ACTOR_TEMPLATE_LEVEL07_CALLBACK_SPAWN. It presents the exact 0x0F9A-0x0FB2 sequence, writes actor type 0x84 through the VM write command at 0x00125932, and clears the actor at 0x0012593E before the adjacent ACTOR_ANIM_LEVEL_ENTRY_VARIANT owner.
   evidence:
     - actor_template_level_entry_family_static_decompilation
     - animation_stream_decoder
 
 0x00125940:
-  name: ACTOR_ANIM_TYPE7D_LEVEL_ENTRY
+  name: ACTOR_ANIM_LEVEL_ENTRY_VARIANT
+  aliases: [ACTOR_ANIM_TYPE7D_LEVEL_ENTRY]
   size: 18
   confidence: decompiled
-  description: Type-0x7D level-entry animation installed by ACTOR_TEMPLATE_TYPE_7D. It loops the paired 0x1B3A, 0x1B3E, and 0x1B42 frame sequence at 0x0012594C.
+  description: Level-entry variant animation installed by ACTOR_TEMPLATE_LEVEL_ENTRY_VARIANT. It loops the paired 0x1B3A, 0x1B3E, and 0x1B42 frame sequence at 0x0012594C.
   evidence:
     - actor_template_level_entry_family_static_decompilation
     - animation_stream_decoder
@@ -5515,7 +5519,7 @@
   aliases: [ACTOR_ANIM_TYPE74_TERRAIN_EXIT_RESPONSE]
   size: 230
   confidence: decompiled
-  description: Shared terrain/Level 06 exit response family selected by ACTOR_TEMPLATE_TERRAIN_EXIT_RESPONSE and ACTOR_TEMPLATE_LEVEL06_EXIT. Its 230-byte region opens with the 0x169A response and three F5 child placements through ACTOR_TEMPLATE_TYPE_84_TYPE74_RESPONSE_CHILD, calls the local substream at 0x00124574 and shared substream at 0x001245AE, and loops through the response body at 0x00124560; the embedded streams return with FC80 and are owned by this family.
+  description: Shared terrain/Level 06 exit response family selected by ACTOR_TEMPLATE_TERRAIN_EXIT_RESPONSE and ACTOR_TEMPLATE_LEVEL06_EXIT. Its 230-byte region opens with the 0x169A response and three F5 child placements through ACTOR_TEMPLATE_TERRAIN_EXIT_RESPONSE_CHILD, calls the local substream at 0x00124574 and shared substream at 0x001245AE, and loops through the response body at 0x00124560; the embedded streams return with FC80 and are owned by this family.
   evidence:
     - type74_terrain_exit_response_animation_static_decompilation
     - actor_template_level_spawn_family_static_decompilation
@@ -7346,10 +7350,11 @@
     - animation_stream_classifier
 
 0x001259A6:
-  name: ACTOR_ANIM_TYPE2E_DIRECTIONAL_CHILD
+  name: ACTOR_ANIM_DIRECTIONAL_CHILD
+  aliases: [ACTOR_ANIM_TYPE2E_DIRECTIONAL_CHILD]
   size: 26
   confidence: decompiled
-  description: Type-0x2E directional child animation supplied by ACTOR_TEMPLATE_TYPE_2E_DIRECTIONAL_CHILD. Its packed region cycles the paired 0x1BF6-0x1C06 frame sequence and loops from 0x001259BA back to 0x001259A6.
+  description: Directional child animation supplied by ACTOR_TEMPLATE_DIRECTIONAL_CHILD. Its packed region cycles the paired 0x1BF6-0x1C06 frame sequence and loops from 0x001259BA back to 0x001259A6.
   evidence:
     - type0c_directional_response_animation_static_decompilation
     - animation_stream_decoder
@@ -7498,31 +7503,34 @@
     - animation_stream_decoder
 
 0x00125F5A:
-  name: ACTOR_ANIM_TYPE84_MENU_PRESENTATION_CHILD_A
+  name: ACTOR_ANIM_MENU_PRESENTATION_CHILD_PRIMARY
+  aliases: [ACTOR_ANIM_TYPE84_MENU_PRESENTATION_CHILD_A]
   type: animation_stream
   size: 214
   confidence: decompiled
-  description: Type-0x84 menu-presentation child-A animation installed by ACTOR_TEMPLATE_MENU_TYPE_84_CHILD_A at 0x001B7D3C. Its exact 214-byte owner presents the 0x148E lead-in, emits the four moving-child and seven flagged-child F5 records, clears the parent state, and ends immediately before ACTOR_ANIM_TYPE84_TERMINAL_INTERACTION_RESPONSE at 0x00126030; the child-B animation remains separately owned.
+  description: Primary menu-presentation child animation installed by ACTOR_TEMPLATE_MENU_PRESENTATION_CHILD_PRIMARY at 0x001B7D3C. Its exact 214-byte owner presents the 0x148E lead-in, emits the four moving-child and seven flagged-child F5 records, clears the parent state, and ends immediately before ACTOR_ANIM_TYPE84_TERMINAL_INTERACTION_RESPONSE at 0x00126030; the secondary child animation remains separately owned.
   evidence:
     - menu_transition_template_family_static_decompilation
     - animation_f5_nested_child_family_static_decompilation
     - animation_stream_decoder
 
 0x00126042:
-  name: ACTOR_ANIM_TYPE84_LEVEL_EVENT
+  name: ACTOR_ANIM_LEVEL_EVENT_RESPONSE
+  aliases: [ACTOR_ANIM_TYPE84_LEVEL_EVENT]
   size: 50
   confidence: decompiled
-  description: Type-0x84 level-event animation installed by ACTOR_TEMPLATE_TYPE_84_LEVEL_EVENT. Its exact 50-byte region presents frame 0x06D2, spawns the Type-0x84 child template at 0x001B83A4, clears the parent actor, and loops through the embedded child-entry sequence beginning at 0x00126056.
+  description: Level-event response animation installed by ACTOR_TEMPLATE_LEVEL_EVENT_RESPONSE. Its exact 50-byte region presents frame 0x06D2, spawns the level-event response child template at 0x001B83A4, clears the parent actor, and loops through the embedded child-entry sequence beginning at 0x00126056.
   evidence:
     - actor_template_type84_type4d_child_family_static_decompilation
     - animation_stream_decoder
 
 0x00126056:
-  name: ACTOR_ANIM_TYPE84_LEVEL_EVENT_CHILD
-  alias_of: ACTOR_ANIM_TYPE84_LEVEL_EVENT
+  name: ACTOR_ANIM_LEVEL_EVENT_RESPONSE_CHILD
+  aliases: [ACTOR_ANIM_TYPE84_LEVEL_EVENT_CHILD]
+  alias_of: ACTOR_ANIM_LEVEL_EVENT_RESPONSE
   entry_offset: 20
   confidence: decompiled
-  description: Embedded Type-0x84 level-event response-child animation selected by ACTOR_TEMPLATE_TYPE_84_LEVEL_EVENT_RESPONSE_CHILD at 0x001B83A4. It presents the 0x0766-0x077A frame loop and does not claim a second ROM ownership range.
+  description: Embedded level-event response-child animation selected by ACTOR_TEMPLATE_LEVEL_EVENT_RESPONSE_CHILD at 0x001B83A4. It presents the 0x0766-0x077A frame loop and does not claim a second ROM ownership range.
   evidence:
     - actor_template_type84_type4d_child_family_static_decompilation
     - animation_stream_decoder
@@ -7581,7 +7589,8 @@
     - animation_stream_decoder
 
 0x00125DC4:
-  name: ACTOR_ANIM_TYPE84_SCENE_INITIAL_PRIMARY
+  name: ACTOR_ANIM_SCENE_INITIAL_PRIMARY
+  aliases: [ACTOR_ANIM_TYPE84_SCENE_INITIAL_PRIMARY]
   size: 38
   confidence: decompiled
   description: Fixed-slot scene-initialization animation for ACTOR_TEMPLATE_SCENE_INITIAL_PRIMARY. It presents the paired 0x070A-0x0726 frame sequence and loops at 0x00125DE4.
@@ -7601,7 +7610,8 @@
     - animation_stream_decoder
 
 0x001261D0:
-  name: ACTOR_ANIM_TYPE84_SCENE_INITIAL_SECONDARY
+  name: ACTOR_ANIM_SCENE_INITIAL_SECONDARY
+  aliases: [ACTOR_ANIM_TYPE84_SCENE_INITIAL_SECONDARY]
   size: 58
   confidence: decompiled
   description: Primary-gameplay-slot scene-initialization animation for ACTOR_TEMPLATE_SCENE_INITIAL_SECONDARY. It presents the 0x09D2-0x0A06 frame sequence and loops through the embedded entry at 0x001261E0.
@@ -7611,10 +7621,11 @@
     - animation_stream_decoder
 
 0x0012620A:
-  name: ACTOR_ANIM_TYPE84_SCENE_RESET
+  name: ACTOR_ANIM_SCENE_RESET
+  aliases: [ACTOR_ANIM_TYPE84_SCENE_RESET]
   size: 36
   confidence: decompiled
-  description: Scene-reset animation for ACTOR_TEMPLATE_TYPE_84_SCENE_RESET. It presents the repeated 0x0EEE-0x0EFE frame sequence and loops at 0x00126228.
+  description: Scene-reset animation for ACTOR_TEMPLATE_SCENE_RESET. It presents the repeated 0x0EEE-0x0EFE frame sequence and loops at 0x00126228.
   evidence:
     - actor_template_scene_level_family_static_decompilation
     - ghidra_scene_level_actor_block
@@ -7841,11 +7852,12 @@
     - ghidra_actor_template_initializer_001AE30A
 
 0x001B8124:
-  name: ACTOR_TEMPLATE_TYPE_84_F5_FLAGGED_CHILD
+  name: ACTOR_TEMPLATE_MENU_FLAGGED_CHILD
+  aliases: [ACTOR_TEMPLATE_TYPE_84_F5_FLAGGED_CHILD]
   type: actor_template
   size: 20
   confidence: decompiled
-  description: Type-0x84 AnimationVM child template supplied by the paired F5 records at 0x00125FAA and 0x00125FBA; it has template payload 0x08000000, no movement stream, animation root 0x00123158, and four resources, while each parent payload selects its inline child entry.
+  description: Menu flagged child template supplied by the paired F5 records at 0x00125FAA and 0x00125FBA; it has template payload 0x08000000, no movement stream, animation root 0x00123158, and four resources, while each parent payload selects its inline child entry.
   evidence:
     - animation_f5_nested_child_targets
     - menu_scene_animation_static_decompilation
@@ -7867,7 +7879,7 @@
   type: actor_template
   size: 20
   confidence: confirmed
-  description: Compact common actor template whose type byte is 0x7D, movement stream pointer at source offset 0x06 is 0x001211C4, and animation stream pointer at source offset 0x0C is 0x00125940.
+  description: Compact level-entry variant template whose movement stream pointer at source offset 0x06 is 0x001211C4 and animation stream pointer at source offset 0x0C is ACTOR_ANIM_LEVEL_ENTRY_VARIANT at 0x00125940.
   evidence:
     - ghidra_actor_template_initializer_001AE30A
     - ghidra_actor_template_001B81D8
@@ -8082,11 +8094,12 @@
     - level01_upper_frontier_initializer_targets
 
 0x001B8200:
-  name: ACTOR_TEMPLATE_TYPE_2E_DIRECTIONAL_CHILD
+  name: ACTOR_TEMPLATE_DIRECTIONAL_CHILD
+  aliases: [ACTOR_TEMPLATE_TYPE_2E_DIRECTIONAL_CHILD]
   type: actor_template
   size: 20
   confidence: decompiled
-  description: Type-0x2E directional child template supplied by the F5 command at 0x00125980 inside ACTOR_ANIM_TYPE0C_DIRECTIONAL_RESPONSE. It uses movement stream 0x0011F6D4, animation ACTOR_ANIM_TYPE2E_DIRECTIONAL_CHILD at 0x001259A6, and retains the trailing template word 0x00000800.
+  description: Directional child template supplied by the F5 command at 0x00125980 inside ACTOR_ANIM_TYPE0C_DIRECTIONAL_RESPONSE. It uses movement stream 0x0011F6D4, animation ACTOR_ANIM_DIRECTIONAL_CHILD at 0x001259A6, and retains the trailing template word 0x00000800.
   evidence:
     - type0c_directional_response_animation_static_decompilation
     - animation_stream_decoder
@@ -8146,22 +8159,24 @@
     - level01_upper_frontier_initializer_targets
 
 0x001B7D3C:
-  name: ACTOR_TEMPLATE_MENU_TYPE_84_CHILD_A
+  name: ACTOR_TEMPLATE_MENU_PRESENTATION_CHILD_PRIMARY
+  aliases: [ACTOR_TEMPLATE_MENU_TYPE_84_CHILD_A]
   type: actor_template
   size: 20
   confidence: decompiled
-  description: Type-0x84 menu-presentation child template supplied by the first F5 record in ACTOR_TEMPLATE_MENU_TYPE_84's animation stream; it uses movement stream 0x00121684, animation stream 0x00125F5A, owns four resources, and carries template payload 0x08000000.
+  description: Primary menu-presentation child template supplied by the first F5 record in ACTOR_TEMPLATE_MENU_TYPE_84's animation stream; it uses movement stream 0x00121684, animation stream ACTOR_ANIM_MENU_PRESENTATION_CHILD_PRIMARY at 0x00125F5A, owns four resources, and carries template payload 0x08000000.
   evidence:
     - menu_template_child_targets
     - menu_scene_animation_static_decompilation
     - ghidra_actor_template_initializer_001AE30A
 
 0x001B7D50:
-  name: ACTOR_TEMPLATE_MENU_TYPE_84_CHILD_B
+  name: ACTOR_TEMPLATE_MENU_PRESENTATION_CHILD_SECONDARY
+  aliases: [ACTOR_TEMPLATE_MENU_TYPE_84_CHILD_B]
   type: actor_template
   size: 20
   confidence: decompiled
-  description: Type-0x84 menu-presentation secondary child template supplied by the second F5 record in ACTOR_TEMPLATE_MENU_TYPE_84's animation stream; it uses movement stream 0x001216AA, animation stream 0x00126030, owns one resource, and carries template payload 0x08000000.
+  description: Secondary menu-presentation child template supplied by the second F5 record in ACTOR_TEMPLATE_MENU_TYPE_84's animation stream; it uses movement stream 0x001216AA, animation stream 0x00126030, owns one resource, and carries template payload 0x08000000.
   evidence:
     - menu_template_child_targets
     - menu_scene_animation_static_decompilation
@@ -8327,11 +8342,12 @@
     - actor_template_grid_xrefs
 
 0x001B8160:
-  name: ACTOR_TEMPLATE_TYPE_54
+  name: ACTOR_TEMPLATE_LEVEL_ENTRY_RESPONSE
+  aliases: [ACTOR_TEMPLATE_TYPE_54]
   type: actor_template
   size: 20
   confidence: decompiled
-  description: Type-0x54 actor template referenced by two interaction-resource sites; it has no movement stream and uses animation stream 0x00125878.
+  description: Level-entry response template referenced by two interaction-resource sites; it has no movement stream and uses ACTOR_ANIM_LEVEL_ENTRY_RESPONSE at 0x00125878.
   evidence:
     - level01_upper_frontier_initializer_targets
     - actor_template_grid_xrefs
@@ -8833,11 +8849,12 @@
     - actor_template_grid_xrefs
 
 0x001B8188:
-  name: ACTOR_TEMPLATE_TYPE_84_LEVEL_EVENT_CHILD
+  name: ACTOR_TEMPLATE_LEVEL_EVENT_CHILD_OPENING
+  aliases: [ACTOR_TEMPLATE_TYPE_84_LEVEL_EVENT_CHILD]
   type: actor_template
   size: 20
   confidence: decompiled
-  description: Type-0x84 level-event child template supplied by the F5 command at 0x001259D8 inside ACTOR_ANIM_TYPE0B_LEVEL_EVENT. It has no movement stream, uses the shared animation entry at 0x001258A6, and owns two resources.
+  description: Level-event child opening template supplied by the F5 command at 0x001259D8 inside ACTOR_ANIM_TYPE0B_LEVEL_EVENT. It has no movement stream, uses ACTOR_ANIM_LEVEL_EVENT_CHILD_OPENING at 0x001258A6, and owns two resources.
   evidence:
     - actor_template_scene_level_family_static_decompilation
     - animation_stream_decoder
@@ -8961,7 +8978,7 @@
   type: actor_template
   size: 20
   confidence: decompiled
-  description: Scene-initialization template used by SceneResource_InitializeActiveScene for the fixed actor slot at 0x00FF7EC4; it uses ACTOR_MOVE_SHARED_STEP_PLUS2 at 0x001203D8, animation stream 0x00125DC4, and owns five resources before the caller sets the initial facing state.
+  description: Scene-initialization template used by SceneResource_InitializeActiveScene for the fixed actor slot at 0x00FF7EC4; it uses ACTOR_MOVE_SHARED_STEP_PLUS2 at 0x001203D8, animation ACTOR_ANIM_SCENE_INITIAL_PRIMARY at 0x00125DC4, and owns five resources before the caller sets the initial facing state.
   evidence:
     - ghidra_scene_initialize_active_scene
     - actor_template_grid_xrefs
@@ -8983,7 +9000,7 @@
   type: actor_template
   size: 20
   confidence: decompiled
-  description: Scene-initialization template used by SceneResource_InitializeActiveScene for the primary gameplay actor slot at 0x00FF7E82; it uses ACTOR_MOVE_SHARED_STEP_PLUS2 at 0x001203D8, animation stream 0x001261D0, and owns sixteen resources before the caller sets the initial facing state.
+  description: Scene-initialization template used by SceneResource_InitializeActiveScene for the primary gameplay actor slot at 0x00FF7E82; it uses ACTOR_MOVE_SHARED_STEP_PLUS2 at 0x001203D8, animation ACTOR_ANIM_SCENE_INITIAL_SECONDARY at 0x001261D0, and owns sixteen resources before the caller sets the initial facing state.
   evidence:
     - ghidra_scene_initialize_active_scene
     - actor_template_grid_xrefs
@@ -8994,7 +9011,7 @@
   type: actor_template
   size: 20
   confidence: decompiled
-  description: Type-0x84 scene-reset template initialized by Scene_ResetToState0 at 0x001B500A; it uses movement stream 0x001217A2, animation stream 0x0012620A, and owns five resources.
+  description: Scene-reset template initialized by Scene_ResetToState0 at 0x001B500A; it uses movement stream 0x001217A2, animation ACTOR_ANIM_SCENE_RESET at 0x0012620A, and owns five resources.
   evidence:
     - ghidra_scene_level_actor_block
     - actor_template_grid_xrefs
@@ -9005,17 +9022,18 @@
   type: actor_template
   size: 20
   confidence: decompiled
-  description: Type-0x84 level-event template loaded through LevelObjectSpawnEntry at 0x001B75F6; it has no movement stream, uses animation stream 0x00126042, and owns four resources before the caller adds 0x0C to the spawned actor's Y position.
+  description: Level-event response template loaded through LevelObjectSpawnEntry at 0x001B75F6; it has no movement stream, uses ACTOR_ANIM_LEVEL_EVENT_RESPONSE at 0x00126042, and owns four resources before the caller adds 0x0C to the spawned actor's Y position.
   evidence:
     - ghidra_scene_level_actor_block
     - actor_template_grid_xrefs
 
 0x001B83A4:
-  name: ACTOR_TEMPLATE_TYPE_84_LEVEL_EVENT_RESPONSE_CHILD
+  name: ACTOR_TEMPLATE_LEVEL_EVENT_RESPONSE_CHILD
+  aliases: [ACTOR_TEMPLATE_TYPE_84_LEVEL_EVENT_RESPONSE_CHILD]
   type: actor_template
   size: 20
   confidence: decompiled
-  description: Type-0x84 level-event response child template supplied by the F5 command at 0x00126044 inside ACTOR_ANIM_TYPE84_LEVEL_EVENT. It has no movement stream, template word 0x6000, animation entry 0x00126056, and three owned resources; the parent stream clears its own actor after publishing the child.
+  description: Level-event response child template supplied by the F5 command at 0x00126044 inside ACTOR_ANIM_LEVEL_EVENT_RESPONSE. It has no movement stream, template word 0x6000, animation entry ACTOR_ANIM_LEVEL_EVENT_RESPONSE_CHILD at 0x00126056, and three owned resources; the parent stream clears its own actor after publishing the child.
   evidence:
     - actor_template_type84_type4d_child_family_static_decompilation
     - ghidra_actor_template_initializer_001AE30A
@@ -9140,11 +9158,12 @@
     - actor_template_grid_xrefs
 
 0x001B7EB8:
-  name: ACTOR_TEMPLATE_TYPE_84_TYPE74_RESPONSE_CHILD
+  name: ACTOR_TEMPLATE_TERRAIN_EXIT_RESPONSE_CHILD
+  aliases: [ACTOR_TEMPLATE_TYPE_84_TYPE74_RESPONSE_CHILD]
   type: actor_template
   size: 20
   confidence: decompiled
-  description: Type-0x84 child template supplied by the three F5 commands at 0x0012451A, 0x0012452C, and 0x0012453E inside ACTOR_ANIM_TYPE74_TERRAIN_EXIT_RESPONSE. It has no movement stream, reuses the embedded ACTOR_ANIM_TYPE8C_LANDING_RESPONSE path at 0x00124436, owns five resources, and receives the response-specific encoded placement bytes.
+  description: Terrain-exit response child template supplied by the three F5 commands at 0x0012451A, 0x0012452C, and 0x0012453E inside ACTOR_ANIM_TERRAIN_EXIT_RESPONSE. It has no movement stream, reuses the embedded ACTOR_ANIM_LANDING_RESPONSE path at 0x00124436, owns five resources, and receives the response-specific encoded placement bytes.
   evidence:
     - type74_terrain_exit_response_animation_static_decompilation
     - type8c_landing_animation_static_decompilation
@@ -9378,7 +9397,7 @@
   type: actor_template
   size: 20
   confidence: decompiled
-  description: Type-0x42 level-entry template loaded by the actor-creation body at 0x001B5A22; it has no movement stream, uses animation stream 0x00125874, and owns one resource before the caller supplies position from the active level origin.
+  description: Level-entry actor template loaded by the actor-creation body at 0x001B5A22; it has no movement stream, uses ACTOR_ANIM_LEVEL_ENTRY_OPENING at 0x00125874, and owns one resource before the caller supplies position from the active level origin.
   evidence:
     - ghidra_level_entry_actor_block
     - actor_template_grid_xrefs

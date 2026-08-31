@@ -3104,7 +3104,7 @@ def test_type84_menu_presentation_child_a_animation_is_exact():
     symbols = SymbolStore()
     stream = symbols.at(0x00125F5A, include_ranges=False)
     assert stream is not None
-    assert stream.name == "ACTOR_ANIM_TYPE84_MENU_PRESENTATION_CHILD_A"
+    assert stream.name == "ACTOR_ANIM_MENU_PRESENTATION_CHILD_PRIMARY"
     assert stream.end == 0x0012602F
     assert stream.size == 214
     assert stream.metadata["type"] == "animation_stream"

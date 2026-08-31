@@ -1,0 +1,40 @@
+{
+  "status": "recorded-semantic-promotion",
+  "scope": "level-entry-scene-initialization-and-level-event-animation-family",
+  "promotions": [
+    "ACTOR_ANIM_LEVEL_ENTRY_OPENING",
+    "ACTOR_ANIM_LEVEL_ENTRY_RESPONSE",
+    "ACTOR_ANIM_LEVEL_EVENT_CHILD_OPENING",
+    "ACTOR_ANIM_LEVEL_ENTRY_VARIANT",
+    "ACTOR_ANIM_DIRECTIONAL_CHILD",
+    "ACTOR_ANIM_SCENE_INITIAL_PRIMARY",
+    "ACTOR_ANIM_MENU_PRESENTATION_CHILD_PRIMARY",
+    "ACTOR_ANIM_LEVEL_EVENT_RESPONSE",
+    "ACTOR_ANIM_LEVEL_EVENT_RESPONSE_CHILD",
+    "ACTOR_ANIM_SCENE_INITIAL_SECONDARY",
+    "ACTOR_ANIM_SCENE_RESET",
+    "ACTOR_TEMPLATE_LEVEL_ENTRY_RESPONSE",
+    "ACTOR_TEMPLATE_LEVEL_EVENT_CHILD_OPENING",
+    "ACTOR_TEMPLATE_DIRECTIONAL_CHILD",
+    "ACTOR_TEMPLATE_MENU_FLAGGED_CHILD",
+    "ACTOR_TEMPLATE_MENU_PRESENTATION_CHILD_PRIMARY",
+    "ACTOR_TEMPLATE_MENU_PRESENTATION_CHILD_SECONDARY",
+    "ACTOR_TEMPLATE_LEVEL_EVENT_RESPONSE_CHILD",
+    "ACTOR_TEMPLATE_TERRAIN_EXIT_RESPONSE_CHILD"
+  ],
+  "evidence": [
+    "actor_template_level_entry_family_static_decompilation",
+    "actor_template_scene_level_family_static_decompilation",
+    "type0c_directional_response_animation_static_decompilation",
+    "menu_transition_template_family_static_decompilation",
+    "scene_reset_secondary_animation_static_decompilation",
+    "animation_stream_decoder"
+  ],
+  "policy": {
+    "old_numeric_names_retained_as_aliases": true,
+    "technical_type_ids_retained": true,
+    "byte_ranges_changed": false,
+    "deasm_ownership_changed": false,
+    "semantic_scope": "proven_level_entry_scene_initialization_and_event_roles"
+  }
+}
