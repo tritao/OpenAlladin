@@ -4768,110 +4768,120 @@
     - animation_stream_decoder
 
 0x001234BE:
-  name: ACTOR_ANIM_TYPE1E_ACTOR_COLLISION_RESPONSE
+  name: ACTOR_ANIM_ACTOR_COLLISION_RESPONSE
+  aliases: [ACTOR_ANIM_TYPE1E_ACTOR_COLLISION_RESPONSE]
   type: animation_stream
   size: 56
   confidence: decompiled
-  description: Type-0x1E actor-collision response animation installed directly by ActorType1E_ActorCollisionHandler. Its exact 56-byte region publishes temporary type 0x84, presents the 0x11A6-0x11BA response cadence with sound 0x41, restores type 0x1E, invokes the shared collision callback, and transfers to ACTOR_ANIM_TYPE1E_PROXIMITY_RESPONSE.
+  description: Actor-collision response animation installed directly by ActorType1E_ActorCollisionHandler. Its exact 56-byte region publishes the transient collision-response state, presents the 0x11A6-0x11BA response cadence with sound 0x41, restores the source actor state, invokes the shared collision callback, and transfers to ACTOR_ANIM_TYPE1E_PROXIMITY_RESPONSE.
   evidence:
     - upper_collision_response_animation_family_static_decompilation
     - ghidra_type1e_handler_decompile
     - animation_stream_decoder
 
 0x001234F6:
-  name: ACTOR_ANIM_TYPE1E_ACTOR_COLLISION_RESPONSE_ALTERNATE
+  name: ACTOR_ANIM_ACTOR_COLLISION_LANDING_RECOVERY
+  aliases: [ACTOR_ANIM_TYPE1E_ACTOR_COLLISION_RESPONSE_ALTERNATE]
   type: animation_stream
   size: 22
   confidence: decompiled
-  description: Alternate compact Type-0x1E player-collision response entry written directly by ActorType1E_PlayerCollisionHandler on the landing/recovery path. It publishes and restores type 0x84/0x1E around two 0x11A2 frames, then transfers to ACTOR_ANIM_TYPE1E_PROXIMITY_RESPONSE.
+  description: Alternate compact actor-collision response entry written directly by ActorType1E_PlayerCollisionHandler on the landing/recovery path. It publishes and restores the transient/source actor state around two 0x11A2 frames, then transfers to ACTOR_ANIM_TYPE1E_PROXIMITY_RESPONSE.
   evidence:
     - upper_collision_response_animation_family_static_decompilation
     - ghidra_type1e_targeted_decompile
     - animation_stream_decoder
 
 0x0012350C:
-  name: ACTOR_ANIM_TYPE21_ACTOR_COLLISION_RESPONSE
+  name: ACTOR_ANIM_PLAYER_COLLISION_RESPONSE
+  aliases: [ACTOR_ANIM_TYPE21_ACTOR_COLLISION_RESPONSE]
   type: animation_stream
   size: 56
   confidence: decompiled
-  description: Type-0x21 player-collision response animation installed directly by ActorType1E_PlayerCollisionHandler for a type-0x21 source actor. Its exact 56-byte region publishes temporary type 0x84, presents the 0x11A6-0x11BA response cadence with sound 0x41, restores type 0x21, invokes the shared collision callback, and transfers to ACTOR_ANIM_TYPE_21_PROXIMITY.
+  description: Player-collision response animation installed directly by ActorType1E_PlayerCollisionHandler for a secondary source-actor path. Its exact 56-byte region publishes the transient collision-response state, presents the 0x11A6-0x11BA response cadence with sound 0x41, restores the source actor state, invokes the shared collision callback, and transfers to ACTOR_ANIM_TYPE_21_PROXIMITY.
   evidence:
     - upper_collision_response_animation_family_static_decompilation
     - ghidra_type1e_targeted_decompile
     - animation_stream_decoder
 
 0x00123544:
-  name: ACTOR_ANIM_TYPE21_ACTOR_COLLISION_RESPONSE_ALTERNATE
+  name: ACTOR_ANIM_PLAYER_COLLISION_LANDING_RECOVERY
+  aliases: [ACTOR_ANIM_TYPE21_ACTOR_COLLISION_RESPONSE_ALTERNATE]
   type: animation_stream
   size: 22
   confidence: decompiled
-  description: Alternate compact Type-0x21 player-collision response entry written directly by ActorType1E_PlayerCollisionHandler on the landing/recovery path. It publishes and restores type 0x84/0x21 around two 0x11A2 frames, then transfers to ACTOR_ANIM_TYPE_21_PROXIMITY.
+  description: Alternate compact player-collision response entry written directly by ActorType1E_PlayerCollisionHandler on the landing/recovery path. It publishes and restores the transient/source actor state around two 0x11A2 frames, then transfers to ACTOR_ANIM_TYPE_21_PROXIMITY.
   evidence:
     - upper_collision_response_animation_family_static_decompilation
     - ghidra_type1e_targeted_decompile
     - animation_stream_decoder
 
 0x0012384A:
-  name: ACTOR_ANIM_TYPE1F_ACTOR_COLLISION_RESPONSE
+  name: ACTOR_ANIM_PLAYER_COLLISION_PROXIMITY_RESPONSE_A
+  aliases: [ACTOR_ANIM_TYPE1F_ACTOR_COLLISION_RESPONSE]
   type: animation_stream
   size: 48
   confidence: decompiled
-  description: Type-0x1F player-collision response animation installed directly by ActorType1E_PlayerCollisionHandler. Its exact 48-byte region publishes temporary type 0x84, presents the 0x1232-0x1246 response cadence with sound 0x41, restores type 0x1F, and transfers to ACTOR_ANIM_TYPE1F_PROXIMITY_GATE at 0x00123900.
+  description: Player-collision proximity-response animation installed directly by ActorType1E_PlayerCollisionHandler. Its exact 48-byte region publishes the transient collision-response state, presents the 0x1232-0x1246 response cadence with sound 0x41, restores the source actor state, and transfers to ACTOR_ANIM_TYPE1F_PROXIMITY_GATE at 0x00123900.
   evidence:
     - upper_type1f_type22_collision_animation_static_decompilation
     - ghidra_type1e_targeted_decompile
     - animation_stream_decoder
 
 0x0012387A:
-  name: ACTOR_ANIM_TYPE22_ACTOR_COLLISION_RESPONSE
+  name: ACTOR_ANIM_PLAYER_COLLISION_PROXIMITY_RESPONSE_B
+  aliases: [ACTOR_ANIM_TYPE22_ACTOR_COLLISION_RESPONSE]
   type: animation_stream
   size: 48
   confidence: decompiled
-  description: Type-0x22 player-collision response animation installed directly by ActorType1E_PlayerCollisionHandler. Its exact 48-byte region publishes temporary type 0x84, presents the 0x1232-0x1246 response cadence with sound 0x41, restores type 0x22, and transfers to the embedded proximity loop at 0x001238B2.
+  description: Player-collision proximity-response animation installed directly by ActorType1E_PlayerCollisionHandler. Its exact 48-byte region publishes the transient collision-response state, presents the 0x1232-0x1246 response cadence with sound 0x41, restores the source actor state, and transfers to the embedded proximity loop at 0x001238B2.
   evidence:
     - upper_type1f_type22_collision_animation_static_decompilation
     - ghidra_type1e_targeted_decompile
     - animation_stream_decoder
 
 0x001238AA:
-  name: ACTOR_ANIM_TYPE22_PLAYER_COLLISION_RESPONSE
+  name: ACTOR_ANIM_PLAYER_COLLISION_PROXIMITY_RECOVERY
+  aliases: [ACTOR_ANIM_TYPE22_PLAYER_COLLISION_RESPONSE]
   type: animation_stream
   size: 78
   confidence: decompiled
-  description: Type-0x22 player-collision response body installed directly by ActorType1E_PlayerCollisionHandler on the alternate recovery path. Its exact 78-byte region presents the 0x125A/0x1256 lead-in, gates the 0x124A proximity phase on player X distance 0x40, presents the 0x124E-0x1266 response sequence with parameters 0x001ACCB8 and 0x001ACCC0, and loops at 0x001238B2.
+  description: Player-collision proximity-recovery body installed directly by ActorType1E_PlayerCollisionHandler on the alternate recovery path. Its exact 78-byte region presents the 0x125A/0x1256 lead-in, gates the 0x124A proximity phase on player X distance 0x40, presents the 0x124E-0x1266 response sequence with parameters 0x001ACCB8 and 0x001ACCC0, and loops at 0x001238B2.
   evidence:
     - upper_type1f_type22_collision_animation_static_decompilation
     - ghidra_type1e_targeted_decompile
     - animation_stream_decoder
 
 0x001238B2:
-  name: ACTOR_ANIM_TYPE22_PROXIMITY_LOOP
+  name: ACTOR_ANIM_PLAYER_COLLISION_PROXIMITY_LOOP
+  aliases: [ACTOR_ANIM_TYPE22_PROXIMITY_LOOP]
   type: animation_stream
-  alias_of: ACTOR_ANIM_TYPE22_PLAYER_COLLISION_RESPONSE
+  alias_of: ACTOR_ANIM_PLAYER_COLLISION_PROXIMITY_RECOVERY
   entry_offset: 8
   confidence: decompiled
-  description: Embedded Type-0x22 proximity-loop entry beginning inside ACTOR_ANIM_TYPE22_PLAYER_COLLISION_RESPONSE. The normal Type-0x22 response at 0x0012387A transfers here, and the alias does not claim a second ROM range.
+  description: Embedded player-collision proximity-loop entry beginning inside ACTOR_ANIM_PLAYER_COLLISION_PROXIMITY_RECOVERY. The normal response at 0x0012387A transfers here, and the alias does not claim a second ROM range.
   evidence:
     - upper_type1f_type22_collision_animation_static_decompilation
     - animation_stream_decoder
 
 0x001238C4:
-  name: ACTOR_ANIM_TYPE22_RESPONSE_SEQUENCE
+  name: ACTOR_ANIM_PLAYER_COLLISION_RESPONSE_SEQUENCE
+  aliases: [ACTOR_ANIM_TYPE22_RESPONSE_SEQUENCE]
   type: animation_stream
-  alias_of: ACTOR_ANIM_TYPE22_PLAYER_COLLISION_RESPONSE
+  alias_of: ACTOR_ANIM_PLAYER_COLLISION_PROXIMITY_RECOVERY
   entry_offset: 26
   confidence: decompiled
-  description: Embedded Type-0x22 response-sequence entry beginning inside ACTOR_ANIM_TYPE22_PLAYER_COLLISION_RESPONSE. It presents the 0x124E-0x1266 frames, pushes the two response parameters, and returns to the local 0x001238B2 loop; the alias does not claim a second ROM range.
+  description: Embedded player-collision response-sequence entry beginning inside ACTOR_ANIM_PLAYER_COLLISION_PROXIMITY_RECOVERY. It presents the 0x124E-0x1266 frames, pushes the two response parameters, and returns to the local 0x001238B2 loop; the alias does not claim a second ROM range.
   evidence:
     - upper_type1f_type22_collision_animation_static_decompilation
     - animation_stream_decoder
 
 0x001238F8:
-  name: ACTOR_ANIM_TYPE1F_COLLISION_RESPONSE_ALTERNATE_PREFIX
+  name: ACTOR_ANIM_PLAYER_COLLISION_PROXIMITY_RECOVERY_PREFIX
+  aliases: [ACTOR_ANIM_TYPE1F_COLLISION_RESPONSE_ALTERNATE_PREFIX]
   type: animation_stream
   size: 8
   confidence: decompiled
-  description: Alternate compact Type-0x1F player-collision response prefix written directly by ActorType1E_PlayerCollisionHandler on the landing/recovery path. It presents the 0x125A/0x1256 lead-in and falls through directly into ACTOR_ANIM_TYPE1F_PROXIMITY_GATE at 0x00123900.
+  description: Alternate compact player-collision proximity-recovery prefix written directly by ActorType1E_PlayerCollisionHandler on the landing/recovery path. It presents the 0x125A/0x1256 lead-in and falls through directly into ACTOR_ANIM_TYPE1F_PROXIMITY_GATE at 0x00123900.
   evidence:
     - upper_type1f_type22_collision_animation_static_decompilation
     - ghidra_type1e_targeted_decompile

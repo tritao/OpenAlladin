@@ -1,0 +1,29 @@
+{
+  "status": "recorded-semantic-promotion",
+  "scope": "upper-collision-response-role-identities",
+  "promotions": [
+    "ACTOR_ANIM_ACTOR_COLLISION_RESPONSE",
+    "ACTOR_ANIM_ACTOR_COLLISION_LANDING_RECOVERY",
+    "ACTOR_ANIM_PLAYER_COLLISION_RESPONSE",
+    "ACTOR_ANIM_PLAYER_COLLISION_LANDING_RECOVERY",
+    "ACTOR_ANIM_PLAYER_COLLISION_PROXIMITY_RESPONSE_A",
+    "ACTOR_ANIM_PLAYER_COLLISION_PROXIMITY_RESPONSE_B",
+    "ACTOR_ANIM_PLAYER_COLLISION_PROXIMITY_RECOVERY",
+    "ACTOR_ANIM_PLAYER_COLLISION_PROXIMITY_LOOP",
+    "ACTOR_ANIM_PLAYER_COLLISION_RESPONSE_SEQUENCE",
+    "ACTOR_ANIM_PLAYER_COLLISION_PROXIMITY_RECOVERY_PREFIX"
+  ],
+  "evidence": [
+    "upper_collision_response_animation_family_static_decompilation",
+    "upper_type1f_type22_collision_animation_static_decompilation",
+    "ghidra_type1e_handler_decompile",
+    "ghidra_type1e_targeted_decompile"
+  ],
+  "policy": {
+    "old_numeric_names_retained_as_aliases": true,
+    "technical_type_ids_retained": true,
+    "byte_ranges_changed": false,
+    "deasm_ownership_changed": false,
+    "semantic_scope": "provisional_role"
+  }
+}

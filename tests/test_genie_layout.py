@@ -3300,10 +3300,10 @@ def test_upper_collision_response_animation_family_is_exact():
     expected = {
         0x001233CC: (0x0012340B, "ACTOR_ANIM_TYPE20_COLLISION_RESPONSE"),
         0x0012340C: (0x001234BD, "ACTOR_ANIM_TYPE1D_INTERACTION_RESPONSE"),
-        0x001234BE: (0x001234F5, "ACTOR_ANIM_TYPE1E_ACTOR_COLLISION_RESPONSE"),
-        0x001234F6: (0x0012350B, "ACTOR_ANIM_TYPE1E_ACTOR_COLLISION_RESPONSE_ALTERNATE"),
-        0x0012350C: (0x00123543, "ACTOR_ANIM_TYPE21_ACTOR_COLLISION_RESPONSE"),
-        0x00123544: (0x00123559, "ACTOR_ANIM_TYPE21_ACTOR_COLLISION_RESPONSE_ALTERNATE"),
+        0x001234BE: (0x001234F5, "ACTOR_ANIM_ACTOR_COLLISION_RESPONSE"),
+        0x001234F6: (0x0012350B, "ACTOR_ANIM_ACTOR_COLLISION_LANDING_RECOVERY"),
+        0x0012350C: (0x00123543, "ACTOR_ANIM_PLAYER_COLLISION_RESPONSE"),
+        0x00123544: (0x00123559, "ACTOR_ANIM_PLAYER_COLLISION_LANDING_RECOVERY"),
     }
     owners = []
     for address, (end, name) in expected.items():
@@ -3334,10 +3334,10 @@ def test_upper_collision_response_animation_family_is_exact():
 def test_upper_type1f_type22_collision_animation_family_is_exact():
     symbols = SymbolStore()
     expected = {
-        0x0012384A: (0x00123879, "ACTOR_ANIM_TYPE1F_ACTOR_COLLISION_RESPONSE"),
-        0x0012387A: (0x001238A9, "ACTOR_ANIM_TYPE22_ACTOR_COLLISION_RESPONSE"),
-        0x001238AA: (0x001238F7, "ACTOR_ANIM_TYPE22_PLAYER_COLLISION_RESPONSE"),
-        0x001238F8: (0x001238FF, "ACTOR_ANIM_TYPE1F_COLLISION_RESPONSE_ALTERNATE_PREFIX"),
+        0x0012384A: (0x00123879, "ACTOR_ANIM_PLAYER_COLLISION_PROXIMITY_RESPONSE_A"),
+        0x0012387A: (0x001238A9, "ACTOR_ANIM_PLAYER_COLLISION_PROXIMITY_RESPONSE_B"),
+        0x001238AA: (0x001238F7, "ACTOR_ANIM_PLAYER_COLLISION_PROXIMITY_RECOVERY"),
+        0x001238F8: (0x001238FF, "ACTOR_ANIM_PLAYER_COLLISION_PROXIMITY_RECOVERY_PREFIX"),
     }
     owners = []
     for address, (end, name) in expected.items():
@@ -3351,14 +3351,14 @@ def test_upper_type1f_type22_collision_animation_family_is_exact():
     assert all(right + 1 == next_left for (_, right), (next_left, _) in zip(owners, owners[1:]))
 
     aliases = {
-        0x001238B2: ("ACTOR_ANIM_TYPE22_PROXIMITY_LOOP", 8),
-        0x001238C4: ("ACTOR_ANIM_TYPE22_RESPONSE_SEQUENCE", 26),
+        0x001238B2: ("ACTOR_ANIM_PLAYER_COLLISION_PROXIMITY_LOOP", 8),
+        0x001238C4: ("ACTOR_ANIM_PLAYER_COLLISION_RESPONSE_SEQUENCE", 26),
     }
     for address, (name, offset) in aliases.items():
         alias = symbols.at(address, include_ranges=False)
         assert alias is not None
         assert alias.name == name
-        assert alias.metadata["alias_of"] == "ACTOR_ANIM_TYPE22_PLAYER_COLLISION_RESPONSE"
+        assert alias.metadata["alias_of"] == "ACTOR_ANIM_PLAYER_COLLISION_PROXIMITY_RECOVERY"
         assert alias.metadata["entry_offset"] == offset
 
 
