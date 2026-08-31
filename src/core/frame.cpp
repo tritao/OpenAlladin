@@ -127,6 +127,26 @@ void step_frame(
         trace->scene_vdp_record_emitted = false;
         trace->scene_vdp_command_address = 0;
         trace->scene_vdp_words.fill(0);
+        trace->scene_resource_processed = false;
+        trace->scene_resource_status = 0;
+        trace->scene_resource_last_command = 0;
+        trace->scene_resource_last_handler = 0;
+        trace->scene_resource_cursor = 0;
+        trace->scene_resource_stream_pointer = 0;
+        trace->scene_resource_tile_x = 0;
+        trace->scene_resource_tile_y = 0;
+        trace->scene_resource_tile_base = 0;
+        trace->scene_resource_last_tile_x = 0;
+        trace->scene_resource_last_tile_y = 0;
+        trace->scene_resource_last_tile_row = 0;
+        trace->scene_resource_instruction_count = 0;
+        trace->scene_resource_tile_write_count = 0;
+        trace->scene_resource_service_frame_count = 0;
+        trace->scene_resource_c000_load_requested = false;
+        trace->scene_resource_frame_palette_prepare_requested = false;
+        trace->scene_resource_presentation_scratch_observed = false;
+        trace->scene_resource_actor_spawned = false;
+        trace->scene_resource_actor_spawn_slot = 0;
         trace_phase(*trace, kFrameEntry);
     }
 

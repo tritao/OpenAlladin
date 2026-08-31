@@ -279,5 +279,97 @@ int main() {
     assert(read8(core.ram, kSceneState) == 0x08);
     assert(read16(core.ram, kSceneTableIndex) == 0);
 
+    // SceneResource_ProcessCommandStream is the procedural command VM. The
+    // cursor and tile coordinates are local interpreter registers, while the
+    // selected tile base is published in RAM and every tile effect leaves via
+    // an explicit host sink.
+    struct TileCapture {
+        std::vector<SceneResourceTileWrite> writes;
+        std::size_t service_frames = 0;
+        std::size_t c000_calls = 0;
+        std::size_t palette_calls = 0;
+        std::size_t object_hook_calls = 0;
+    } capture;
+    constexpr std::size_t kSceneResourceCommandTable = 0x0049D8;
+    const SceneResourceEffects effects{
+        &capture,
+        [](void* context, const SceneResourceTileWrite& write) {
+            static_cast<TileCapture*>(context)->writes.push_back(write);
+        },
+        [](void* context) {
+            ++static_cast<TileCapture*>(context)->service_frames;
+        },
+        [](void* context) {
+            ++static_cast<TileCapture*>(context)->c000_calls;
+        },
+        [](void* context) {
+            ++static_cast<TileCapture*>(context)->palette_calls;
+        },
+        [](void* context) {
+            ++static_cast<TileCapture*>(context)->object_hook_calls;
+        },
+    };
+    const std::size_t resource_stream = 0x0600;
+    const std::size_t resource_template = 0x1B7E2C;
+    rom[resource_stream + 0] = 0x01;
+    rom[resource_stream + 1] = 0xFF; // x -= 1
+    rom[resource_stream + 2] = 0x02;
+    rom[resource_stream + 3] = 0xFF; // y -= 1
+    rom[resource_stream + 4] = 0x03;
+    rom[resource_stream + 5] = 2;
+    rom[resource_stream + 6] = 0x20;
+    rom[resource_stream + 7] = 0x07;
+    rom[resource_stream + 8] = 0x09;
+    rom[resource_stream + 9] = 0x23;
+    rom[resource_stream + 10] = 0x06;
+    rom[resource_stream + 11] = 2;
+    rom[resource_stream + 12] = 0x0D;
+    rom[resource_stream + 13] = 0x0E;
+    rom[resource_stream + 14] = 0x0F;
+    write_rom32(rom, resource_stream + 15, resource_template);
+    write_rom16(rom, resource_stream + 19, 0x0123);
+    write_rom16(rom, resource_stream + 21, 0x0045);
+    rom[resource_stream + 23] = 0x00;
+    write16(core.ram, kSceneResourceTileBase, 0);
+    write8(core.ram, kSceneResourcePresentationScratch, 1);
+    write8(core.ram, kSceneResourceStatus, 0);
+    write_rom32(rom, kSceneResourceCommandTable + 0x00, 0x001B2300);
+    write_rom32(rom, kSceneResourceCommandTable + 0x03 * 4, 0x001B2314);
+    write_rom32(rom, kSceneResourceCommandTable + 0x06 * 4, 0x001B2380);
+    write_rom32(rom, kSceneResourceCommandTable + 0x07 * 4, 0x001B23AC);
+    write_rom32(rom, kSceneResourceCommandTable + 0x09 * 4, 0x001B23BC);
+    write_rom32(rom, kSceneResourceCommandTable + 0x0D * 4, 0x001B23EA);
+    write_rom32(rom, kSceneResourceCommandTable + 0x0E * 4, 0x001B2412);
+    write_rom32(rom, kSceneResourceCommandTable + 0x0F * 4, 0x001B2432);
+    rom[resource_template] = 0x84;
+    rom[resource_template + 0x10] = 0;
+    CoreTrace resource_trace;
+    const SceneResourceRunResult resource_result =
+        scene_resource_process_command_stream(
+            core, resource_stream, 0, 0, effects, &resource_trace);
+    assert(resource_result.status == SceneResourceRunStatus::Finished);
+    assert(resource_result.cursor == resource_stream + 24);
+    assert(resource_result.tile_x == 0xFF01);
+    assert(resource_result.tile_y == 0xFF00);
+    assert(resource_result.tile_base == 0x2000);
+    assert(resource_result.tile_write_count == 3);
+    assert(capture.writes.size() == 3);
+    assert(capture.writes[0].x == 0xFFFF);
+    assert(capture.writes[0].y == 0xFFFF);
+    assert(capture.writes[1].x == 0xFF00);
+    assert(capture.writes[2].x == 0xFF00);
+    assert(capture.writes[2].tile_row == 3);
+    assert(capture.writes[2].tile_base == 0x2000);
+    assert(capture.service_frames == 2);
+    assert(capture.c000_calls == 1);
+    assert(capture.palette_calls == 1);
+    assert(capture.object_hook_calls == 1);
+    assert(resource_result.actor_spawned);
+    assert(actor_read8(actor_view(core.ram, resource_result.actor_spawn_slot),
+                       kActorTypeOffset) == 0x84);
+    assert(resource_trace.scene_resource_processed);
+    assert(resource_trace.scene_resource_last_handler == 0x001B2300);
+    assert(resource_trace.scene_resource_tile_write_count == 3);
+
     return 0;
 }

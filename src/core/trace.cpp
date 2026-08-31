@@ -44,7 +44,7 @@ void write_ram_bytes(std::ostream& output, const GenesisRam& ram) {
         RamAddress address;
         std::uint8_t width;
     };
-    constexpr std::array<RawField, 57> fields = {{
+    constexpr std::array<RawField, 61> fields = {{
         {kPlayerX, 2}, {kPlayerY, 2}, {kWorldCameraX, 2}, {kWorldCameraY, 2},
         {kPlayerWorldX, 2}, {kPlayerWorldY, 2},
         {kCameraReferenceX, 2}, {kCameraReferenceY, 2},
@@ -76,6 +76,9 @@ void write_ram_bytes(std::ostream& output, const GenesisRam& ram) {
         {kSceneResourceVdpStreamPtr, 4},
         {kSceneResourceVdpStreamEnd, 2}, {kSceneResourceVdpStreamOffset, 2},
         {kVdpCommandAddressLatch, 4},
+        {kSceneResourceTileBase, 2}, {kSceneResourcePresentationScratch, 1},
+        {kSceneResourceActorRecordCursor, 4},
+        {kSceneResourceActorSpawnGate, 1},
     }};
     output << "[";
     for (std::size_t index = 0; index < fields.size(); ++index) {
@@ -172,6 +175,26 @@ void trace_begin(
     trace.scene_vdp_record_emitted = false;
     trace.scene_vdp_command_address = 0;
     trace.scene_vdp_words.fill(0);
+    trace.scene_resource_processed = false;
+    trace.scene_resource_status = 0;
+    trace.scene_resource_last_command = 0;
+    trace.scene_resource_last_handler = 0;
+    trace.scene_resource_cursor = 0;
+    trace.scene_resource_stream_pointer = 0;
+    trace.scene_resource_tile_x = 0;
+    trace.scene_resource_tile_y = 0;
+    trace.scene_resource_tile_base = 0;
+    trace.scene_resource_last_tile_x = 0;
+    trace.scene_resource_last_tile_y = 0;
+    trace.scene_resource_last_tile_row = 0;
+    trace.scene_resource_instruction_count = 0;
+    trace.scene_resource_tile_write_count = 0;
+    trace.scene_resource_service_frame_count = 0;
+    trace.scene_resource_c000_load_requested = false;
+    trace.scene_resource_frame_palette_prepare_requested = false;
+    trace.scene_resource_presentation_scratch_observed = false;
+    trace.scene_resource_actor_spawned = false;
+    trace.scene_resource_actor_spawn_slot = 0;
     trace.frame_atomic = false;
     output << "{\"type\":\"header\",\"format\":\"openaladdin-core-trace-v1\""
            << ",\"state_boundary\":\"game-loop\""
@@ -287,6 +310,46 @@ void trace_state(
         output << trace.scene_vdp_words[index];
     }
     output << "]"
+           << ",\"scene_resource_processed\":"
+           << (trace.scene_resource_processed ? "true" : "false")
+           << ",\"scene_resource_status\":"
+           << static_cast<unsigned>(trace.scene_resource_status)
+           << ",\"scene_resource_last_command\":"
+           << static_cast<unsigned>(trace.scene_resource_last_command)
+           << ",\"scene_resource_last_handler\":"
+           << trace.scene_resource_last_handler
+           << ",\"scene_resource_cursor\":"
+           << trace.scene_resource_cursor
+           << ",\"scene_resource_stream_pointer\":"
+           << trace.scene_resource_stream_pointer
+           << ",\"scene_resource_tile_x\":"
+           << trace.scene_resource_tile_x
+           << ",\"scene_resource_tile_y\":"
+           << trace.scene_resource_tile_y
+           << ",\"scene_resource_tile_base\":"
+           << trace.scene_resource_tile_base
+           << ",\"scene_resource_last_tile_x\":"
+           << trace.scene_resource_last_tile_x
+           << ",\"scene_resource_last_tile_y\":"
+           << trace.scene_resource_last_tile_y
+           << ",\"scene_resource_last_tile_row\":"
+           << static_cast<unsigned>(trace.scene_resource_last_tile_row)
+           << ",\"scene_resource_instruction_count\":"
+           << trace.scene_resource_instruction_count
+           << ",\"scene_resource_tile_write_count\":"
+           << trace.scene_resource_tile_write_count
+           << ",\"scene_resource_service_frame_count\":"
+           << trace.scene_resource_service_frame_count
+           << ",\"scene_resource_c000_load_requested\":"
+           << (trace.scene_resource_c000_load_requested ? "true" : "false")
+           << ",\"scene_resource_frame_palette_prepare_requested\":"
+           << (trace.scene_resource_frame_palette_prepare_requested ? "true" : "false")
+           << ",\"scene_resource_presentation_scratch_observed\":"
+           << (trace.scene_resource_presentation_scratch_observed ? "true" : "false")
+           << ",\"scene_resource_actor_spawned\":"
+           << (trace.scene_resource_actor_spawned ? "true" : "false")
+           << ",\"scene_resource_actor_spawn_slot\":"
+           << trace.scene_resource_actor_spawn_slot
            << "}"
            << ",\"scene\":{\"state\":" << static_cast<unsigned>(read8(ram, kSceneState))
            << ",\"level_exit_vdp_control\":" << trace.level_exit_vdp_control

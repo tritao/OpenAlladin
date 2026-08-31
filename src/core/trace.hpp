@@ -46,6 +46,26 @@ struct CoreTrace {
     bool scene_vdp_record_emitted = false;
     std::uint32_t scene_vdp_command_address = 0;
     std::array<std::uint16_t, 5> scene_vdp_words{};
+    bool scene_resource_processed = false;
+    std::uint8_t scene_resource_status = 0;
+    std::uint8_t scene_resource_last_command = 0;
+    RamAddress scene_resource_last_handler = 0;
+    RamAddress scene_resource_cursor = 0;
+    RamAddress scene_resource_stream_pointer = 0;
+    std::uint16_t scene_resource_tile_x = 0;
+    std::uint16_t scene_resource_tile_y = 0;
+    std::uint16_t scene_resource_tile_base = 0;
+    std::uint16_t scene_resource_last_tile_x = 0;
+    std::uint16_t scene_resource_last_tile_y = 0;
+    std::uint8_t scene_resource_last_tile_row = 0;
+    std::size_t scene_resource_instruction_count = 0;
+    std::size_t scene_resource_tile_write_count = 0;
+    std::uint16_t scene_resource_service_frame_count = 0;
+    bool scene_resource_c000_load_requested = false;
+    bool scene_resource_frame_palette_prepare_requested = false;
+    bool scene_resource_presentation_scratch_observed = false;
+    bool scene_resource_actor_spawned = false;
+    std::size_t scene_resource_actor_spawn_slot = 0;
     bool frame_atomic = false;
 };
 
