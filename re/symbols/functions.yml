@@ -5387,21 +5387,25 @@
     - interaction_spawn_mid_family_static_decompilation
     - interaction_spawn_mid_family_semantic_v1
 0x001B68F6:
-  name: InteractionSpawn_Type5E84Pair_E0
+  name: InteractionSpawn_CreateType5E84Pair_E0
+  aliases: [InteractionSpawn_Type5E84Pair_E0]
   confidence: decompiled
   description: Interaction selector 0xE0 handler that allocates a type-0x5E base and linked type-0x84 companion, installs movement stream 0x0011F7A6 on the base, and publishes the companion anchor at (base X, base Y + 0x40).
   evidence:
     - ghidra_disassembly_001B68F6
     - interaction_spawn_type5e84_pair_targets
     - interaction_spawn_type5e84_pair_static_decompilation
+    - interaction_spawn_type5e84_pair_semantic_v1
 0x001B694C:
-  name: InteractionSpawn_Type5E84Pair_E1E2
+  name: InteractionSpawn_CreateType5E84Pair_E1E2
+  aliases: [InteractionSpawn_Type5E84Pair_E1E2]
   confidence: decompiled
   description: Interaction selectors 0xE1 and 0xE2 handler that allocates a type-0x5E base and linked type-0x84 companion, installs movement stream 0x0011F8A4 on the base, and publishes the companion anchor at (base X - 0x20, base Y + 0x40).
   evidence:
     - ghidra_disassembly_001B694C
     - interaction_spawn_type5e84_pair_targets
     - interaction_spawn_type5e84_pair_static_decompilation
+    - interaction_spawn_type5e84_pair_semantic_v1
 0x001B69A6:
   name: InteractionSpawn_Type5E84Pair_AnchorResponse
   size: 90
@@ -5411,45 +5415,55 @@
     - interaction_spawn_type5e84_unindexed_static_disassembly
     - gnu_m68k_disassembly_001B69A6
 0x001B6A00:
-  name: InteractionSpawn_Type5E84Pair_E3E5
+  name: InteractionSpawn_CreateType5E84Pair_E3E5
+  aliases: [InteractionSpawn_Type5E84Pair_E3E5]
   confidence: decompiled
   description: Interaction selectors 0xE3 through 0xE5 handler that allocates a type-0x5E base and linked type-0x84 companion, installs movement stream 0x0011FD18 on the base, and publishes the companion anchor at (base X - 0x20, base Y + 0x40).
   evidence:
     - ghidra_disassembly_001B6A00
     - interaction_spawn_type5e84_pair_targets
     - interaction_spawn_type5e84_pair_static_decompilation
+    - interaction_spawn_type5e84_pair_semantic_v1
 0x001B6A5A:
-  name: InteractionSpawn_Type5E84Pair_E8
+  name: InteractionSpawn_CreateType5E84Pair_E8
+  aliases: [InteractionSpawn_Type5E84Pair_E8]
   confidence: decompiled
   description: Interaction selector 0xE8 handler that allocates a type-0x5E base and linked type-0x84 companion, installs movement stream 0x001201FE on the base, and publishes the companion anchor at (base X - 0x20, base Y + 0x40).
   evidence:
     - ghidra_disassembly_001B6A5A
     - interaction_spawn_type5e84_pair_targets
     - interaction_spawn_type5e84_pair_static_decompilation
+    - interaction_spawn_type5e84_pair_semantic_v1
 0x001B6AB4:
-  name: InteractionSpawn_Type5E84Pair_E9
+  name: InteractionSpawn_CreateType5E84Pair_E9
+  aliases: [InteractionSpawn_Type5E84Pair_E9]
   confidence: decompiled
   description: Interaction selector 0xE9 handler that allocates a type-0x5E base and linked type-0x84 companion, installs movement stream 0x001202CA on the base, and publishes the companion anchor at (base X - 0x20, base Y + 0x40).
   evidence:
     - ghidra_disassembly_001B6AB4
     - interaction_spawn_type5e84_pair_targets
     - interaction_spawn_type5e84_pair_static_decompilation
+    - interaction_spawn_type5e84_pair_semantic_v1
 0x001B6B0E:
-  name: InteractionSpawn_Type5E84Pair_E6
+  name: InteractionSpawn_CreateType5E84Pair_E6
+  aliases: [InteractionSpawn_Type5E84Pair_E6]
   confidence: decompiled
   description: Interaction selector 0xE6 handler that allocates a type-0x5E base and linked type-0x84 companion, installs movement stream 0x0012004E on the base, and publishes the companion anchor at (base X - 0x20, base Y + 0x40).
   evidence:
     - ghidra_disassembly_001B6B0E
     - interaction_spawn_type5e84_pair_targets
     - interaction_spawn_type5e84_pair_static_decompilation
+    - interaction_spawn_type5e84_pair_semantic_v1
 0x001B6B5C:
-  name: InteractionSpawn_Type5E84Pair_F9WhenReady
+  name: InteractionSpawn_CreateType5E84Pair_F9WhenReady
+  aliases: [InteractionSpawn_Type5E84Pair_F9WhenReady]
   confidence: decompiled
   description: Interaction selector 0xF9 handler that waits for gate byte 0x00FFF112, then allocates a type-0x5E base and linked type-0x84 companion, installs movement stream 0x001200DE on the base, and publishes the companion anchor at (base X - 0x20, base Y + 0x40).
   evidence:
     - ghidra_disassembly_001B6B5C
     - interaction_spawn_type5e84_pair_targets
     - interaction_spawn_type5e84_pair_static_decompilation
+    - interaction_spawn_type5e84_pair_semantic_v1
 0x001B6BB2:
   name: InteractionSpawn_Type5E_Threshold2646
   confidence: decompiled

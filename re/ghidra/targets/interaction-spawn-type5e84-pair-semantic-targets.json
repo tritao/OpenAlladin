@@ -1,0 +1,40 @@
+{
+  "format": "openaladdin-semantic-promotion-target-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "focus": {
+    "name": "interaction-spawn-type5e84-pair-semantic",
+    "purpose": "Promote the seven active Type-0x5E/0x84 paired-spawn handlers to stable creation identities while retaining selector-qualified historical names."
+  },
+  "dispatch": {
+    "table": "0x004154 INTERACTION_HANDLER_TABLE",
+    "handlers": [
+      { "address": "0x001B68F6", "selectors": ["0xE0"], "name": "InteractionSpawn_CreateType5E84Pair_E0", "legacy_name": "InteractionSpawn_Type5E84Pair_E0", "movement_stream": "0x0011F7A6", "base_offset": ["0x00", "0x40"] },
+      { "address": "0x001B694C", "selectors": ["0xE1", "0xE2"], "name": "InteractionSpawn_CreateType5E84Pair_E1E2", "legacy_name": "InteractionSpawn_Type5E84Pair_E1E2", "movement_stream": "0x0011F8A4", "base_offset": ["-0x20", "0x40"] },
+      { "address": "0x001B6A00", "selectors": ["0xE3", "0xE4", "0xE5"], "name": "InteractionSpawn_CreateType5E84Pair_E3E5", "legacy_name": "InteractionSpawn_Type5E84Pair_E3E5", "movement_stream": "0x0011FD18", "base_offset": ["-0x20", "0x40"] },
+      { "address": "0x001B6A5A", "selectors": ["0xE8"], "name": "InteractionSpawn_CreateType5E84Pair_E8", "legacy_name": "InteractionSpawn_Type5E84Pair_E8", "movement_stream": "0x001201FE", "base_offset": ["-0x20", "0x40"] },
+      { "address": "0x001B6AB4", "selectors": ["0xE9"], "name": "InteractionSpawn_CreateType5E84Pair_E9", "legacy_name": "InteractionSpawn_Type5E84Pair_E9", "movement_stream": "0x001202CA", "base_offset": ["-0x20", "0x40"] },
+      { "address": "0x001B6B0E", "selectors": ["0xE6"], "name": "InteractionSpawn_CreateType5E84Pair_E6", "legacy_name": "InteractionSpawn_Type5E84Pair_E6", "movement_stream": "0x0012004E", "base_offset": ["-0x20", "0x40"] },
+      { "address": "0x001B6B5C", "selectors": ["0xF9"], "name": "InteractionSpawn_CreateType5E84Pair_F9WhenReady", "legacy_name": "InteractionSpawn_Type5E84Pair_F9WhenReady", "movement_stream": "0x001200DE", "base_offset": ["-0x20", "0x40"], "gate": "0x00FFF112" }
+    ]
+  },
+  "pair_contract": {
+    "base_template": "0x001B78A0 ACTOR_TEMPLATE_TYPE_5E_INTERACTION_PAIR_BASE",
+    "companion_template": "0x001B78C8 ACTOR_TEMPLATE_TYPE_84_INTERACTION_PAIR_COMPANION",
+    "link_field": "actor offset 0x3E",
+    "companion_anchor": ["0x00FFF094", "0x00FFF096"],
+    "base_initializer": "0x001AE30A Actor_InitializeFromTemplate",
+    "spawn_helpers": ["0x001B525E InteractionSpawn_ReverseSlot", "0x001B524E InteractionSpawn_ForwardSlot"]
+  },
+  "evidence": [
+    "Exact paired-spawn handler bodies and selector membership",
+    "Per-handler movement-stream literals and companion anchor writes",
+    "Established Type-0x5E/0x84 templates, link field, and allocator contracts",
+    "re/ghidra/targets/interaction-spawn-type5e84-pair-targets.json",
+    "re/mame/findings/20260829-interaction-spawn-type5e84-pair-static-v1.json"
+  ],
+  "limitations": [
+    "The names identify the pair creation contract and selector variants, not user-facing scene roles.",
+    "The unindexed 0x001B69A6 paired-spawn variant remains separate because it has no active table entry or runtime sample."
+  ],
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+}
