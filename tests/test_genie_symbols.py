@@ -246,6 +246,40 @@ def test_level_event_movement_names_promote_roles_and_preserve_numeric_aliases()
         assert alias in symbol.aliases
 
 
+def test_shared_interaction_names_promote_roles_and_preserve_numeric_aliases():
+    symbols = SymbolStore()
+    expected = {
+        0x001217B4: ("ACTOR_MOVE_WALL_OSCILLATION", "ACTOR_MOVE_TYPE34_WALL_OSCILLATION"),
+        0x00122BD8: ("ACTOR_ANIM_INTERACTION_RESPONSE_SHARED", "ACTOR_ANIM_TYPE3A_3B_INTERACTION_RESPONSE"),
+        0x00122C12: ("ACTOR_ANIM_INTERACTION_SHARED", "ACTOR_ANIM_TYPE40_INTERACTION"),
+        0x00123E36: ("ACTOR_ANIM_INTERACTION_CHILD_SPAWN", "ACTOR_ANIM_TYPE84_RUNTIME47_4C"),
+        0x00123FE4: ("ACTOR_ANIM_INTERACTION_TERMINAL_RESPONSE", "ACTOR_ANIM_TYPE2B_INTERACTION"),
+        0x0012585C: ("ACTOR_ANIM_LEVEL_ENTRY_SHARED", "ACTOR_ANIM_TYPE84_LEVEL_ENTRY_SHARED"),
+        0x001B7904: ("ACTOR_TEMPLATE_INTERACTION_SHARED_BASE", "ACTOR_TEMPLATE_TYPE_6E_73_BASE"),
+        0x001B7A1C: ("ACTOR_TEMPLATE_INTERACTION_POSITION_VARIANTS", "ACTOR_TEMPLATE_TYPE_55_INTERACTION_7B_7E"),
+        0x001B8138: ("ACTOR_TEMPLATE_LEVEL_ENTRY_SHARED", "ACTOR_TEMPLATE_TYPE_84_LEVEL_ENTRY_SHARED"),
+    }
+    for address, (name, alias) in expected.items():
+        symbol = symbols.at(address, include_ranges=False)
+        assert symbol is not None
+        assert symbol.name == name
+        assert alias in symbol.aliases
+
+    mappings = load_entity_mappings()
+    assert validate_entity_mappings(mappings) == []
+    mapping_names = {mapping.name for mapping in mappings}
+    assert {
+        "WALL_OSCILLATION",
+        "INTERACTION_RESPONSE_SHARED",
+        "INTERACTION_SHARED",
+        "INTERACTION_CHILD_SPAWN",
+        "INTERACTION_TERMINAL_RESPONSE",
+        "LEVEL_ENTRY_SHARED",
+        "INTERACTION_SHARED_BASE",
+        "INTERACTION_POSITION_VARIANTS",
+    } <= mapping_names
+
+
 def test_actor_template_roles_promote_numeric_names_with_aliases():
     symbols = SymbolStore()
     expected = {

@@ -1,0 +1,30 @@
+{
+  "status": "recorded-semantic-promotion",
+  "scope": "shared-interaction-and-level-entry-identities",
+  "promotions": [
+    "ACTOR_MOVE_WALL_OSCILLATION",
+    "ACTOR_ANIM_INTERACTION_RESPONSE_SHARED",
+    "ACTOR_ANIM_INTERACTION_SHARED",
+    "ACTOR_ANIM_INTERACTION_CHILD_SPAWN",
+    "ACTOR_ANIM_INTERACTION_TERMINAL_RESPONSE",
+    "ACTOR_ANIM_LEVEL_ENTRY_SHARED",
+    "ACTOR_TEMPLATE_INTERACTION_SHARED_BASE",
+    "ACTOR_TEMPLATE_INTERACTION_POSITION_VARIANTS",
+    "ACTOR_TEMPLATE_LEVEL_ENTRY_SHARED"
+  ],
+  "evidence": [
+    "mame_type_34_wall_actor_probe",
+    "mid-actor-collision-animation-family-static-decompilation",
+    "interaction-spawn-runtime47-4c-static-decompilation",
+    "type2b-animation-static-decompilation",
+    "actor-template-level-entry-family-static-decompilation",
+    "actor-runtime-type6e_73-static-decompilation",
+    "ghidra-interaction-dispatch-block"
+  ],
+  "policy": {
+    "old_numeric_names_retained_as_aliases": true,
+    "technical_type_ids_retained": true,
+    "byte_ranges_changed": false,
+    "deasm_ownership_changed": false
+  }
+}

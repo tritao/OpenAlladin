@@ -4442,14 +4442,15 @@
   name: ACTOR_ANIM_TYPE6E_73_BASE_DEFAULT
   size: 76
   confidence: decompiled
-  description: Default animation stream stored in ACTOR_TEMPLATE_TYPE_6E_73_BASE at 0x001B7904. Its exact 76-byte region plays sound 0x2C, presents the repeated 0x1652-0x168A frame sequence, and loops through the internal 0x00123E18 entry; the six runtime type 0x6E-0x73 spawners overwrite this template field with their per-type roots.
+  description: Default animation stream stored in ACTOR_TEMPLATE_INTERACTION_SHARED_BASE at 0x001B7904. Its exact 76-byte region plays sound 0x2C, presents the repeated 0x1652-0x168A frame sequence, and loops through the internal 0x00123E18 entry; the six runtime type 0x6E-0x73 spawners overwrite this template field with their per-type roots.
   evidence:
     - actor_runtime_type6e_73_static_decompilation
     - actor_template_type6e_73_base
     - animation_stream_decoder
 
 0x00123E36:
-  name: ACTOR_ANIM_TYPE84_RUNTIME47_4C
+  name: ACTOR_ANIM_INTERACTION_CHILD_SPAWN
+  aliases: [ACTOR_ANIM_TYPE84_RUNTIME47_4C]
   size: 64
   confidence: decompiled
   description: Shared Type-0x84 child-spawn animation installed by the runtime type 0x47-0x4C interaction family. Its exact 64-byte region presents the 0x176A frame phases, conditionally executes the two F5 records for ACTOR_TEMPLATE_TYPE_84_RUNTIME47_4C_CHILD with inline entries 0x00125B86 and 0x00125BA6, and loops from 0x00123E70 to its root.
@@ -4501,7 +4502,7 @@
   name: ACTOR_ANIM_TYPE55_INTERACTION
   size: 62
   confidence: decompiled
-  description: Type-0x55 interaction animation installed by ACTOR_TEMPLATE_TYPE_55_INTERACTION_7B_7E. Its exact 62-byte region clears the actor, presents the 0x1596-0x15BA sequence with timer 0x89, writes 0x40 to actor field +0x06, plays sound 0x4D, writes type 0x84, and ends with EC 0x01 immediately before ACTOR_ANIM_TYPE01 at 0x00122D92.
+  description: Type-0x55 interaction animation installed by ACTOR_TEMPLATE_INTERACTION_POSITION_VARIANTS. Its exact 62-byte region clears the actor, presents the 0x1596-0x15BA sequence with timer 0x89, writes 0x40 to actor field +0x06, plays sound 0x4D, writes type 0x84, and ends with EC 0x01 immediately before ACTOR_ANIM_TYPE01 at 0x00122D92.
   evidence:
     - actor_template_interaction_dispatch_family_static_decompilation
     - animation_stream_decoder
@@ -4864,7 +4865,8 @@
     - animation_stream_decoder
 
 0x00123FE4:
-  name: ACTOR_ANIM_TYPE2B_INTERACTION
+  name: ACTOR_ANIM_INTERACTION_TERMINAL_RESPONSE
+  aliases: [ACTOR_ANIM_TYPE2B_INTERACTION]
   size: 80
   confidence: decompiled
   description: Type-0x2B interaction animation selected by the backward-slot consumer. Its packed 80-byte region performs the initial child spawn for template 0x001B7B20, clears actor state, presents the 0x1772-0x1782 sequence, destroys or clears the actor, then cycles the 0x0F02-0x0F1E terminal sequence before looping.
@@ -5132,7 +5134,8 @@
     - movement_stream_decoder
 
 0x001217B4:
-  name: ACTOR_MOVE_TYPE34_WALL_OSCILLATION
+  name: ACTOR_MOVE_WALL_OSCILLATION
+  aliases: [ACTOR_MOVE_TYPE34_WALL_OSCILLATION]
   size: 102
   confidence: decompiled
   description: Type-0x34 wall actor movement root; its lossless 102-byte decode contains zero horizontal deltas, a signed one-pixel vertical oscillation controlled by opcode 0x84 values 0x80 through 0x84, and an opcode-0x80 loop back to the root.
@@ -5144,10 +5147,11 @@
     - movement_stream_decoder
 
 0x0012585C:
-  name: ACTOR_ANIM_TYPE84_LEVEL_ENTRY_SHARED
+  name: ACTOR_ANIM_LEVEL_ENTRY_SHARED
+  aliases: [ACTOR_ANIM_TYPE84_LEVEL_ENTRY_SHARED]
   size: 24
   confidence: decompiled
-  description: Shared Type-0x84 level-entry animation opening installed by ACTOR_TEMPLATE_TYPE_84_LEVEL_ENTRY_SHARED. It runs three timed frame/clear phases for frame references 0x107E, 0x1082, and 0x1086, then hands off at 0x00125874 to the Type-0x42/0x54 entry family.
+  description: Shared Type-0x84 level-entry animation opening installed by ACTOR_TEMPLATE_LEVEL_ENTRY_SHARED. It runs three timed frame/clear phases for frame references 0x107E, 0x1082, and 0x1086, then hands off at 0x00125874 to the Type-0x42/0x54 entry family.
   evidence:
     - actor_template_level_entry_family_static_decompilation
     - animation_stream_decoder
@@ -6737,7 +6741,8 @@
     - animation_stream_decoder
 
 0x00122BD8:
-  name: ACTOR_ANIM_TYPE3A_3B_INTERACTION_RESPONSE
+  name: ACTOR_ANIM_INTERACTION_RESPONSE_SHARED
+  aliases: [ACTOR_ANIM_TYPE3A_3B_INTERACTION_RESPONSE]
   type: animation_stream
   size: 58
   confidence: decompiled
@@ -6748,7 +6753,8 @@
     - animation_stream_decoder
 
 0x00122C12:
-  name: ACTOR_ANIM_TYPE40_INTERACTION
+  name: ACTOR_ANIM_INTERACTION_SHARED
+  aliases: [ACTOR_ANIM_TYPE40_INTERACTION]
   type: animation_stream
   size: 12
   confidence: decompiled
@@ -7036,7 +7042,7 @@
   name: ACTOR_ANIM_TYPE84_SCENE_RESOURCE_RESPONSE_PREFIX
   size: 102
   confidence: decompiled
-  description: Type-0x84 scene-resource response prefix selected by ACTOR_TEMPLATE_SCENE_RESOURCE_TYPE_84_123F7E. It presents the 0x1726-0x1766 sequence, applies the encoded timer/random/actor-flag phases, spawns ACTOR_TEMPLATE_SCENE_RESOURCE_TYPE_84_123E7E at 0x00123FD2, clears the source at 0x00123FE2, and hands off to ACTOR_ANIM_TYPE2B_INTERACTION at 0x00123FE4.
+  description: Type-0x84 scene-resource response prefix selected by ACTOR_TEMPLATE_SCENE_RESOURCE_TYPE_84_123F7E. It presents the 0x1726-0x1766 sequence, applies the encoded timer/random/actor-flag phases, spawns ACTOR_TEMPLATE_SCENE_RESOURCE_TYPE_84_123E7E at 0x00123FD2, clears the source at 0x00123FE2, and hands off to ACTOR_ANIM_INTERACTION_TERMINAL_RESPONSE at 0x00123FE4.
   evidence:
     - actor_template_scene_resource_family_static_decompilation
     - animation_stream_decoder
@@ -7466,7 +7472,8 @@
     - actor_refill_vm_static_decompilation
 
 0x001B7904:
-  name: ACTOR_TEMPLATE_TYPE_6E_73_BASE
+  name: ACTOR_TEMPLATE_INTERACTION_SHARED_BASE
+  aliases: [ACTOR_TEMPLATE_TYPE_6E_73_BASE]
   type: actor_template_base
   size: 20
   confidence: decompiled
@@ -7632,7 +7639,7 @@
   type: actor_template
   size: 20
   confidence: decompiled
-  description: Type-0x84 child template supplied by the F5 record in ACTOR_ANIM_TYPE2B_INTERACTION. It has no movement stream or template word, animation root 0x0012400E, and one owned resource; the parent interaction stream performs the child spawn before clearing and cycling its own response state.
+  description: Type-0x84 child template supplied by the F5 record in ACTOR_ANIM_INTERACTION_TERMINAL_RESPONSE. It has no movement stream or template word, animation root 0x0012400E, and one owned resource; the parent interaction stream performs the child spawn before clearing and cycling its own response state.
   evidence:
     - type2b-animation-static-targets
     - type2b-animation-static-decompilation
@@ -8298,7 +8305,7 @@
   type: actor_template
   size: 20
   confidence: decompiled
-  description: Type-0x2B interaction template loaded by the backward-slot spawn entry at 0x001B688A; it has no movement stream, uses animation stream ACTOR_ANIM_TYPE2B_INTERACTION, and owns seven resources.
+  description: Type-0x2B interaction template loaded by the backward-slot spawn entry at 0x001B688A; it has no movement stream, uses animation stream ACTOR_ANIM_INTERACTION_TERMINAL_RESPONSE, and owns seven resources.
   evidence:
     - ghidra_interaction_dispatch_block
     - actor_template_grid_xrefs
@@ -8969,7 +8976,8 @@
     - actor_template_grid_xrefs
 
 0x001B7A1C:
-  name: ACTOR_TEMPLATE_TYPE_55_INTERACTION_7B_7E
+  name: ACTOR_TEMPLATE_INTERACTION_POSITION_VARIANTS
+  aliases: [ACTOR_TEMPLATE_TYPE_55_INTERACTION_7B_7E]
   type: actor_template
   size: 20
   confidence: decompiled
@@ -9110,7 +9118,8 @@
     - actor_template_grid_xrefs
 
 0x001B8138:
-  name: ACTOR_TEMPLATE_TYPE_84_LEVEL_ENTRY_SHARED
+  name: ACTOR_TEMPLATE_LEVEL_ENTRY_SHARED
+  aliases: [ACTOR_TEMPLATE_TYPE_84_LEVEL_ENTRY_SHARED]
   type: actor_template
   size: 20
   confidence: decompiled

@@ -198,3 +198,83 @@ mappings:
     confidence: decompiled
     evidence: [actor-template-scene-level-family-static-decompilation]
     description: Fixed-slot and primary-gameplay-slot scene initialization templates.
+
+  - name: WALL_OSCILLATION
+    scope: role
+    symbol_addresses: [0x001217B4]
+    technical_types: [0x34]
+    confidence: trace_validated
+    evidence:
+      - mame_type_34_wall_actor_probe
+      - actor_type34_movement_stream_static_decode
+    description: Type-0x34 movement stream for the oscillating wall actor.
+
+  - name: INTERACTION_RESPONSE_SHARED
+    scope: event
+    symbol_addresses: [0x00122BD8]
+    technical_types: [0x3A, 0x3B]
+    confidence: decompiled
+    evidence:
+      - mid-actor-collision-animation-family-static-decompilation
+      - actor_collision_handler_family_static_decompilation
+    description: Shared interaction-response animation used by the Type-0x3A/0x3B producer family.
+
+  - name: INTERACTION_SHARED
+    scope: event
+    symbol_addresses: [0x00122C12]
+    technical_types: [0x40]
+    confidence: decompiled
+    evidence:
+      - mid-actor-collision-animation-family-static-decompilation
+      - interaction-spawn-runtime3c-40-static-decompilation
+    description: Shared Type-0x40 interaction animation and response stream.
+
+  - name: INTERACTION_CHILD_SPAWN
+    scope: event
+    symbol_addresses: [0x00123E36]
+    technical_types: [0x47, 0x48, 0x49, 0x4A, 0x4B, 0x4C, 0x84]
+    confidence: decompiled
+    evidence:
+      - actor_template_type84_runtime47_4c_child_static_decompilation
+      - interaction_spawn_runtime47-4c-static-decompilation
+    description: Shared Type-0x84 child-spawn animation for the runtime Type-0x47 through Type-0x4C interaction family.
+
+  - name: INTERACTION_TERMINAL_RESPONSE
+    scope: event
+    symbol_addresses: [0x00123FE4]
+    technical_types: [0x2B]
+    confidence: decompiled
+    evidence:
+      - type2b_animation_static_decompilation
+      - interaction_spawn_mid_family_static_decompilation
+    description: Type-0x2B interaction stream that performs the child spawn and terminal response cycle.
+
+  - name: LEVEL_ENTRY_SHARED
+    scope: event
+    symbol_addresses: [0x0012585C, 0x001B8138]
+    technical_types: [0x84]
+    confidence: decompiled
+    evidence:
+      - actor_template_level_entry_family_static_decompilation
+      - ghidra_level_entry_actor_block
+    description: Shared level-entry animation/template pair used by the level-entry actor creation family.
+
+  - name: INTERACTION_SHARED_BASE
+    scope: event
+    symbol_addresses: [0x001B7904]
+    technical_types: [0x6E, 0x6F, 0x70, 0x71, 0x72, 0x73]
+    confidence: decompiled
+    evidence:
+      - actor_runtime_type6e_73_targets
+      - actor_runtime_type6e_73_static_decompilation
+    description: Shared actor-template base for the runtime Type-0x6E through Type-0x73 interaction-spawn family.
+
+  - name: INTERACTION_POSITION_VARIANTS
+    scope: event
+    symbol_addresses: [0x001B7A1C]
+    technical_types: [0x55, 0x7B, 0x7C, 0x7D, 0x7E]
+    confidence: decompiled
+    evidence:
+      - ghidra_interaction_dispatch_block
+      - actor_template_grid_xrefs
+    description: Shared interaction template whose reverse-slot consumers select fixed position variants for Types 0x7B through 0x7E.
