@@ -1,0 +1,83 @@
+{
+  "format": "openaladdin-semantic-promotion-target-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "focus": {
+    "name": "interaction-spawn-type47-4c-semantic",
+    "purpose": "Promote the selector B1-B6 zero-template runtime-type family to stable creation identities."
+  },
+  "dispatch": {
+    "table": "0x004154 INTERACTION_HANDLER_TABLE",
+    "selector_range": "0xB1-B6"
+  },
+  "shared_contract": {
+    "template": "ACTOR_TEMPLATE_BASE_ZERO",
+    "animation": "ACTOR_ANIM_TYPE84_RUNTIME47_4C at 0x00123E36",
+    "post_spawn": [
+      "clear actor movement pointer at offset 0x0A",
+      "set actor flag byte at offset 0x29 to 1"
+    ]
+  },
+  "handlers": [
+    {
+      "address": "0x001B7018",
+      "name": "InteractionSpawn_CreateType47Actor",
+      "legacy_name": "InteractionSpawn_RuntimeType47_B1",
+      "selector": "0xB1",
+      "runtime_type": "0x47",
+      "allocator": "InteractionSpawn_ReverseSlot"
+    },
+    {
+      "address": "0x001B703C",
+      "name": "InteractionSpawn_CreateType48Actor",
+      "legacy_name": "InteractionSpawn_RuntimeType48_B2",
+      "selector": "0xB2",
+      "runtime_type": "0x48",
+      "allocator": "LevelObjectSpawnEntry"
+    },
+    {
+      "address": "0x001B7060",
+      "name": "InteractionSpawn_CreateType49Actor",
+      "legacy_name": "InteractionSpawn_RuntimeType49_B3",
+      "selector": "0xB3",
+      "runtime_type": "0x49",
+      "allocator": "LevelObjectSpawnEntry"
+    },
+    {
+      "address": "0x001B7084",
+      "name": "InteractionSpawn_CreateType4AActor",
+      "legacy_name": "InteractionSpawn_RuntimeType4A_B4",
+      "selector": "0xB4",
+      "runtime_type": "0x4A",
+      "allocator": "LevelObjectSpawnEntry",
+      "gate": "PLAYER_INTERACTION_TYPE3D_LATCH != 0"
+    },
+    {
+      "address": "0x001B70B0",
+      "name": "InteractionSpawn_CreateType4BActor",
+      "legacy_name": "InteractionSpawn_RuntimeType4B_B5",
+      "selector": "0xB5",
+      "runtime_type": "0x4B",
+      "allocator": "LevelObjectSpawnEntry"
+    },
+    {
+      "address": "0x001B70D4",
+      "name": "InteractionSpawn_CreateType4CActor",
+      "legacy_name": "InteractionSpawn_RuntimeType4C_B6",
+      "selector": "0xB6",
+      "runtime_type": "0x4C",
+      "allocator": "LevelObjectSpawnEntry"
+    }
+  ],
+  "evidence": [
+    "Exact 68000 handler bodies and selector membership",
+    "Shared ACTOR_TEMPLATE_BASE_ZERO and animation root",
+    "Per-handler runtime-type publication and allocator differences",
+    "Selector B4 PLAYER_INTERACTION_TYPE3D_LATCH gate",
+    "Shared movement-clear and actor-flag initialization"
+  ],
+  "limitations": [
+    "The promoted names identify creation and runtime-type contracts but do not assign user-facing object identities.",
+    "The legacy selector-qualified names remain aliases for historical findings and references."
+  ],
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+}

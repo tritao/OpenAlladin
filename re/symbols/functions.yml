@@ -5635,53 +5635,71 @@
     - interaction_spawn_late-level-object-family-targets
     - interaction_spawn_late-level-object-family-static-decompilation
 0x001B7018:
-  name: InteractionSpawn_RuntimeType47_B1
+  name: InteractionSpawn_CreateType47Actor
+  aliases:
+    - InteractionSpawn_RuntimeType47_B1
   confidence: decompiled
-  description: Interaction selector 0xB1 handler that reverse-spawns from the zero-type base, promotes the actor to runtime type 0x47, installs animation root 0x00123E36, clears movement state, and sets actor flag byte +0x29 to 1.
+  description: Interaction selector 0xB1 handler that reverse-spawns ACTOR_TEMPLATE_BASE_ZERO, publishes runtime type 0x47, installs ACTOR_ANIM_TYPE84_RUNTIME47_4C at 0x00123E36, clears movement state, and sets actor flag byte +0x29 to 1.
   evidence:
     - ghidra_disassembly_001B7018
     - interaction_spawn_runtime47-4c-targets
     - interaction_spawn_runtime47-4c-static-decompilation
+    - interaction_spawn_type47_4c_semantic_v1
 0x001B703C:
-  name: InteractionSpawn_RuntimeType48_B2
+  name: InteractionSpawn_CreateType48Actor
+  aliases:
+    - InteractionSpawn_RuntimeType48_B2
   confidence: decompiled
-  description: Interaction selector 0xB2 handler that uses the zero-type base through LevelObjectSpawnEntry, promotes the actor to runtime type 0x48, installs animation root 0x00123E36, clears movement state, and sets actor flag byte +0x29 to 1.
+  description: Interaction selector 0xB2 handler that allocates ACTOR_TEMPLATE_BASE_ZERO through LevelObjectSpawnEntry, publishes runtime type 0x48, installs ACTOR_ANIM_TYPE84_RUNTIME47_4C at 0x00123E36, clears movement state, and sets actor flag byte +0x29 to 1.
   evidence:
     - ghidra_disassembly_001B703C
     - interaction_spawn_runtime47-4c-targets
     - interaction_spawn_runtime47-4c-static-decompilation
+    - interaction_spawn_type47_4c_semantic_v1
 0x001B7060:
-  name: InteractionSpawn_RuntimeType49_B3
+  name: InteractionSpawn_CreateType49Actor
+  aliases:
+    - InteractionSpawn_RuntimeType49_B3
   confidence: decompiled
-  description: Interaction selector 0xB3 handler that uses the zero-type base through LevelObjectSpawnEntry, promotes the actor to runtime type 0x49, installs animation root 0x00123E36, clears movement state, and sets actor flag byte +0x29 to 1.
+  description: Interaction selector 0xB3 handler that allocates ACTOR_TEMPLATE_BASE_ZERO through LevelObjectSpawnEntry, publishes runtime type 0x49, installs ACTOR_ANIM_TYPE84_RUNTIME47_4C at 0x00123E36, clears movement state, and sets actor flag byte +0x29 to 1.
   evidence:
     - ghidra_disassembly_001B7060
     - interaction_spawn_runtime47-4c-targets
     - interaction_spawn_runtime47-4c-static-decompilation
+    - interaction_spawn_type47_4c_semantic_v1
 0x001B7084:
-  name: InteractionSpawn_RuntimeType4A_B4
+  name: InteractionSpawn_CreateType4AActor
+  aliases:
+    - InteractionSpawn_RuntimeType4A_B4
   confidence: decompiled
-  description: Interaction selector 0xB4 handler that requires nonzero 0x00FFF179, then uses the zero-type base through LevelObjectSpawnEntry, promotes the actor to runtime type 0x4A, installs animation root 0x00123E36, clears movement state, and sets actor flag byte +0x29 to 1.
+  description: Interaction selector 0xB4 handler that requires PLAYER_INTERACTION_TYPE3D_LATCH at 0x00FFF179, then allocates ACTOR_TEMPLATE_BASE_ZERO through LevelObjectSpawnEntry, publishes runtime type 0x4A, installs ACTOR_ANIM_TYPE84_RUNTIME47_4C at 0x00123E36, clears movement state, and sets actor flag byte +0x29 to 1.
   evidence:
     - ghidra_disassembly_001B7084
     - interaction_spawn_runtime47-4c-targets
     - interaction_spawn_runtime47-4c-static-decompilation
+    - interaction_spawn_type47_4c_semantic_v1
 0x001B70B0:
-  name: InteractionSpawn_RuntimeType4B_B5
+  name: InteractionSpawn_CreateType4BActor
+  aliases:
+    - InteractionSpawn_RuntimeType4B_B5
   confidence: decompiled
-  description: Interaction selector 0xB5 handler that uses the zero-type base through LevelObjectSpawnEntry, promotes the actor to runtime type 0x4B, installs animation root 0x00123E36, clears movement state, and sets actor flag byte +0x29 to 1.
+  description: Interaction selector 0xB5 handler that allocates ACTOR_TEMPLATE_BASE_ZERO through LevelObjectSpawnEntry, publishes runtime type 0x4B, installs ACTOR_ANIM_TYPE84_RUNTIME47_4C at 0x00123E36, clears movement state, and sets actor flag byte +0x29 to 1.
   evidence:
     - ghidra_disassembly_001B70B0
     - interaction_spawn_runtime47-4c-targets
     - interaction_spawn_runtime47-4c-static-decompilation
+    - interaction_spawn_type47_4c_semantic_v1
 0x001B70D4:
-  name: InteractionSpawn_RuntimeType4C_B6
+  name: InteractionSpawn_CreateType4CActor
+  aliases:
+    - InteractionSpawn_RuntimeType4C_B6
   confidence: decompiled
-  description: Interaction selector 0xB6 handler that uses the zero-type base through LevelObjectSpawnEntry, promotes the actor to runtime type 0x4C, installs animation root 0x00123E36, clears movement state, and sets actor flag byte +0x29 to 1.
+  description: Interaction selector 0xB6 handler that allocates ACTOR_TEMPLATE_BASE_ZERO through LevelObjectSpawnEntry, publishes runtime type 0x4C, installs ACTOR_ANIM_TYPE84_RUNTIME47_4C at 0x00123E36, clears movement state, and sets actor flag byte +0x29 to 1.
   evidence:
     - ghidra_disassembly_001B70D4
     - interaction_spawn_runtime47-4c-targets
     - interaction_spawn_runtime47-4c-static-decompilation
+    - interaction_spawn_type47_4c_semantic_v1
 0x001B70F8:
   name: InteractionSpawn_Type84Base_B6
   confidence: decompiled

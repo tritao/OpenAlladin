@@ -1,0 +1,43 @@
+{
+  "format": "openaladdin-recorded-semantic-promotion-v1",
+  "recorded_at": "2026-08-31",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "target_manifest": "re/ghidra/targets/interaction-spawn-type47-4c-semantic-targets.json",
+  "promoted_symbols": [
+    "InteractionSpawn_CreateType47Actor",
+    "InteractionSpawn_CreateType48Actor",
+    "InteractionSpawn_CreateType49Actor",
+    "InteractionSpawn_CreateType4AActor",
+    "InteractionSpawn_CreateType4BActor",
+    "InteractionSpawn_CreateType4CActor"
+  ],
+  "legacy_aliases": [
+    "InteractionSpawn_RuntimeType47_B1",
+    "InteractionSpawn_RuntimeType48_B2",
+    "InteractionSpawn_RuntimeType49_B3",
+    "InteractionSpawn_RuntimeType4A_B4",
+    "InteractionSpawn_RuntimeType4B_B5",
+    "InteractionSpawn_RuntimeType4C_B6"
+  ],
+  "contracts": [
+    "Selector B1 reverse-spawns ACTOR_TEMPLATE_BASE_ZERO and publishes runtime type 0x47.",
+    "Selectors B2-B6 allocate ACTOR_TEMPLATE_BASE_ZERO through LevelObjectSpawnEntry and publish runtime types 0x48-0x4C respectively.",
+    "Selector B4 requires PLAYER_INTERACTION_TYPE3D_LATCH at 0x00FFF179 to be nonzero before allocation.",
+    "All six handlers install ACTOR_ANIM_TYPE84_RUNTIME47_4C at 0x00123E36, clear actor movement state at offset 0x0A, and set actor flag byte +0x29 to 1."
+  ],
+  "evidence": [
+    "Exact handler bodies at 0x001B7018, 0x001B703C, 0x001B7060, 0x001B7084, 0x001B70B0, and 0x001B70D4",
+    "INTERACTION_HANDLER_TABLE selector range 0xB1-0xB6",
+    "Established zero-template, animation-root, movement-clear, and actor-flag contracts"
+  ],
+  "limitations": [
+    "No user-facing object identity is claimed for runtime types 0x47-0x4C.",
+    "The legacy selector-qualified names remain aliases for historical findings and references."
+  ],
+  "conclusion": "Selectors B1-B6 are now represented by stable type-specific creation identities within a shared zero-template interaction-spawn family.",
+  "confidence": "decompiled",
+  "status": "recorded-semantic-promotion"
+}
