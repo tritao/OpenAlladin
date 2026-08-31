@@ -6,7 +6,8 @@ from genie.commands import deasm
 from genie.commands import data
 from genie.commands import ghidra
 from genie.ghidra.database import AnalysisDatabase
-from genie.ghidra.decompile import decompile_function, decompile_functions
+from genie.ghidra.decompile import canonicalize_pseudocode, decompile_function, decompile_functions
+from genie.symbols import Symbol, SymbolStore
 
 
 def test_ghidra_subcommands_dispatch_to_ghidra_command_module():
@@ -80,6 +81,20 @@ def test_ghidra_subcommands_dispatch_to_ghidra_command_module():
     assert review_decompile.json_output is True
     assert data_decode.function is data.command_data_decode
     assert data_decode.json_output is True
+
+
+def test_decompile_canonicalizes_known_ghidra_auto_symbols_without_fabricating_unknowns():
+    symbols = SymbolStore([
+        Symbol(0x00100010, "KnownFunction", "function"),
+        Symbol(0x00100020, "KnownTable", "data", size=4),
+        Symbol(0x00FF0010, "KnownRamMarker", "ram"),
+    ])
+
+    source = "void FUN_00100010(void) { DAT_00100022 = PTR_DAT_00100020; _DAT_00FF0010 = UNK_00100040; }"
+
+    assert canonicalize_pseudocode(source, symbols) == (
+        "void KnownFunction(void) { KnownTable+0x2 = KnownTable; KnownRamMarker = UNK_00100040; }"
+    )
 
 
 def test_ghidra_rebuild_calls_existing_service(monkeypatch, capsys):
