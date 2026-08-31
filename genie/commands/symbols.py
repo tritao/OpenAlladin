@@ -11,8 +11,10 @@ from genie.ghidra.database import AnalysisDatabase
 from genie.ghidra.worklist import (
     function_work_queue,
     render_symbol_review,
+    render_unresolved_queue,
     render_work_queue,
     symbol_review_queue,
+    unresolved_symbol_queue,
 )
 from genie.runtime import ROOT, default_rom, resolve
 from genie.symbols import Symbol, SymbolStore, edit_symbol, mechanical_name
@@ -171,6 +173,24 @@ def command_symbols_review(args: argparse.Namespace) -> int:
         return 1
     limit = args.limit if args.limit > 0 else len(queue)
     render_symbol_review(queue[:limit], total=len(queue), json_output=args.json_output)
+    return 0
+
+
+def command_symbols_unresolved(args: argparse.Namespace) -> int:
+    try:
+        database = AnalysisDatabase(resolve(args.database))
+        database.load("metadata.json")
+        queue = unresolved_symbol_queue(
+            database,
+            _store(),
+            kind=args.kind,
+            coverage_path=resolve(args.coverage) if args.coverage else None,
+        )
+    except (OSError, TypeError, ValueError, json.JSONDecodeError) as error:
+        print(f"ERROR {error}")
+        return 1
+    limit = args.limit if args.limit > 0 else len(queue)
+    render_unresolved_queue(queue[:limit], total=len(queue), json_output=args.json_output)
     return 0
 
 

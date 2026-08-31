@@ -6,7 +6,7 @@ from pathlib import Path
 from genie.cli import build_parser
 from genie.ghidra.context import build_context
 from genie.ghidra.database import AnalysisDatabase
-from genie.ghidra.worklist import function_work_queue, symbol_review_queue
+from genie.ghidra.worklist import function_work_queue, symbol_review_queue, unresolved_symbol_queue
 from genie.layout.model import Layout, LayoutRange
 from genie.symbols import (
     Symbol,
@@ -88,6 +88,7 @@ def test_symbols_cli_surface_dispatches():
     unknown = build_parser().parse_args(["symbols", "unknown", "--kind", "function", "--limit", "4"])
     semantic = build_parser().parse_args(["symbols", "next", "--kind", "function", "--semantic"])
     review = build_parser().parse_args(["symbols", "review", "--kind", "data", "--limit", "4", "--json"])
+    unresolved = build_parser().parse_args(["symbols", "unresolved", "--kind", "ram", "--limit", "4", "--json"])
     rename = build_parser().parse_args(["symbols", "rename", "0x20", "Scene_Init"])
     describe = build_parser().parse_args(["symbols", "describe", "0x20", "entry point"])
     confidence = build_parser().parse_args(["symbols", "confidence", "0x20", "decompiled"])
@@ -99,6 +100,9 @@ def test_symbols_cli_surface_dispatches():
     assert review.kind == "data"
     assert review.limit == 4
     assert review.json_output is True
+    assert unresolved.kind == "ram"
+    assert unresolved.limit == 4
+    assert unresolved.json_output is True
     assert rename.name == "Scene_Init"
     assert describe.description == "entry point"
     assert confidence.confidence == "decompiled"
@@ -213,6 +217,87 @@ def test_function_work_queue_can_include_weak_semantic_names(tmp_path):
     queue = function_work_queue(database, symbols, include_weak_names=True)
     assert len(queue) == 1
     assert queue[0]["candidate_reason"] == "weak semantic name"
+
+
+def test_unresolved_symbol_queue_ranks_runtime_writers_and_excludes_closed_aliases(tmp_path):
+    database_root = tmp_path / "full-rom"
+    _write_database(database_root)
+    (tmp_path / "coverage-ghidra.json").write_text(
+        json.dumps({"functions": {
+            "0x00000010": {"pc_count": 4, "scenarios": ["game"]},
+        }}),
+        encoding="utf-8",
+    )
+    database = AnalysisDatabase(database_root)
+    symbols = SymbolStore(symbols=(
+        Symbol(
+            0xFF0010,
+            "RuntimeRamQuestion",
+            "ram",
+            confidence="decompiled",
+            description="No direct static reader is currently exported.",
+        ),
+        Symbol(
+            0xFF0020,
+            "StaticRamQuestion",
+            "ram",
+            confidence="decompiled",
+            description="The producer remains unresolved.",
+        ),
+        Symbol(
+            0x30,
+            "ClosedAliasOwner",
+            "data",
+            confidence="decompiled",
+            size=4,
+            description="No exported wrapper remains.",
+            metadata={"review_status": "closed"},
+        ),
+        Symbol(
+            0x34,
+            "InteriorAlias",
+            "data",
+            confidence="decompiled",
+            metadata={"alias_of": "ClosedAliasOwner"},
+            description="No exported wrapper remains.",
+        ),
+    ))
+    # Replace the fixture's single RAM reference with evidence for both
+    # candidates, including a runtime-observed writer for the first one.
+    (database_root / "memory_reads.json").write_text(json.dumps({"references": [
+        {"from": "0x00000012", "from_function": "0x00000010", "to": "0x00FF0010", "type": "READ"},
+        {"from": "0x00000022", "from_function": "0x00000020", "to": "0x00FF0020", "type": "READ"},
+    ]}), encoding="utf-8")
+    (database_root / "memory_writes.json").write_text(json.dumps({"references": [
+        {"from": "0x00000016", "from_function": "0x00000010", "to": "0x00FF0010", "type": "WRITE"},
+        {"from": "0x00000026", "from_function": "0x00000020", "to": "0x00FF0020", "type": "WRITE"},
+    ]}), encoding="utf-8")
+
+    queue = unresolved_symbol_queue(
+        database,
+        symbols,
+        coverage_path=tmp_path / "coverage-ghidra.json",
+    )
+
+    assert [item["name"] for item in queue] == ["RuntimeRamQuestion", "StaticRamQuestion"]
+    assert queue[0]["writer_count"] == 1
+    assert queue[0]["reader_count"] == 1
+    assert queue[0]["runtime_observed"] is True
+    assert queue[0]["writers"][0]["name"] == "First"
+    assert all(item["name"] not in {"ClosedAliasOwner", "InteriorAlias"} for item in queue)
+
+
+def test_unresolved_symbol_queue_filters_by_kind(tmp_path):
+    database_root = tmp_path / "full-rom"
+    _write_database(database_root)
+    symbols = SymbolStore(symbols=(
+        Symbol(0xFF0010, "RamQuestion", "ram", description="The producer remains unresolved."),
+        Symbol(0x30, "DataQuestion", "data", description="The producer remains unresolved."),
+    ))
+
+    queue = unresolved_symbol_queue(AnalysisDatabase(database_root), symbols, kind="data")
+
+    assert [item["name"] for item in queue] == ["DataQuestion"]
 
 
 def test_real_proximity_collision_handler_has_semantic_name_and_legacy_alias():

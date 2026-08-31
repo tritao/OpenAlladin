@@ -33,6 +33,23 @@ REVIEW_MARKERS = (
     "live entry remains unclaimed",
 )
 
+# Data and RAM symbols often carry a precise static description while leaving
+# one boundary open (for example, an unexported wrapper or an indirect
+# producer).  Keep those entries visible without making every named data
+# object part of the semantic queue.
+UNRESOLVED_DATA_MARKERS = (
+    "provisional",
+    "unresolved",
+    "no direct static reader",
+    "no direct reader",
+    "no exported wrapper",
+    "no exported consumer",
+    "no runtime sample",
+    "external template or producer remains unresolved",
+    "external reachability remains unresolved",
+    "retained as an unreferenced",
+)
+
 
 def _address(value: Any) -> int:
     return parse_int(value)
@@ -315,6 +332,187 @@ def symbol_review_queue(
     return result
 
 
+def _reference_function_address(
+    database: AnalysisDatabase,
+    reference: dict[str, Any],
+) -> int | None:
+    """Resolve the ROM function containing a memory reference."""
+
+    for value in (reference.get("from_function"), reference.get("from")):
+        if value is None:
+            continue
+        try:
+            address = _address(value)
+        except (TypeError, ValueError):
+            continue
+        if reference.get("from_function") is not None:
+            return address
+        function = database.function(address)
+        return _address(function["address"]) if function is not None else None
+    return None
+
+
+def _evidence_functions(
+    database: AnalysisDatabase,
+    symbols: SymbolStore,
+    addresses: set[int],
+    runtime: dict[int, dict[str, Any]],
+) -> tuple[list[dict[str, Any]], set[int], int, set[str]]:
+    """Return stable function evidence, runtime hits, counts, and scenarios."""
+
+    evidence: list[dict[str, Any]] = []
+    observed: set[int] = set()
+    pc_count = 0
+    scenarios: set[str] = set()
+    for address in sorted(addresses):
+        function = database.function(address)
+        canonical = symbols.at(address, include_ranges=False)
+        name = (
+            canonical.name
+            if canonical is not None and canonical.kind == "function"
+            else str(function.get("name") if function else f"Func_{address:08X}")
+        )
+        runtime_item = runtime.get(address, {})
+        if runtime_item:
+            observed.add(address)
+            pc_count += int(runtime_item.get("pc_count", 0) or 0)
+            scenarios.update(str(item) for item in runtime_item.get("scenarios", ()) or ())
+        evidence.append({
+            "address": f"0x{address:08X}",
+            "name": name,
+            "runtime_observed": bool(runtime_item),
+            "runtime_pc_count": int(runtime_item.get("pc_count", 0) or 0),
+            "runtime_scenarios": list(runtime_item.get("scenarios", ())),
+        })
+    return evidence, observed, pc_count, scenarios
+
+
+def unresolved_symbol_queue(
+    database: AnalysisDatabase,
+    symbols: SymbolStore,
+    *,
+    kind: str | None = None,
+    coverage_path: Path | None = None,
+) -> list[dict[str, Any]]:
+    """Rank unresolved RAM/data symbols using whole-ROM evidence.
+
+    This queue complements :func:`symbol_review_queue`: it is deliberately
+    limited to non-closed RAM/data symbols with low-confidence or explicit
+    unresolved language, then ranks them by the functions that read and write
+    the address/range.  The result is a practical semantic investigation
+    queue rather than a list of every canonical data label.
+    """
+
+    normalized_kind = str(kind).casefold() if kind else None
+    if normalized_kind not in {None, "ram", "data"}:
+        raise ValueError("unresolved symbol kind must be 'ram', 'data', or omitted")
+    runtime = _runtime_functions(database, coverage_path)
+    xrefs = _review_records(database, "xrefs.json")
+    reads = _review_records(database, "memory_reads.json")
+    writes = _review_records(database, "memory_writes.json")
+    result: list[dict[str, Any]] = []
+
+    for symbol in symbols.symbols:
+        symbol_kind = symbol.kind.casefold()
+        if symbol_kind not in {"ram", "data"} or (normalized_kind and symbol_kind != normalized_kind):
+            continue
+        metadata = {str(key): value for key, value in symbol.metadata.items()}
+        if str(metadata.get("review_status", "")).casefold() in {"closed", "resolved"}:
+            continue
+        # Aliases identify interior locations without owning a second range.
+        if metadata.get("alias_of"):
+            continue
+        description = (symbol.description or "").casefold()
+        markers = [marker for marker in UNRESOLVED_DATA_MARKERS if marker in description]
+        if symbol.confidence.casefold() in LOW_CONFIDENCE:
+            markers.insert(0, f"confidence: {symbol.confidence}")
+        if not markers:
+            continue
+
+        incoming_xrefs = [item for item in xrefs if _in_symbol_range(item.get("to"), symbol)]
+        symbol_reads = [item for item in reads if _in_symbol_range(item.get("to"), symbol)]
+        symbol_writes = [item for item in writes if _in_symbol_range(item.get("to"), symbol)]
+        reader_addresses = {
+            address for item in symbol_reads
+            if (address := _reference_function_address(database, item)) is not None
+        }
+        writer_addresses = {
+            address for item in symbol_writes
+            if (address := _reference_function_address(database, item)) is not None
+        }
+        all_evidence_addresses = reader_addresses | writer_addresses
+        reader_evidence, reader_runtime, reader_pc_count, reader_scenarios = _evidence_functions(
+            database, symbols, reader_addresses, runtime
+        )
+        writer_evidence, writer_runtime, writer_pc_count, writer_scenarios = _evidence_functions(
+            database, symbols, writer_addresses, runtime
+        )
+        caller_addresses: set[int] = set()
+        callee_addresses: set[int] = set()
+        for address in all_evidence_addresses:
+            caller_addresses.update(
+                _address(item["from"])
+                for item in database.callers(address)
+                if item.get("from") is not None
+            )
+            callee_addresses.update(
+                _address(item["to"])
+                for item in database.callees(address)
+                if item.get("to") is not None
+            )
+        scenarios = sorted(reader_scenarios | writer_scenarios)
+        runtime_functions = sorted(reader_runtime | writer_runtime)
+        score = (
+            (100_000 if runtime_functions else 0)
+            + len(runtime_functions) * 10_000
+            + len(writer_addresses) * 5_000
+            + len(reader_addresses) * 2_500
+            + len(caller_addresses) * 500
+            + len(callee_addresses) * 100
+            + len(incoming_xrefs) * 25
+            + len(symbol_writes) * 20
+            + len(symbol_reads) * 10
+        )
+        result.append({
+            "rank": 0,
+            "score": score,
+            "address": f"0x{symbol.address:08X}",
+            "name": symbol.name,
+            "kind": symbol.kind,
+            "confidence": symbol.confidence,
+            "description": symbol.description or "",
+            "review_markers": markers,
+            "range": (
+                {"start": symbol.range[0], "end": symbol.range[1]}
+                if symbol.range is not None else None
+            ),
+            "xrefs": len(incoming_xrefs),
+            "reads": len(symbol_reads),
+            "writes": len(symbol_writes),
+            "reader_count": len(reader_addresses),
+            "writer_count": len(writer_addresses),
+            "readers": reader_evidence,
+            "writers": writer_evidence,
+            "callers": len(caller_addresses),
+            "callees": len(callee_addresses),
+            "runtime_observed": bool(runtime_functions),
+            "runtime_function_count": len(runtime_functions),
+            "runtime_pc_count": reader_pc_count + writer_pc_count,
+            "runtime_scenarios": scenarios,
+            "candidate_reason": "; ".join(markers),
+        })
+    result.sort(key=lambda item: (
+        -item["score"],
+        -int(item["runtime_observed"]),
+        -item["writer_count"],
+        -item["reader_count"],
+        _address(item["address"]),
+    ))
+    for rank, item in enumerate(result, 1):
+        item["rank"] = rank
+    return result
+
+
 def render_work_queue(
     items: list[dict[str, Any]],
     *,
@@ -364,9 +562,43 @@ def render_symbol_review(
         print(f"     review: {item['description']}")
 
 
+def render_unresolved_queue(
+    items: list[dict[str, Any]],
+    *,
+    total: int,
+    json_output: bool,
+) -> None:
+    if json_output:
+        print(json.dumps({"total": total, "items": items}, indent=2, sort_keys=True))
+        return
+    print(f"Unresolved RAM/data symbols ({len(items)} of {total})")
+    if not items:
+        return
+    print("rank score address       kind  name                              writers readers run evidence")
+    for item in items:
+        print(
+            f"{item['rank']:>4} {item['score']:>5} {item['address']} "
+            f"{item['kind']:<5} {item['name'][:32]:<32} "
+            f"{item['writer_count']:>7} {item['reader_count']:>7} "
+            f"{'yes' if item['runtime_observed'] else 'no':>3} "
+            f"xrefs={item['xrefs']},reads={item['reads']},writes={item['writes']}"
+        )
+        print(f"     review: {item['candidate_reason']}")
+        if item["writers"]:
+            print("     writers: " + ", ".join(
+                f"{value['name']}({value['address']})" for value in item["writers"]
+            ))
+        if item["readers"]:
+            print("     readers: " + ", ".join(
+                f"{value['name']}({value['address']})" for value in item["readers"]
+            ))
+
+
 __all__ = [
     "function_work_queue",
     "render_symbol_review",
     "render_work_queue",
+    "render_unresolved_queue",
     "symbol_review_queue",
+    "unresolved_symbol_queue",
 ]
