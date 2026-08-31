@@ -3637,7 +3637,7 @@
   size: 164
   confidence: decompiled
   review_status: closed
-  description: 164-byte MovementVM interaction-anchor grid response immediately after LEVEL_F800_TILEMAP_SOURCE and before ACTOR_MOVE_TYPE5E84_PAIR_E1E2. Its exact decoder coverage contains the signed displacement grid, twelve pushes of Actor_SetInteractionAnchorFromActor, timer-parameter phases, a terminal write of 0x01 to INTERACTION_SPAWN_HANDOFF_MARKER at 0x0011F89C, and the clear-state step through 0x0011F8A3; its external template or producer remains unresolved.
+  description: 164-byte MovementVM interaction-anchor grid response immediately after LEVEL_F800_TILEMAP_SOURCE and before ACTOR_MOVE_INTERACTION_PAIR_ANCHOR_APPROACH. Its exact decoder coverage contains the signed displacement grid, twelve pushes of Actor_SetInteractionAnchorFromActor, timer-parameter phases, a terminal write of 0x01 to INTERACTION_SPAWN_HANDOFF_MARKER at 0x0011F89C, and the clear-state step through 0x0011F8A3; its external template or producer remains unresolved.
   evidence:
     - unreferenced_movement_streams_static_v1
     - vm_stream_semantic_naming_static_v1
@@ -3645,72 +3645,79 @@
     - movement_stream_decoder
 
 0x0011FD18:
-  name: ACTOR_MOVE_TYPE5E84_PAIR_E3E5
+  name: ACTOR_MOVE_INTERACTION_PAIR_TRAJECTORY
+  aliases: [ACTOR_MOVE_TYPE5E84_PAIR_E3E5]
   type: movement_stream
   size: 822
   confidence: decompiled
-  description: Type-0x5E interaction-pair movement stream selected by InteractionSpawn_Type5E84Pair_E3E5 for selectors 0xE3, 0xE4, and 0xE5. Its exact 822-byte owner contains the initial type-0x5E compare/write gate and the long movement trajectory, ending with the local jump at 0x00120048 to the shared movement continuation at 0x0011F890; the continuation bytes are not claimed by this range.
+  description: Interaction-pair movement stream selected for selectors 0xE3, 0xE4, and 0xE5. Its exact 822-byte owner contains the initial pair compare/write gate and the long movement trajectory, ending with the local jump at 0x00120048 to the shared movement continuation at 0x0011F890; the continuation bytes are not claimed by this range.
   evidence:
     - interaction_spawn_type5e84_pair_static_decompilation
     - movement_stream_decoder
 
 0x0011F8A4:
-  name: ACTOR_MOVE_TYPE5E84_PAIR_E1E2
+  name: ACTOR_MOVE_INTERACTION_PAIR_ANCHOR_APPROACH
+  aliases: [ACTOR_MOVE_TYPE5E84_PAIR_E1E2]
   type: movement_stream
   size: 0x204
   confidence: decompiled
-  description: Type-0x5E interaction-pair movement stream selected by InteractionSpawn_Type5E84Pair_E1E2 for selectors 0xE1 and 0xE2. Its exact 516-byte owner performs the shared parameter/timer phases, traverses the signed movement trajectory, sets INTERACTION_SPAWN_HANDOFF_MARKER at 0x0011FAA0, and ends with the clear-state command at 0x0011FAA6-0x0011FAA7 immediately before the following independent movement entry.
+  description: Interaction-pair movement stream selected for selectors 0xE1 and 0xE2. Its exact 516-byte owner performs the shared parameter/timer phases, traverses the signed movement trajectory, sets INTERACTION_SPAWN_HANDOFF_MARKER at 0x0011FAA0, and ends with the clear-state command at 0x0011FAA6-0x0011FAA7 immediately before the following independent movement entry.
   evidence:
     - interaction_spawn_type5e84_pair_static_decompilation
     - interaction_spawn_type5e84_pair_e1e2_movement_static_v1
     - movement_stream_decoder
 
 0x0011FAA8:
-  name: ACTOR_MOVE_TYPE5E84_PAIR_ANCHOR_RESPONSE
+  name: ACTOR_MOVE_INTERACTION_PAIR_ANCHOR_RESPONSE
+  aliases: [ACTOR_MOVE_TYPE5E84_PAIR_ANCHOR_RESPONSE]
   type: movement_stream
   size: 0x270
   confidence: decompiled
-  description: Type-0x5E plus Type-0x84 paired anchor-response movement bank installed by the handler-shaped producer at 0x001B69A6. Its exact 624-byte owner publishes Actor_SetInteractionAnchorFromActor, gates the opening on actor type 0x5E and the 0x00FFF0D3 interaction-anchor marker, emits the signed 0x60-grid trajectory with timer 0x93, and jumps at 0x0011FD12 into the shared continuation at 0x0011F890. The only known producer is a complete unreferenced variant with no exported selector or runtime sample, so this bank is retained as a complete unreferenced MovementVM asset.
+  description: Paired anchor-response movement bank installed by the handler-shaped producer at 0x001B69A6. Its exact 624-byte owner publishes Actor_SetInteractionAnchorFromActor, gates the opening on the interaction-anchor marker at 0x00FFF0D3, emits the signed 0x60-grid trajectory with timer 0x93, and jumps at 0x0011FD12 into the shared continuation at 0x0011F890. The only known producer is a complete unreferenced variant with no exported selector or runtime sample, so this bank is retained as a complete unreferenced MovementVM asset.
   evidence:
     - interaction_spawn_type5e84_unindexed_static_disassembly
     - movement_stream_decoder
 
 0x0012004E:
-  name: ACTOR_MOVE_TYPE5E84_PAIR_E6
+  name: ACTOR_MOVE_INTERACTION_PAIR_SHORT_RESPONSE
+  aliases: [ACTOR_MOVE_TYPE5E84_PAIR_E6]
   type: movement_stream
   size: 144
   confidence: decompiled
-  description: Type-0x5E interaction-pair movement stream selected by InteractionSpawn_Type5E84Pair_E6. Its exact 144-byte owner contains the E6 trajectory and terminates with the local jump at 0x001200D8 to the shared movement continuation at 0x0011F890.
+  description: Interaction-pair movement stream selected for the short response variant. Its exact 144-byte owner contains the E6 trajectory and terminates with the local jump at 0x001200D8 to the shared movement continuation at 0x0011F890.
   evidence:
     - interaction_spawn_type5e84_pair_static_decompilation
     - movement_stream_decoder
 
 0x001200DE:
-  name: ACTOR_MOVE_TYPE5E84_PAIR_F9
+  name: ACTOR_MOVE_INTERACTION_PAIR_READY_RESPONSE
+  aliases: [ACTOR_MOVE_TYPE5E84_PAIR_F9]
   type: movement_stream
   size: 288
   confidence: decompiled
-  description: Type-0x5E interaction-pair movement stream selected by InteractionSpawn_Type5E84Pair_F9 after its 0x00FFF112 readiness gate. Its exact 288-byte owner contains the F9 trajectory and terminates with the local jump at 0x001201F8 to the shared movement continuation at 0x0011F890.
+  description: Interaction-pair movement stream selected after the 0x00FFF112 readiness gate. Its exact 288-byte owner contains the readiness response trajectory and terminates with the local jump at 0x001201F8 to the shared movement continuation at 0x0011F890.
   evidence:
     - interaction_spawn_type5e84_pair_static_decompilation
     - movement_stream_decoder
 
 0x001201FE:
-  name: ACTOR_MOVE_TYPE5E84_PAIR_E8
+  name: ACTOR_MOVE_INTERACTION_PAIR_EXTENDED_RESPONSE
+  aliases: [ACTOR_MOVE_TYPE5E84_PAIR_E8]
   type: movement_stream
   size: 204
   confidence: decompiled
-  description: Type-0x5E interaction-pair movement stream selected by InteractionSpawn_Type5E84Pair_E8. Its exact 204-byte owner contains the E8 trajectory and terminates with the local jump at 0x001202C4 to the shared movement continuation at 0x0011F890.
+  description: Interaction-pair movement stream selected for the extended response variant. Its exact 204-byte owner contains the extended trajectory and terminates with the local jump at 0x001202C4 to the shared movement continuation at 0x0011F890.
   evidence:
     - interaction_spawn_type5e84_pair_static_decompilation
     - movement_stream_decoder
 
 0x001202CA:
-  name: ACTOR_MOVE_TYPE5E84_PAIR_E9
+  name: ACTOR_MOVE_INTERACTION_PAIR_VERTICAL_RESPONSE
+  aliases: [ACTOR_MOVE_TYPE5E84_PAIR_E9]
   type: movement_stream
   size: 136
   confidence: decompiled
-  description: Type-0x5E interaction-pair movement stream selected by InteractionSpawn_Type5E84Pair_E9. Its exact 136-byte owner contains the E9 vertical response and terminal delay, then jumps at 0x0012034C to the shared movement continuation at 0x0011F890.
+  description: Interaction-pair movement stream selected for the vertical response variant. Its exact 136-byte owner contains the vertical response and terminal delay, then jumps at 0x0012034C to the shared movement continuation at 0x0011F890.
   evidence:
     - interaction_spawn_type5e84_pair_static_decompilation
     - movement_stream_decoder

@@ -1,0 +1,26 @@
+{
+  "status": "recorded-semantic-promotion",
+  "scope": "interaction-pair-movement-role-identities",
+  "promotions": [
+    "ACTOR_MOVE_INTERACTION_PAIR_ANCHOR_APPROACH",
+    "ACTOR_MOVE_INTERACTION_PAIR_ANCHOR_RESPONSE",
+    "ACTOR_MOVE_INTERACTION_PAIR_TRAJECTORY",
+    "ACTOR_MOVE_INTERACTION_PAIR_SHORT_RESPONSE",
+    "ACTOR_MOVE_INTERACTION_PAIR_READY_RESPONSE",
+    "ACTOR_MOVE_INTERACTION_PAIR_EXTENDED_RESPONSE",
+    "ACTOR_MOVE_INTERACTION_PAIR_VERTICAL_RESPONSE"
+  ],
+  "evidence": [
+    "interaction_spawn_type5e84_pair_static_decompilation",
+    "interaction_spawn_type5e84_pair_e1e2_movement_static_v1",
+    "interaction_spawn_type5e84_unindexed_static_disassembly",
+    "movement_stream_decoder"
+  ],
+  "policy": {
+    "old_numeric_names_retained_as_aliases": true,
+    "technical_type_ids_retained": true,
+    "byte_ranges_changed": false,
+    "deasm_ownership_changed": false,
+    "semantic_scope": "provisional_role"
+  }
+}

@@ -293,6 +293,28 @@ def test_shared_interaction_names_promote_roles_and_preserve_numeric_aliases():
     )
 
 
+def test_interaction_pair_movement_names_promote_roles_and_preserve_aliases():
+    symbols = SymbolStore()
+    expected = {
+        0x0011F8A4: ("ACTOR_MOVE_INTERACTION_PAIR_ANCHOR_APPROACH", "ACTOR_MOVE_TYPE5E84_PAIR_E1E2"),
+        0x0011FAA8: ("ACTOR_MOVE_INTERACTION_PAIR_ANCHOR_RESPONSE", "ACTOR_MOVE_TYPE5E84_PAIR_ANCHOR_RESPONSE"),
+        0x0011FD18: ("ACTOR_MOVE_INTERACTION_PAIR_TRAJECTORY", "ACTOR_MOVE_TYPE5E84_PAIR_E3E5"),
+        0x0012004E: ("ACTOR_MOVE_INTERACTION_PAIR_SHORT_RESPONSE", "ACTOR_MOVE_TYPE5E84_PAIR_E6"),
+        0x001200DE: ("ACTOR_MOVE_INTERACTION_PAIR_READY_RESPONSE", "ACTOR_MOVE_TYPE5E84_PAIR_F9"),
+        0x001201FE: ("ACTOR_MOVE_INTERACTION_PAIR_EXTENDED_RESPONSE", "ACTOR_MOVE_TYPE5E84_PAIR_E8"),
+        0x001202CA: ("ACTOR_MOVE_INTERACTION_PAIR_VERTICAL_RESPONSE", "ACTOR_MOVE_TYPE5E84_PAIR_E9"),
+    }
+    for address, (name, alias) in expected.items():
+        symbol = symbols.at(address, include_ranges=False)
+        assert symbol is not None
+        assert symbol.name == name
+        assert alias in symbol.aliases
+
+    pair_mapping = next(mapping for mapping in load_entity_mappings() if mapping.name == "INTERACTION_PAIR")
+    assert pair_mapping.scope == "role"
+    assert set(expected) <= set(pair_mapping.symbol_addresses)
+
+
 def test_terminal_transition_and_level_object_names_promote_roles_and_preserve_aliases():
     symbols = SymbolStore()
     expected = {

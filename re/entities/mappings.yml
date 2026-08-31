@@ -161,11 +161,11 @@ mappings:
 
   - name: INTERACTION_PAIR
     scope: role
-    symbol_addresses: [0x001B78A0, 0x001B78C8]
-    technical_types: [0x5E, 0x84]
+    symbol_addresses: [0x0011F8A4, 0x0011FAA8, 0x0011FD18, 0x0012004E, 0x001200DE, 0x001201FE, 0x001202CA, 0x001B78A0, 0x001B78C8]
+    technical_types: [0x5E, 0x84, 0xE1, 0xE2, 0xE3, 0xE4, 0xE5, 0xE6, 0xE8, 0xE9, 0xF9]
     confidence: decompiled
     evidence: [early-interaction-dispatch-block, actor-template-grid-xrefs]
-    description: Type-0x5E interaction-pair source and its Type-0x84 companion.
+    description: Provisional interaction-pair role covering the Type-0x5E source, Type-0x84 companion, and their exact MovementVM approach/response streams.
 
   - name: INTERACTION_BASE
     scope: role

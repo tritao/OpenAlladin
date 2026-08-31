@@ -1287,7 +1287,7 @@ def test_type5e84_e1e2_movement_stream_is_exact():
     symbols = SymbolStore()
     stream = symbols.at(0x0011F8A4, include_ranges=False)
     assert stream is not None
-    assert stream.name == "ACTOR_MOVE_TYPE5E84_PAIR_E1E2"
+    assert stream.name == "ACTOR_MOVE_INTERACTION_PAIR_ANCHOR_APPROACH"
     assert stream.end == 0x0011FAA7
     assert stream.size == 0x204
     assert stream.metadata["type"] == "movement_stream"
@@ -1308,7 +1308,7 @@ def test_type5e84_e1e2_movement_stream_is_exact():
 def test_unindexed_movement_stream_bands_are_exact_with_evidence_confidence():
     symbols = SymbolStore()
     expected = [
-        (0x0011FAA8, 0x0011FD17, "ACTOR_MOVE_TYPE5E84_PAIR_ANCHOR_RESPONSE", 0x270, "decompiled"),
+        (0x0011FAA8, 0x0011FD17, "ACTOR_MOVE_INTERACTION_PAIR_ANCHOR_RESPONSE", 0x270, "decompiled"),
         (0x001210FE, 0x0012117F, "ACTOR_MOVE_FLAG20_TERRAIN_RESPONSE", 0x82, "decompiled"),
         (0x001212C0, 0x001212FF, "ACTOR_MOVE_INTERACTION_ANCHOR_RESPONSE_BANK", 0x40, "decompiled"),
         (0x001213E2, 0x00121411, "ACTOR_MOVE_TYPE8D_WALL_RESPONSE_CHILD_SPAWN_PREFIX", 0x30, "decompiled"),
@@ -1467,11 +1467,11 @@ def test_flag20_terrain_response_stream_preserves_callback_and_terrain_evidence(
 def test_type5e84_pair_movement_stream_family_is_exact_and_contiguous():
     symbols = SymbolStore()
     expected = [
-        (0x0011FD18, 0x0012004D, "ACTOR_MOVE_TYPE5E84_PAIR_E3E5", 822, 0x00120048),
-        (0x0012004E, 0x001200DD, "ACTOR_MOVE_TYPE5E84_PAIR_E6", 144, 0x001200D8),
-        (0x001200DE, 0x001201FD, "ACTOR_MOVE_TYPE5E84_PAIR_F9", 288, 0x001201F8),
-        (0x001201FE, 0x001202C9, "ACTOR_MOVE_TYPE5E84_PAIR_E8", 204, 0x001202C4),
-        (0x001202CA, 0x00120351, "ACTOR_MOVE_TYPE5E84_PAIR_E9", 136, 0x0012034C),
+        (0x0011FD18, 0x0012004D, "ACTOR_MOVE_INTERACTION_PAIR_TRAJECTORY", 822, 0x00120048),
+        (0x0012004E, 0x001200DD, "ACTOR_MOVE_INTERACTION_PAIR_SHORT_RESPONSE", 144, 0x001200D8),
+        (0x001200DE, 0x001201FD, "ACTOR_MOVE_INTERACTION_PAIR_READY_RESPONSE", 288, 0x001201F8),
+        (0x001201FE, 0x001202C9, "ACTOR_MOVE_INTERACTION_PAIR_EXTENDED_RESPONSE", 204, 0x001202C4),
+        (0x001202CA, 0x00120351, "ACTOR_MOVE_INTERACTION_PAIR_VERTICAL_RESPONSE", 136, 0x0012034C),
     ]
     previous_end = None
     for address, end, name, size, terminal_jump in expected:
