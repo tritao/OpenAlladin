@@ -1,0 +1,31 @@
+{
+  "format": "openaladdin-semantic-promotion-target-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "focus": {
+    "name": "interaction-spawn-type11-12-semantic",
+    "purpose": "Promote the adjacent Type-0x11 palette and Type-0x12 presentation interaction handlers to stable creation identities while retaining selector-qualified historical names."
+  },
+  "dispatch": {
+    "table": "0x004154 INTERACTION_HANDLER_TABLE",
+    "handlers": [
+      { "address": "0x001B6CB4", "selector": "0x1F", "name": "InteractionSpawn_CreateType11WithPalette_1F", "legacy_name": "InteractionSpawn_Type11WithPalette_1F", "template": "0x001B7E90 ACTOR_TEMPLATE_TYPE_11_COLLISION_RESPONSE", "allocator": "LevelObjectSpawnEntry", "palette": "0x001295F2 through Render_UploadPaletteBand2 when allocation succeeds" },
+      { "address": "0x001B6CCE", "selector": "0x4D", "name": "InteractionSpawn_CreateType12WithPresentation_4D", "legacy_name": "InteractionSpawn_Type12WithPresentation_4D", "template": "0x001B7EA4 ACTOR_TEMPLATE_TYPE_12_INTERACTION_RESPONSE", "allocator": "LevelObjectSpawnEntry", "palette": "0x001295D2 through Render_UploadPaletteBand2", "presentation_flag": "0x00FFF123", "audio": "prepared command 0x32 when SCENE_TRANSITION_EVENT is active" }
+    ]
+  },
+  "contracts": [
+    "Selector 0x1F creates the exact Type-0x11 collision-response template through LevelObjectSpawnEntry and uploads palette band 2 from ROM 0x001295F2 only after successful allocation.",
+    "Selector 0x4D creates the exact Type-0x12 interaction-response template through LevelObjectSpawnEntry, uploads palette band 2 from ROM 0x001295D2, sets presentation flag 0x00FFF123 after allocation, and conditionally queues prepared audio command 0x32.",
+    "Both handlers retain their exact 20-byte actor-template contracts and direct helper/side-effect behavior."
+  ],
+  "evidence": [
+    "Exact 68000 handler bodies at 0x001B6CB4 and 0x001B6CCE",
+    "INTERACTION_HANDLER_TABLE selector membership",
+    "re/ghidra/targets/interaction-spawn-type11-palette-targets.json",
+    "re/ghidra/targets/interaction-spawn-type12-presentation-targets.json"
+  ],
+  "limitations": [
+    "The names identify exact creation and presentation contracts, not user-facing object or scene roles.",
+    "The upstream lifecycle of the palette, presentation, and audio gates remains unresolved."
+  ],
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+}

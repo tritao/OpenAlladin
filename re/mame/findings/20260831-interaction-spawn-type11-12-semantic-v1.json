@@ -1,0 +1,32 @@
+{
+  "format": "openaladdin-recorded-semantic-promotion-v1",
+  "recorded_at": "2026-08-31",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "target_manifest": "re/ghidra/targets/interaction-spawn-type11-12-semantic-targets.json",
+  "promoted_symbols": [
+    "InteractionSpawn_CreateType11WithPalette_1F",
+    "InteractionSpawn_CreateType12WithPresentation_4D"
+  ],
+  "legacy_aliases": [
+    "InteractionSpawn_Type11WithPalette_1F",
+    "InteractionSpawn_Type12WithPresentation_4D"
+  ],
+  "contracts": [
+    "Selector 0x1F retains Type-0x11 LevelObjectSpawnEntry creation and success-gated palette upload from 0x001295F2.",
+    "Selector 0x4D retains Type-0x12 LevelObjectSpawnEntry creation, palette upload from 0x001295D2, presentation flag 0x00FFF123, and conditional audio command 0x32."
+  ],
+  "evidence": [
+    "Exact handler bodies and INTERACTION_HANDLER_TABLE membership",
+    "interaction_spawn_type11_12_semantic_v1"
+  ],
+  "limitations": [
+    "No user-facing actor identity is claimed for these interaction handlers.",
+    "Dynamic gate-byte reachability and lifecycle remain unresolved."
+  ],
+  "conclusion": "The Type-0x11 palette and Type-0x12 presentation interaction handlers now have stable creation identities while preserving historical aliases and exact static contracts.",
+  "confidence": "decompiled",
+  "status": "recorded-semantic-promotion"
+}

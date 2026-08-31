@@ -5576,21 +5576,25 @@
     - interaction_spawn_response_family_static_decompilation
     - interaction_spawn_response_family_semantic_v1
 0x001B6CB4:
-  name: InteractionSpawn_Type11WithPalette_1F
+  name: InteractionSpawn_CreateType11WithPalette_1F
+  aliases: [InteractionSpawn_Type11WithPalette_1F]
   confidence: decompiled
   description: Interaction selector 0x1F handler that spawns ACTOR_TEMPLATE_TYPE_11_COLLISION_RESPONSE through LevelObjectSpawnEntry and, on successful allocation, uploads palette data from ROM 0x001295F2 through Render_UploadPaletteBand2.
   evidence:
     - ghidra_disassembly_001B6CB4
     - interaction_spawn_type11-palette-targets
     - interaction_spawn_type11-palette-static-decompilation
+    - interaction_spawn_type11_12_semantic_v1
 0x001B6CCE:
-  name: InteractionSpawn_Type12WithPresentation_4D
+  name: InteractionSpawn_CreateType12WithPresentation_4D
+  aliases: [InteractionSpawn_Type12WithPresentation_4D]
   confidence: decompiled
   description: Interaction selector 0x4D handler that spawns ACTOR_TEMPLATE_TYPE_12_INTERACTION_RESPONSE through LevelObjectSpawnEntry, uploads palette data from ROM 0x001295D2, raises the presentation flag at 0x00FFF123, and queues prepared audio command 0x32 when SCENE_TRANSITION_EVENT is active.
   evidence:
     - ghidra_disassembly_001B6CCE
     - interaction_spawn_type12-presentation-targets
     - interaction_spawn_type12-presentation-static-decompilation
+    - interaction_spawn_type11_12_semantic_v1
 0x001B6D90:
   name: InteractionSpawn_Type8BPresentation_F5
   confidence: decompiled
