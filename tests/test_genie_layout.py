@@ -719,10 +719,10 @@ def test_layout_uses_canonical_terrain_collision_profile_range(tmp_path):
 def test_canonical_actor_animation_family_has_exact_non_overlapping_ranges():
     symbols = SymbolStore()
     expected = {
-        0x00124A2E: (0x00124A6B, "ACTOR_ANIM_TYPE8B_PRESENTATION_F5"),
-        0x00124A6C: (0x00124AA9, "ACTOR_ANIM_TYPE8B_PRESENTATION_F6"),
-        0x00124AAA: (0x00124ADF, "ACTOR_ANIM_TYPE8B_PRESENTATION_F7"),
-        0x00124AE0: (0x00124B15, "ACTOR_ANIM_TYPE8B_PRESENTATION_F8"),
+        0x00124A2E: (0x00124A6B, "ACTOR_ANIM_PRESENTATION_RESPONSE_VARIANT_A"),
+        0x00124A6C: (0x00124AA9, "ACTOR_ANIM_PRESENTATION_RESPONSE_VARIANT_B"),
+        0x00124AAA: (0x00124ADF, "ACTOR_ANIM_PRESENTATION_RESPONSE_VARIANT_C"),
+        0x00124AE0: (0x00124B15, "ACTOR_ANIM_PRESENTATION_RESPONSE_VARIANT_D"),
         0x00124B16: (0x00124B39, "ACTOR_ANIM_INTERACTION_FRAME_RESPONSE"),
         0x00124B3A: (0x00124B6D, "ACTOR_ANIM_INTERACTION_FRAME_RESPONSE_SECONDARY"),
         0x00124BA6: (0x00124BDB, "ACTOR_ANIM_PLAYER_COLLISION_RESPONSE_ENTRY"),
@@ -746,7 +746,8 @@ def test_canonical_actor_animation_family_has_exact_non_overlapping_ranges():
 
     alias = symbols.at(0x00124B94, include_ranges=False)
     assert alias is not None
-    assert alias.name == "ACTOR_ANIM_TYPE50_LEVEL09_RESPONSE_ENTRY"
+    assert alias.name == "ACTOR_ANIM_LEVEL09_RESPONSE_ENTRY"
+    assert "ACTOR_ANIM_TYPE50_LEVEL09_RESPONSE_ENTRY" in alias.aliases
     assert alias.metadata["alias_of"] == "ACTOR_ANIM_PLAYER_COLLISION_RESPONSE_SHARED"
 
 
@@ -1023,7 +1024,8 @@ def test_interaction_counter_animation_table_and_bank_are_exact():
 
     following = symbols.at(0x00122D54, include_ranges=False)
     assert following is not None
-    assert following.name == "ACTOR_ANIM_TYPE55_INTERACTION"
+    assert following.name == "ACTOR_ANIM_INTERACTION_POSITION_RESPONSE"
+    assert "ACTOR_ANIM_TYPE55_INTERACTION" in following.aliases
     assert bank.end + 1 == following.address
 
 
@@ -1073,7 +1075,7 @@ def test_mid_actor_animation_stream_ranges_are_exact():
     expected = {
         0x00122C40: (0x00122C65, "ACTOR_ANIM_INTERACTION_RESPONSE_COMPACT"),
         0x00122C66: (0x00122CAB, "ACTOR_ANIM_INTERACTION_MULTI_CHILD_SPAWN"),
-        0x00122D54: (0x00122D91, "ACTOR_ANIM_TYPE55_INTERACTION"),
+        0x00122D54: (0x00122D91, "ACTOR_ANIM_INTERACTION_POSITION_RESPONSE"),
         0x00122DB2: (0x00122DD7, "ACTOR_ANIM_PLAYER_COLLISION_RECOVERY"),
         0x00122DD8: (0x00122DED, "ACTOR_ANIM_TYPE84_TYPE2D_INTERACTION_RESPONSE"),
         0x00122DEE: (0x00122DF1, "ACTOR_ANIM_MENU_PRESENTATION"),
@@ -1106,14 +1108,16 @@ def test_type10_collision_response_animation_is_exact():
     symbols = SymbolStore()
     response = symbols.at(0x001239A0, include_ranges=False)
     assert response is not None
-    assert response.name == "ACTOR_ANIM_TYPE10_COLLISION_RESPONSE"
+    assert response.name == "ACTOR_ANIM_COLLISION_RESPONSE_RESTORE"
+    assert "ACTOR_ANIM_TYPE10_COLLISION_RESPONSE" in response.aliases
     assert response.end == 0x001239C9
     assert response.size == 42
     assert response.metadata["type"] == "animation_stream"
 
     continuation = symbols.at(0x001239DE, include_ranges=False)
     assert continuation is not None
-    assert continuation.name == "ACTOR_ANIM_TYPE10_COLLISION_RESPONSE_CONTINUATION"
+    assert continuation.name == "ACTOR_ANIM_COLLISION_RESPONSE_SPAWN_CONTINUATION"
+    assert "ACTOR_ANIM_TYPE10_COLLISION_RESPONSE_CONTINUATION" in continuation.aliases
     assert continuation.metadata["alias_of"] == "ACTOR_ANIM_INTERACTION_RESPONSE_SPAWN"
     assert continuation.metadata["entry_offset"] == 20
 
@@ -2600,7 +2604,8 @@ def test_actor_type4d_collision_response_animation_is_exact():
     symbols = SymbolStore()
     stream = symbols.at(0x001222C2, include_ranges=False)
     assert stream is not None
-    assert stream.name == "ACTOR_ANIM_TYPE12_TYPE4D_RESPONSE"
+    assert stream.name == "ACTOR_ANIM_INTERACTION_PAIR_RESPONSE"
+    assert "ACTOR_ANIM_TYPE12_TYPE4D_RESPONSE" in stream.aliases
     assert stream.end == 0x001222D1
     assert stream.size == 16
     assert stream.metadata["type"] == "animation_stream"
@@ -3518,13 +3523,13 @@ def test_canonical_fixed_palette_sources_have_exact_upload_extents():
         (0x00129012, 0x00129031, "MENU_OPTIONS_PALETTE_BAND2_SOURCE"),
         (0x00129092, 0x001290B1, "LEVEL00_PALETTE_BAND_SOURCE"),
         (0x001290B2, 0x001290D1, "SCENE_RESOURCE_PALETTE_BAND_SOURCE"),
-        (0x00129152, 0x00129171, "INTERACTION_TYPE13_PALETTE_SOURCE"),
+        (0x00129152, 0x00129171, "INTERACTION_GUARD_RESPONSE_PALETTE_SOURCE"),
         (0x001292B2, 0x001292D1, "INTERACTION_SHARED_PALETTE_SOURCE"),
         (0x001292F2, 0x00129311, "INTERACTION_PRESENTATION_PALETTE_SOURCE"),
         (0x00129332, 0x00129351, "LEVEL07_EVENT_PALETTE_SOURCE"),
         (0x001294F2, 0x00129511, "INTERACTION_PALETTE_SOURCE_PLAYER_RESPONSE"),
         (0x00129532, 0x00129551, "INTERACTION_PALETTE_SOURCE_COLLISION_RESPONSE"),
-        (0x001295D2, 0x001295F1, "INTERACTION_TYPE12_PALETTE_SOURCE"),
+        (0x001295D2, 0x001295F1, "INTERACTION_PRESENTATION_RESPONSE_PALETTE_SOURCE"),
         (0x001295F2, 0x00129611, "INTERACTION_COLLISION_RESPONSE_PALETTE"),
         (0x00129612, 0x00129631, "TERRAIN_RESPONSE_PALETTE_SOURCE"),
         (0x00129B52, 0x00129B71, "SCENE_TRANSITION_PALETTE_BAND_SOURCE"),

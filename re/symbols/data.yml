@@ -1883,11 +1883,12 @@
     - ghidra_menu_palette_bank_load
 
 0x00129152:
-  name: INTERACTION_TYPE13_PALETTE_SOURCE
+  name: INTERACTION_GUARD_RESPONSE_PALETTE_SOURCE
+  aliases: [INTERACTION_TYPE13_PALETTE_SOURCE]
   type: palette_data
   size: 0x20
   confidence: decompiled
-  description: Fixed 16-word palette source uploaded to palette band 2 by the Type-0x13 interaction spawner.
+  description: Fixed 16-word palette source uploaded to palette band 2 by the guard-response interaction spawner.
   evidence: [ghidra_palette_band2_consumers, fixed_palette_source_extents_static_v1]
 
 0x001292B2:
@@ -1941,11 +1942,12 @@
   evidence: [ghidra_palette_band2_consumers, fixed_palette_source_extents_static_v1]
 
 0x001295D2:
-  name: INTERACTION_TYPE12_PALETTE_SOURCE
+  name: INTERACTION_PRESENTATION_RESPONSE_PALETTE_SOURCE
+  aliases: [INTERACTION_TYPE12_PALETTE_SOURCE]
   type: palette_data
   size: 0x20
   confidence: decompiled
-  description: Fixed 16-word palette source uploaded to palette band 2 by the Type-0x12/0x4D presentation handler.
+  description: Fixed 16-word palette source uploaded to palette band 2 by the Type-0x12/0x4D presentation-response handler.
   evidence: [ghidra_palette_band2_consumers, fixed_palette_source_extents_static_v1]
 
 0x001295F2:
@@ -4360,22 +4362,24 @@
     - animation_stream_decoder
 
 0x001239A0:
-  name: ACTOR_ANIM_TYPE10_COLLISION_RESPONSE
+  name: ACTOR_ANIM_COLLISION_RESPONSE_RESTORE
+  aliases: [ACTOR_ANIM_TYPE10_COLLISION_RESPONSE]
   type: animation_stream
   size: 42
   confidence: decompiled
-  description: Type-0x10 actor-collision response animation installed by ActorType10_ActorCollisionHandler at 0x001AC2D2. Its exact 42-byte region publishes temporary type 0x84, presents the 0x18E2-0x18F2 response cadence with sound 0x42, restores type 0x10, and transfers into the embedded ACTOR_ANIM_TYPE10_COLLISION_RESPONSE_CONTINUATION at 0x001239DE.
+  description: Actor-collision response animation installed by ActorType10_ActorCollisionHandler at 0x001AC2D2. Its exact 42-byte region publishes temporary type 0x84, presents the 0x18E2-0x18F2 response cadence with sound 0x42, restores the source type, and transfers into the embedded ACTOR_ANIM_COLLISION_RESPONSE_SPAWN_CONTINUATION at 0x001239DE.
   evidence:
     - type10_collision_response_animation_static_decompilation
     - ghidra_actor_type10_collision_handler
     - animation_stream_decoder
 
 0x001239DE:
-  name: ACTOR_ANIM_TYPE10_COLLISION_RESPONSE_CONTINUATION
+  name: ACTOR_ANIM_COLLISION_RESPONSE_SPAWN_CONTINUATION
+  aliases: [ACTOR_ANIM_TYPE10_COLLISION_RESPONSE_CONTINUATION]
   alias_of: ACTOR_ANIM_INTERACTION_RESPONSE_SPAWN
   entry_offset: 20
   confidence: decompiled
-  description: Embedded collision-response continuation entered by ACTOR_ANIM_TYPE10_COLLISION_RESPONSE after its temporary type-0x84 presentation. It aliases ACTOR_ANIM_INTERACTION_RESPONSE_SPAWN and does not claim a second ROM ownership range.
+  description: Embedded collision-response continuation entered by ACTOR_ANIM_COLLISION_RESPONSE_RESTORE after its temporary type-0x84 presentation. It aliases ACTOR_ANIM_INTERACTION_RESPONSE_SPAWN and does not claim a second ROM ownership range.
   evidence:
     - type10_collision_response_animation_static_decompilation
     - animation_stream_decoder
@@ -4579,17 +4583,18 @@
   type: animation_stream
   size: 168
   confidence: decompiled
-  description: Exact 42-entry interaction-counter animation bank selected by INTERACTION_COUNTER_ANIMATION_ROOT_TABLE. Each four-byte entry presents one frame reference from 0x0CAA through 0x0D4E and clears actor state with EC 0x01; the bank is contiguous and ends immediately before ACTOR_ANIM_TYPE55_INTERACTION at 0x00122D54.
+  description: Exact 42-entry interaction-counter animation bank selected by INTERACTION_COUNTER_ANIMATION_ROOT_TABLE. Each four-byte entry presents one frame reference from 0x0CAA through 0x0D4E and clears actor state with EC 0x01; the bank is contiguous and ends immediately before ACTOR_ANIM_INTERACTION_POSITION_RESPONSE at 0x00122D54.
   evidence:
     - interaction_counter_animation_bank_static_decompilation
     - ghidra_decompile_001B1AD6
     - animation_stream_decoder
 
 0x00122D54:
-  name: ACTOR_ANIM_TYPE55_INTERACTION
+  name: ACTOR_ANIM_INTERACTION_POSITION_RESPONSE
+  aliases: [ACTOR_ANIM_TYPE55_INTERACTION]
   size: 62
   confidence: decompiled
-  description: Type-0x55 interaction animation installed by ACTOR_TEMPLATE_INTERACTION_POSITION_VARIANTS. Its exact 62-byte region clears the actor, presents the 0x1596-0x15BA sequence with timer 0x89, writes 0x40 to actor field +0x06, plays sound 0x4D, writes type 0x84, and ends with EC 0x01 immediately before ACTOR_ANIM_PROXIMITY_BOUNCE_TRIGGER at 0x00122D92.
+  description: Interaction-position response animation installed by ACTOR_TEMPLATE_INTERACTION_POSITION_VARIANTS. Its exact 62-byte region clears the actor, presents the 0x1596-0x15BA sequence with timer 0x89, writes 0x40 to actor field +0x06, plays sound 0x4D, writes 0x84 to the actor type field, and ends with EC 0x01 immediately before ACTOR_ANIM_PROXIMITY_BOUNCE_TRIGGER at 0x00122D92.
   evidence:
     - actor_template_interaction_dispatch_family_static_decompilation
     - animation_stream_decoder
@@ -5646,44 +5651,48 @@
     - animation_stream_decoder
 
 0x00124A2E:
-  name: ACTOR_ANIM_TYPE8B_PRESENTATION_F5
+  name: ACTOR_ANIM_PRESENTATION_RESPONSE_VARIANT_A
+  aliases: [ACTOR_ANIM_TYPE8B_PRESENTATION_F5]
   type: animation_stream
   size: 62
   confidence: decompiled
-  description: Base type-0x8B presentation animation installed by InteractionSpawn_Type8BPresentation_F5. Its exact 62-byte loop writes the response field 0x0000, conditionally spawns the type-0x84 presentation child at 0x00124A4A, and returns through the local response entry.
+  description: Presentation-response variant A installed by InteractionSpawn_Type8BPresentation_F5. Its exact 62-byte loop writes response value 0x0000, conditionally spawns the shared presentation child at 0x00124A4A, and returns through the local response entry.
   evidence:
     - interaction_spawn_type8b_presentation_static_decompilation
     - actor_animation_stream_family_static_decompilation
     - animation_stream_decoder
 
 0x00124A6C:
-  name: ACTOR_ANIM_TYPE8B_PRESENTATION_F6
+  name: ACTOR_ANIM_PRESENTATION_RESPONSE_VARIANT_B
+  aliases: [ACTOR_ANIM_TYPE8B_PRESENTATION_F6]
   type: animation_stream
   size: 62
   confidence: decompiled
-  description: Type-0x8B presentation variant installed by InteractionSpawn_Type8BPresentation_F6. Its exact 62-byte loop writes response value 0x00FF, conditionally spawns the shared type-0x84 presentation child at 0x00124A88, and returns through its local response entry.
+  description: Presentation-response variant B installed by InteractionSpawn_Type8BPresentation_F6. Its exact 62-byte loop writes response value 0x00FF, conditionally spawns the shared presentation child at 0x00124A88, and returns through its local response entry.
   evidence:
     - interaction_spawn_type8b_presentation_static_decompilation
     - actor_animation_stream_family_static_decompilation
     - animation_stream_decoder
 
 0x00124AAA:
-  name: ACTOR_ANIM_TYPE8B_PRESENTATION_F7
+  name: ACTOR_ANIM_PRESENTATION_RESPONSE_VARIANT_C
+  aliases: [ACTOR_ANIM_TYPE8B_PRESENTATION_F7]
   type: animation_stream
   size: 54
   confidence: decompiled
-  description: Type-0x8B presentation variant installed by InteractionSpawn_Type8BPresentation_F7. Its exact 54-byte loop uses response value 0x0002 and conditionally spawns the shared type-0x84 presentation child at 0x00124ABE.
+  description: Presentation-response variant C installed by InteractionSpawn_Type8BPresentation_F7. Its exact 54-byte loop uses response value 0x0002 and conditionally spawns the shared presentation child at 0x00124ABE.
   evidence:
     - interaction_spawn_type8b_presentation_static_decompilation
     - actor_animation_stream_family_static_decompilation
     - animation_stream_decoder
 
 0x00124AE0:
-  name: ACTOR_ANIM_TYPE8B_PRESENTATION_F8
+  name: ACTOR_ANIM_PRESENTATION_RESPONSE_VARIANT_D
+  aliases: [ACTOR_ANIM_TYPE8B_PRESENTATION_F8]
   type: animation_stream
   size: 54
   confidence: decompiled
-  description: Type-0x8B presentation variant installed by InteractionSpawn_Type8BPresentation_F8. Its exact 54-byte loop uses response value 0x0003 and conditionally spawns the shared type-0x84 presentation child at 0x00124AF4.
+  description: Presentation-response variant D installed by InteractionSpawn_Type8BPresentation_F8. Its exact 54-byte loop uses response value 0x0003 and conditionally spawns the shared presentation child at 0x00124AF4.
   evidence:
     - interaction_spawn_type8b_presentation_static_decompilation
     - actor_animation_stream_family_static_decompilation
@@ -5727,12 +5736,13 @@
     - animation_stream_decoder
 
 0x00124B94:
-  name: ACTOR_ANIM_TYPE50_LEVEL09_RESPONSE_ENTRY
+  name: ACTOR_ANIM_LEVEL09_RESPONSE_ENTRY
+  aliases: [ACTOR_ANIM_TYPE50_LEVEL09_RESPONSE_ENTRY]
   type: animation_stream
   alias_of: ACTOR_ANIM_PLAYER_COLLISION_RESPONSE_SHARED
   entry_offset: 38
   confidence: decompiled
-  description: Embedded Level-09 type-0x50 response entry installed by Level09_FrameCallback. It begins at offset 38 inside ACTOR_ANIM_TYPE84_PLAYER_COLLISION_RESPONSE and therefore does not claim a second ROM ownership range.
+  description: Embedded Level-09 response entry installed by Level09_FrameCallback. It begins at offset 38 inside ACTOR_ANIM_PLAYER_COLLISION_RESPONSE_SHARED and therefore does not claim a second ROM ownership range.
   evidence:
     - level09_type50_template_static_decompilation
     - actor_animation_stream_family_static_decompilation
@@ -6584,11 +6594,12 @@
     - animation_stream_decoder
 
 0x001222C2:
-  name: ACTOR_ANIM_TYPE12_TYPE4D_RESPONSE
+  name: ACTOR_ANIM_INTERACTION_PAIR_RESPONSE
+  aliases: [ACTOR_ANIM_TYPE12_TYPE4D_RESPONSE]
   type: animation_stream
   size: 16
   confidence: decompiled
-  description: Type-0x12 actor response animation installed by ActorType4D_PlayerCollisionHandler at 0x001AF0CA when it finds the paired actor. Its exact 16-byte region presents 0x09AA, reloads timer 0x8B, repeats the 0x09AA/0x09A6/0x09A2 frame pairs, and enters dynamic state selection at 0x001222D0.
+  description: Paired-actor interaction response animation installed by ActorType4D_PlayerCollisionHandler at 0x001AF0CA when it finds the paired actor. Its exact 16-byte region presents 0x09AA, reloads timer 0x8B, repeats the 0x09AA/0x09A6/0x09A2 frame pairs, and enters dynamic state selection at 0x001222D0.
   evidence:
     - actor_type4d_collision_response_animation_static_decompilation
     - ghidra_disassembly_001AF0B8

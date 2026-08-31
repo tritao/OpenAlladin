@@ -1,0 +1,83 @@
+{
+  "format": "openaladdin-recorded-semantic-promotion-v1",
+  "recorded_at": "2026-08-31",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "promotions": [
+    {
+      "address": "0x001222C2",
+      "old_name": "ACTOR_ANIM_TYPE12_TYPE4D_RESPONSE",
+      "name": "ACTOR_ANIM_INTERACTION_PAIR_RESPONSE",
+      "reason": "Exact response installed on the paired actor by the Type-0x4D collision path."
+    },
+    {
+      "address": "0x00122D54",
+      "old_name": "ACTOR_ANIM_TYPE55_INTERACTION",
+      "name": "ACTOR_ANIM_INTERACTION_POSITION_RESPONSE",
+      "reason": "Exact position-variant interaction response stream."
+    },
+    {
+      "address": "0x001239A0",
+      "old_name": "ACTOR_ANIM_TYPE10_COLLISION_RESPONSE",
+      "name": "ACTOR_ANIM_COLLISION_RESPONSE_RESTORE",
+      "reason": "Collision animation that presents a temporary response state and restores the source actor type."
+    },
+    {
+      "address": "0x001239DE",
+      "old_name": "ACTOR_ANIM_TYPE10_COLLISION_RESPONSE_CONTINUATION",
+      "name": "ACTOR_ANIM_COLLISION_RESPONSE_SPAWN_CONTINUATION",
+      "reason": "Embedded continuation into the shared interaction-response spawn body."
+    },
+    {
+      "address": "0x00124A2E",
+      "old_name": "ACTOR_ANIM_TYPE8B_PRESENTATION_F5",
+      "name": "ACTOR_ANIM_PRESENTATION_RESPONSE_VARIANT_A",
+      "reason": "First exact presentation-response variant, distinguished by response value 0x0000."
+    },
+    {
+      "address": "0x00124A6C",
+      "old_name": "ACTOR_ANIM_TYPE8B_PRESENTATION_F6",
+      "name": "ACTOR_ANIM_PRESENTATION_RESPONSE_VARIANT_B",
+      "reason": "Second exact presentation-response variant, distinguished by response value 0x00FF."
+    },
+    {
+      "address": "0x00124AAA",
+      "old_name": "ACTOR_ANIM_TYPE8B_PRESENTATION_F7",
+      "name": "ACTOR_ANIM_PRESENTATION_RESPONSE_VARIANT_C",
+      "reason": "Third exact presentation-response variant, distinguished by response value 0x0002."
+    },
+    {
+      "address": "0x00124AE0",
+      "old_name": "ACTOR_ANIM_TYPE8B_PRESENTATION_F8",
+      "name": "ACTOR_ANIM_PRESENTATION_RESPONSE_VARIANT_D",
+      "reason": "Fourth exact presentation-response variant, distinguished by response value 0x0003."
+    },
+    {
+      "address": "0x00124B94",
+      "old_name": "ACTOR_ANIM_TYPE50_LEVEL09_RESPONSE_ENTRY",
+      "name": "ACTOR_ANIM_LEVEL09_RESPONSE_ENTRY",
+      "reason": "Embedded Level-09 response entry inside the shared player-collision response body."
+    },
+    {
+      "address": "0x00129152",
+      "old_name": "INTERACTION_TYPE13_PALETTE_SOURCE",
+      "name": "INTERACTION_GUARD_RESPONSE_PALETTE_SOURCE",
+      "reason": "Palette source uploaded by the guard-response interaction spawner."
+    },
+    {
+      "address": "0x001295D2",
+      "old_name": "INTERACTION_TYPE12_PALETTE_SOURCE",
+      "name": "INTERACTION_PRESENTATION_RESPONSE_PALETTE_SOURCE",
+      "reason": "Palette source uploaded by the Type-0x12/0x4D presentation-response handler."
+    }
+  ],
+  "policy": {
+    "legacy_names_preserved_as_aliases": true,
+    "rom_ranges_changed": false,
+    "selector_only_identity_not_invented": true
+  },
+  "confidence": "decompiled",
+  "status": "recorded-semantic-promotion"
+}

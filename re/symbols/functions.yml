@@ -1808,7 +1808,7 @@
   aliases: [ActorType10_ActorCollisionHandler]
   size: 36
   confidence: confirmed
-  description: Advances the receiving Type-0x10 actor through its staged collision response. It clears the source and owned resources, runs Actor_HandleType2DInteraction, decrements the receiver phase while installing ACTOR_ANIM_TYPE10_COLLISION_RESPONSE when active, and on completion adds the response counter, arms SCENE_SCRIPT_COUNTDOWN for selected receiver types, releases linked state, and reinitializes the receiver from the terminal Type-0x84 template.
+  description: Advances the receiving Type-0x10 actor through its staged collision response. It clears the source and owned resources, runs Actor_HandleType2DInteraction, decrements the receiver phase while installing ACTOR_ANIM_COLLISION_RESPONSE_RESTORE when active, and on completion adds the response counter, arms SCENE_SCRIPT_COUNTDOWN for selected receiver types, releases linked state, and reinitializes the receiver from the terminal Type-0x84 template.
   evidence:
     - rom_actor_collision_handler_table_001EBA
     - ghidra_level01_countdown_producer_decompile
@@ -2600,7 +2600,7 @@
   aliases: [ActorType4D_PlayerCollisionHandler]
   size: 88
   confidence: decompiled
-  description: Processes the Type-0x4D paired response. It checks for an existing Type-0x12 actor, installs ACTOR_ANIM_TYPE12_TYPE4D_RESPONSE at 0x001222C2 on that actor, adjusts PLAYER_VX by +/-0x0100 from the actor/player X ordering, then converts the source to a Type-0x84 response with animation 0x00124498 and clears its transient motion words.
+  description: Processes the Type-0x4D paired response. It checks for an existing Type-0x12 actor, installs ACTOR_ANIM_INTERACTION_PAIR_RESPONSE at 0x001222C2 on that actor, adjusts PLAYER_VX by +/-0x0100 from the actor/player X ordering, then converts the source to a Type-0x84 response with animation 0x00124498 and clears its transient motion words.
   evidence:
     - rom_player_collision_handler_table_001CBE
     - ghidra_disassembly_001AF0B8

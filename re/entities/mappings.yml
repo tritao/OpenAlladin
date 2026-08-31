@@ -52,7 +52,7 @@ mappings:
 
   - name: LEVEL09_SPAWN
     scope: event
-    symbol_addresses: [0x001203F2, 0x001B7FA8]
+    symbol_addresses: [0x001203F2, 0x00124B94, 0x001B7FA8]
     technical_types: [0x50]
     confidence: decompiled
     evidence: [level09-type50-template-static-decompilation]
@@ -291,7 +291,7 @@ mappings:
 
   - name: PRESENTATION_RESPONSE_TEMPLATE
     scope: role
-    symbol_addresses: [0x001B7F6C]
+    symbol_addresses: [0x00124A2E, 0x00124A6C, 0x00124AAA, 0x00124AE0, 0x001B7F6C]
     technical_types: [0x8B]
     confidence: decompiled
     evidence: [interaction-presentation-family-static-decompilation]
@@ -345,7 +345,7 @@ mappings:
 
   - name: INTERACTION_PRESENTATION_RESPONSE
     scope: role
-    symbol_addresses: [0x00121710, 0x0012512C, 0x00126074, 0x001B7EA4, 0x001B83B8]
+    symbol_addresses: [0x00121710, 0x001222C2, 0x0012512C, 0x00126074, 0x001295D2, 0x001B7EA4, 0x001B83B8]
     technical_types: [0x12, 0x4D]
     confidence: decompiled
     evidence:
@@ -386,7 +386,7 @@ mappings:
 
   - name: INTERACTION_GUARD_RESPONSE
     scope: role
-    symbol_addresses: [0x00124658, 0x001B7F1C]
+    symbol_addresses: [0x00124658, 0x00129152, 0x001B7F1C]
     technical_types: [0x13]
     confidence: decompiled
     evidence:
@@ -466,7 +466,7 @@ mappings:
 
   - name: INTERACTION_POSITION_VARIANTS
     scope: role
-    symbol_addresses: [0x001B7A1C]
+    symbol_addresses: [0x00122D54, 0x001B7A1C]
     technical_types: [0x55, 0x7B, 0x7C, 0x7D, 0x7E]
     confidence: decompiled
     evidence:
