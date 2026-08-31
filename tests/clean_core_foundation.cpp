@@ -90,5 +90,26 @@ int main() {
     assert(output.find("\"phase_order\":[") != std::string::npos);
     assert(output.find("\"publication_writes\":[") != std::string::npos);
 
+    // VDP_BuildTileRowCommandTables and VDP_WriteTileWord share the ROM's
+    // RAM tables and tile-base publication. The native renderer can consume
+    // the semantic VDP latches/memory without emulating the VDP bus.
+    vdp_build_tile_row_command_tables(core.ram, 0x40);
+    assert(read32(core.ram, 0x00FF8680) == 0x00034000);
+    assert(read32(core.ram, 0x00FF8700) == 0x00034000);
+    assert(read32(core.ram, 0x00FF8780) == 0x00036000);
+    write16(core.ram, kSceneResourceTileBase, 0x2000);
+    const VdpTileWriteResult tile = vdp_write_tile_word(
+        core.ram, core.vdp, 2, 3, 5);
+    assert(tile.table_entry_present);
+    assert(tile.control == 0x40C40003);
+    assert(tile.data == 0xA7C5);
+    assert(tile.vram_address == 0xC0C4);
+    assert(core.vdp.control_latch == tile.control);
+    assert(core.vdp.data_latch == tile.data);
+    assert(core.vdp.vram[0xC0C4] == 0xA7);
+    assert(core.vdp.vram[0xC0C5] == 0xC5);
+    vdp_clear_vram_c000(core.vdp);
+    assert(core.vdp.vram[0xC0C4] == 0);
+
     return 0;
 }

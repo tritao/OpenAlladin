@@ -9,6 +9,7 @@
 #include "core/scene.hpp"
 #include "core/terrain.hpp"
 #include "core/trace.hpp"
+#include "core/vdp.hpp"
 
 namespace openaladdin::core {
 namespace {
@@ -64,6 +65,7 @@ const std::array<FrameService, kFrameServiceCount>& frame_service_table() {
 
 void reset(CoreRuntime& core) {
     core.ram.bytes.fill(0);
+    vdp_reset(core.vdp);
 }
 
 void bind_rom(CoreRuntime& core, RomView rom) {

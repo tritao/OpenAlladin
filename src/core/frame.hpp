@@ -2,6 +2,7 @@
 
 #include "core/ram.hpp"
 #include "core/rom.hpp"
+#include "core/vdp.hpp"
 
 #include <array>
 #include <cstddef>
@@ -16,6 +17,7 @@ struct CoreInput;
 struct CoreRuntime {
     GenesisRam ram{};
     RomView rom{};
+    GenesisVdp vdp{};
 };
 
 struct FrameService {

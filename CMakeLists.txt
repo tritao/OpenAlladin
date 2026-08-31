@@ -152,6 +152,8 @@ add_library(openaladdin_clean_core STATIC
     src/core/terrain.hpp
     src/core/trace.cpp
     src/core/trace.hpp
+    src/core/vdp.cpp
+    src/core/vdp.hpp
     src/core/vm_common.cpp
     src/core/vm_common.hpp
 )
