@@ -206,6 +206,10 @@ void apply_random_spawn_variation(CoreRuntime& core, std::size_t slot) {
 
 }  // namespace
 
+std::uint8_t terrain_scene5_random_step(CoreRuntime& core) {
+    return random_step_low_byte(core);
+}
+
 InteractionDispatch interaction_dispatch(
     const CoreRuntime& core,
     std::uint8_t selector

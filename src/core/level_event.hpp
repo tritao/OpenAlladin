@@ -25,4 +25,12 @@ LevelEventDispatchResult level_event_dispatch_timed_command(
     CoreTrace* trace = nullptr
 );
 
+// Level08_EnterRoutine consumes the separate two-byte command/parameter
+// stream from LEVEL08_EVENT_COMMAND_CURSOR. It shares the ROM command table
+// but supplies the parameter through the event-side byte (D6 in the ROM).
+LevelEventDispatchResult level08_event_dispatch_command(
+    CoreRuntime& core,
+    CoreTrace* trace = nullptr
+);
+
 }  // namespace openaladdin::core

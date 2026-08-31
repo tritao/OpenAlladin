@@ -97,4 +97,8 @@ std::optional<std::size_t> interaction_allocate_preserve_row(
     std::uint8_t selector
 );
 
+// TerrainScene5RandomStep at 0x001B3032. The PRNG state remains in RAM;
+// callers receive the low byte returned by the shared ROM helper.
+std::uint8_t terrain_scene5_random_step(CoreRuntime& core);
+
 }  // namespace openaladdin::core

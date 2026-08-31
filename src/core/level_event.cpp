@@ -1,6 +1,7 @@
 #include "core/level_event.hpp"
 
 #include "core/actor.hpp"
+#include "core/interaction.hpp"
 #include "core/ram.hpp"
 #include "core/rom.hpp"
 #include "core/trace.hpp"
@@ -10,7 +11,6 @@
 namespace openaladdin::core {
 namespace {
 
-constexpr RamAddress kLevelEventDispatchEntry = 0x001B634E;
 constexpr std::size_t kLevelEventCommandDispatchTable = 0x000020C0;
 constexpr std::size_t kLevelEventRecordSize = 6;
 
@@ -137,12 +137,12 @@ std::uint16_t event_relative_y(
 
 void execute_event_handler(
     CoreRuntime& core,
-    const LevelEventDispatchResult& event
+    const LevelEventDispatchResult& event,
+    std::optional<std::uint8_t> event_byte = std::nullopt
 ) {
     const std::uint16_t direct_x = event.arg0;
     const std::uint16_t direct_y = event.arg1;
     const std::uint16_t relative_x = event_relative_x(core.ram);
-    const std::uint16_t relative_y = event_relative_y(core.ram, event.arg1);
 
     switch (event.handler) {
     case kHandlerType05:
@@ -227,32 +227,38 @@ void execute_event_handler(
             0x018E, 0x0164, kAnimationType84C});
         break;
     case kHandlerType3AFromCounter:
-        if (read16(core.ram, kInteractionCounterSecondaryDigits) != 0x3939) {
+        if (event_byte
+            && read16(core.ram, kInteractionCounterSecondaryDigits) != 0x3939) {
             (void)spawn_event_actor(core, EventActorSpec{
                 ActorAllocationPool::CommonForward, kTemplateBaseZero,
-                relative_x, relative_y, kAnimationType3A, 0,
-                0x3A, true, 0, false, 1, true});
+                relative_x, event_relative_y(core.ram, *event_byte),
+                kAnimationType3A, 0,
+                0x3A, true, 0, false, 1, true, 0, false, true});
         }
         break;
     case kHandlerType34:
+        if (!event_byte) break;
         (void)spawn_event_actor(core, EventActorSpec{
             ActorAllocationPool::CommonForward, kTemplateBaseZero,
-            relative_x, relative_y, kAnimationType34, kMovementType34,
-            0x34, true, 6, true, 6, true});
+            relative_x, event_relative_y(core.ram, *event_byte),
+            kAnimationType34, kMovementType34,
+            0x34, true, 6, true, 6, true, 0, false, true});
         break;
     case kHandlerType54Pair:
+        if (!event_byte) break;
         (void)spawn_event_actor(core, EventActorSpec{
             ActorAllocationPool::CommonForward, kTemplateType54,
-            relative_x, relative_y});
+            relative_x, event_relative_y(core.ram, *event_byte)});
         (void)spawn_event_actor(core, EventActorSpec{
             ActorAllocationPool::CommonForward, kTemplateType54,
-            static_cast<std::uint16_t>(relative_x + 0x20U), relative_y});
+            static_cast<std::uint16_t>(relative_x + 0x20U),
+            event_relative_y(core.ram, *event_byte)});
         break;
     case kHandlerType46SceneReady:
-        if (read8(core.ram, kGameDifficultyCounter) != '9') {
+        if (event_byte && read8(core.ram, kGameDifficultyCounter) != '9') {
             (void)spawn_event_actor(core, EventActorSpec{
                 ActorAllocationPool::CommonForward, kTemplateType46,
-                relative_x, relative_y});
+                relative_x, event_relative_y(core.ram, *event_byte)});
         }
         break;
     case kHandlerType84Pair:
@@ -274,16 +280,17 @@ void execute_event_handler(
             0x018E, 0x0164, kAnimationType84B, kMovementType84B});
         break;
     case kHandlerType42:
+        if (!event_byte) break;
         (void)spawn_event_actor(core, EventActorSpec{
             ActorAllocationPool::CommonForward, kTemplateType42,
-            relative_x, relative_y});
+            relative_x, event_relative_y(core.ram, *event_byte)});
+        break;
+    case kHandlerPresentationState:
+        if (event_byte) write8(core.ram, kLevelEventPresentationState, *event_byte);
         break;
     case kHandlerSound5D:
-    case kHandlerPresentationState:
     case kHandlerNoOp:
-        // Audio, the shared D6 presentation byte, and direct RTS entries
-        // are kept as separate boundaries. The timed six-byte path supplies
-        // D1/D2; the D6 byte belongs to the Level-08 two-byte dispatcher.
+        // Audio and direct RTS entries are host/no-op boundaries.
         break;
     default:
         break;
@@ -324,6 +331,40 @@ LevelEventDispatchResult level_event_dispatch_timed_command(
             + static_cast<std::size_t>(table_index) * 4);
 
     execute_event_handler(core, result);
+
+    if (trace != nullptr) {
+        trace->level_event_dispatched = true;
+        trace->level_event_command = result.command;
+        trace->level_event_arg0 = result.arg0;
+        trace->level_event_arg1 = result.arg1;
+        trace->level_event_handler = result.handler;
+    }
+    return result;
+}
+
+LevelEventDispatchResult level08_event_dispatch_command(
+    CoreRuntime& core,
+    CoreTrace* trace
+) {
+    LevelEventDispatchResult result;
+    const RamAddress cursor = read32(core.ram, kLevel08EventCommandCursor);
+
+    // Level08_EnterRoutine owns a separate two-byte stream. It advances the
+    // cursor before entering the shared handler, and the second byte arrives
+    // in D6 rather than in either of the timed dispatcher's payload words.
+    result.dispatched = true;
+    result.command = rom_read8(core.rom, cursor);
+    result.arg1 = rom_read8(core.rom, cursor + 1);
+    write32(core.ram, kLevel08EventCommandCursor, cursor + 2);
+
+    const std::uint8_t table_index = static_cast<std::uint8_t>(
+        result.command + 0x1AU);
+    result.handler = rom_read32(
+        core.rom,
+        kLevelEventCommandDispatchTable
+            + static_cast<std::size_t>(table_index) * 4);
+
+    execute_event_handler(core, result, static_cast<std::uint8_t>(result.arg1));
 
     if (trace != nullptr) {
         trace->level_event_dispatched = true;

@@ -1,5 +1,7 @@
 #include "core/level.hpp"
 
+#include "core/actor.hpp"
+#include "core/interaction.hpp"
 #include "core/level_event.hpp"
 #include "core/ram.hpp"
 #include "core/rom.hpp"
@@ -26,7 +28,11 @@ constexpr RamAddress kLevelCallback01 = 0x001B5B4A;
 constexpr RamAddress kLevelCallback02 = 0x001B5B94;
 constexpr RamAddress kLevelCallback03 = 0x001B5B9A;
 constexpr RamAddress kLevelCallback06 = 0x001B5D3A;
+constexpr RamAddress kLevelCallback08 = 0x001B6066;
 constexpr RamAddress kLevelCallback10 = 0x001B623A;
+
+constexpr RamAddress kLevel08RotatingVdpTable = 0x000029E0;
+constexpr RamAddress kLevel08Type84Template = 0x001B7EE0;
 
 void publish16(
     CoreRuntime& core,
@@ -57,6 +63,103 @@ void publish32(
 void decrement_level_timer(CoreRuntime& core) {
     const std::uint8_t timer = read8(core.ram, kLevelTimer);
     if (timer != 0) write8(core.ram, kLevelTimer, timer - 1);
+}
+
+void level08_emit_rotating_vdp_record(
+    CoreRuntime& core,
+    CoreTrace* trace
+) {
+    const std::uint16_t record_offset = read16(
+        core.ram, kLevel08VdpRecordOffset);
+    const RamAddress record = kLevel08RotatingVdpTable + record_offset;
+    const std::uint32_t control = rom_read32(core.rom, record);
+    const std::uint16_t data = rom_read16(core.rom, record + 4);
+
+    // The native presentation boundary will consume these semantic VDP
+    // packets. The gameplay-visible contract here is the exact rotating RAM
+    // cursor and the trace of the packet selected by the ROM.
+    if (trace != nullptr) {
+        ++trace->level08_vdp_record_count;
+        trace->level08_vdp_last_control = control;
+        trace->level08_vdp_last_data = data;
+    }
+
+    std::uint16_t next = static_cast<std::uint16_t>(record_offset + 6U);
+    if (next >= 0x0060U) next = 0;
+    write16(core.ram, kLevel08VdpRecordOffset, next);
+}
+
+void level08_spawn_random_type84(CoreRuntime& core, std::uint8_t random) {
+    if (random >= 0x46U) return;
+    const auto slot = actor_find_free_slot(
+        core.ram, ActorAllocationPool::CommonForward);
+    if (!slot || !actor_initialize_from_template(
+            core, *slot, kLevel08Type84Template)) {
+        return;
+    }
+
+    const ActorView actor = actor_view(core.ram, *slot);
+    actor_write16(
+        actor,
+        kActorXOffset,
+        static_cast<std::uint16_t>(read16(core.ram, kWorldCameraX) + 0x0140U));
+    actor_write16(
+        actor,
+        kActorYOffset,
+        static_cast<std::uint16_t>((random & 0x0FU) + 0x01C4U));
+}
+
+void invoke_level08_frame_callback(CoreRuntime& core, CoreTrace* trace) {
+    // Level08_EnterRoutine first refreshes slot 1's camera-relative mirror.
+    // Slot zero remains the player; slot one is an ordinary RAM actor record.
+    const ActorView event_actor = actor_view(core.ram, 1);
+    write16(
+        core.ram,
+        kPlayerX,
+        static_cast<std::uint16_t>(
+            actor_read16(event_actor, kActorXOffset)
+            - read16(core.ram, kWorldCameraX)));
+    actor_write16(
+        event_actor,
+        kActorYOffset,
+        read16(core.ram, kPlayerWorldY));
+
+    std::uint16_t low = static_cast<std::uint16_t>(
+        read16(core.ram, kLevel08EventCounterLow) + 1U);
+    if (low >= 0x0136U) {
+        low = 0;
+        write16(
+            core.ram,
+            kLevel08EventCounterHigh,
+            static_cast<std::uint16_t>(
+                read16(core.ram, kLevel08EventCounterHigh) + 1U));
+    }
+    write16(core.ram, kLevel08EventCounterLow, low);
+
+    level08_emit_rotating_vdp_record(core, trace);
+    level08_emit_rotating_vdp_record(core, trace);
+
+    const std::uint8_t frame_phase = read8(core.ram, kFramePhaseCounter);
+    if ((frame_phase & 0x3FU) == 0) {
+        write16(
+            core.ram,
+            kLevel08VdpScrollOffset,
+            static_cast<std::uint16_t>(
+                read16(core.ram, kLevel08VdpScrollOffset) + 1U));
+    }
+
+    std::uint16_t phase = static_cast<std::uint16_t>(
+        read16(core.ram, kLevel08EventPhase)
+        + read16(core.ram, kLevel08EventCounterHigh));
+    if (phase >= 0x00C0U) {
+        phase = static_cast<std::uint16_t>(phase - 0x00C0U);
+        write16(core.ram, kLevel08EventPhase, phase);
+        (void)level08_event_dispatch_command(core, trace);
+        level08_spawn_random_type84(
+            core, terrain_scene5_random_step(core));
+    } else {
+        write16(core.ram, kLevel08EventPhase, phase);
+    }
 }
 
 }  // namespace
@@ -137,6 +240,9 @@ void level_invoke_frame_callback(CoreRuntime& core, CoreTrace* trace) {
     case kLevelCallback06:
         (void)level_event_dispatch_timed_command(core, trace);
         write8(core.ram, kPlayerTerrainBounceAnimationState, 0);
+        break;
+    case kLevelCallback08:
+        invoke_level08_frame_callback(core, trace);
         break;
     case kLevelCallback10:
         if (read8(core.ram, kSceneScriptCountdown) == 0

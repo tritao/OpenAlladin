@@ -38,6 +38,9 @@ struct CoreTrace {
     std::uint16_t level_event_arg0 = 0;
     std::uint16_t level_event_arg1 = 0;
     RamAddress level_event_handler = 0;
+    std::size_t level08_vdp_record_count = 0;
+    std::uint32_t level08_vdp_last_control = 0;
+    std::uint16_t level08_vdp_last_data = 0;
     bool frame_atomic = false;
 };
 

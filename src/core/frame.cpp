@@ -118,6 +118,9 @@ void step_frame(
         trace->level_event_arg0 = 0;
         trace->level_event_arg1 = 0;
         trace->level_event_handler = 0;
+        trace->level08_vdp_record_count = 0;
+        trace->level08_vdp_last_control = 0;
+        trace->level08_vdp_last_data = 0;
         trace_phase(*trace, kFrameEntry);
     }
 

@@ -44,7 +44,7 @@ void write_ram_bytes(std::ostream& output, const GenesisRam& ram) {
         RamAddress address;
         std::uint8_t width;
     };
-    constexpr std::array<RawField, 48> fields = {{
+    constexpr std::array<RawField, 53> fields = {{
         {kPlayerX, 2}, {kPlayerY, 2}, {kWorldCameraX, 2}, {kWorldCameraY, 2},
         {kPlayerWorldX, 2}, {kPlayerWorldY, 2},
         {kCameraReferenceX, 2}, {kCameraReferenceY, 2},
@@ -70,7 +70,9 @@ void write_ram_bytes(std::ostream& output, const GenesisRam& ram) {
         {kInteractionHandlerY, 2}, {kLevelCameraScrollCallback, 4},
         {kLevelFrameCallback, 4},
         {kLevelEventScriptCursor, 4}, {kLevelEventTick, 1},
-        {kLevel08EventCommandCursor, 4},
+        {kLevel08EventCommandCursor, 4}, {kLevel08EventPhase, 2},
+        {kLevel08EventCounterHigh, 2}, {kLevel08EventCounterLow, 2},
+        {kLevel08VdpRecordOffset, 2}, {kLevel08VdpScrollOffset, 2},
     }};
     output << "[";
     for (std::size_t index = 0; index < fields.size(); ++index) {
@@ -159,6 +161,9 @@ void trace_begin(
     trace.level_event_arg0 = 0;
     trace.level_event_arg1 = 0;
     trace.level_event_handler = 0;
+    trace.level08_vdp_record_count = 0;
+    trace.level08_vdp_last_control = 0;
+    trace.level08_vdp_last_data = 0;
     trace.frame_atomic = false;
     output << "{\"type\":\"header\",\"format\":\"openaladdin-core-trace-v1\""
            << ",\"state_boundary\":\"game-loop\""
@@ -255,6 +260,14 @@ void trace_state(
            << ",\"event_arg0\":" << trace.level_event_arg0
            << ",\"event_arg1\":" << trace.level_event_arg1
            << ",\"event_handler\":" << trace.level_event_handler
+           << ",\"level08_event_phase\":" << read16(ram, kLevel08EventPhase)
+           << ",\"level08_event_counter_high\":" << read16(ram, kLevel08EventCounterHigh)
+           << ",\"level08_event_counter_low\":" << read16(ram, kLevel08EventCounterLow)
+           << ",\"level08_vdp_record_offset\":" << read16(ram, kLevel08VdpRecordOffset)
+           << ",\"level08_vdp_scroll_offset\":" << read16(ram, kLevel08VdpScrollOffset)
+           << ",\"level08_vdp_record_count\":" << trace.level08_vdp_record_count
+           << ",\"level08_vdp_last_control\":" << trace.level08_vdp_last_control
+           << ",\"level08_vdp_last_data\":" << trace.level08_vdp_last_data
            << "}"
            << ",\"scene\":{\"state\":" << static_cast<unsigned>(read8(ram, kSceneState))
            << ",\"script_cursor\":" << read32(ram, kSceneScriptCursor)

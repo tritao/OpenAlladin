@@ -148,5 +148,48 @@ int main() {
     level_invoke_frame_callback(core, &event_trace);
     assert(read32(core.ram, kLevelEventScriptCursor) == stream + 6);
 
+    // Level 08 owns a separate command/parameter stream and a rotating VDP
+    // record cursor. Its callback also republishes the camera-relative slot
+    // one record before folding the phase and dispatching one event.
+    write_rom32(rom, 0x20C0 + 0x0D * 4, 0x001B5B32);
+    write_rom32(rom, 0x29E0 + 0x54, 0x008B0200);
+    write_rom16(rom, 0x29E0 + 0x58, 0x0011);
+    write_rom32(rom, 0x29E0 + 0x5A, 0x008B0400);
+    write_rom16(rom, 0x29E0 + 0x5E, 0x0022);
+    rom[0x0200] = 0xF3;
+    rom[0x0201] = 0x5A;
+    write32(core.ram, kLevelFrameCallback, 0x001B6066);
+    write16(core.ram, kWorldCameraX, 0x0100);
+    write16(core.ram, kPlayerWorldY, 0x0300);
+    actor_write16(actor_view(core.ram, 1), kActorXOffset, 0x0500);
+    write16(core.ram, kLevel08EventPhase, 0x00BF);
+    write16(core.ram, kLevel08EventCounterHigh, 1);
+    write16(core.ram, kLevel08EventCounterLow, 0x0135);
+    write16(core.ram, kLevel08VdpRecordOffset, 0x0054);
+    write16(core.ram, kLevel08VdpScrollOffset, 0x0140);
+    write32(core.ram, kLevel08EventCommandCursor, 0x0200);
+    write32(core.ram, kGlobalPrngState, 29);
+    write8(core.ram, kFramePhaseCounter, 0);
+    CoreTrace level08_trace;
+    level_invoke_frame_callback(core, &level08_trace);
+    assert(level08_trace.frame_callback == 0x001B6066);
+    assert(level08_trace.level_event_dispatched);
+    assert(level08_trace.level_event_command == 0xF3);
+    assert(level08_trace.level_event_arg1 == 0x5A);
+    assert(level08_trace.level_event_handler == 0x001B5B32);
+    assert(read16(core.ram, kPlayerX) == 0x0400);
+    assert(actor_read16(actor_view(core.ram, 1), kActorYOffset) == 0x0300);
+    assert(read16(core.ram, kLevel08EventCounterHigh) == 2);
+    assert(read16(core.ram, kLevel08EventCounterLow) == 0);
+    assert(read16(core.ram, kLevel08EventPhase) == 1);
+    assert(read16(core.ram, kLevel08VdpRecordOffset) == 0);
+    assert(read16(core.ram, kLevel08VdpScrollOffset) == 0x0141);
+    assert(read32(core.ram, kLevel08EventCommandCursor) == 0x0202);
+    assert(read8(core.ram, kLevelEventPresentationState) == 0x5A);
+    assert(level08_trace.level08_vdp_record_count == 2);
+    assert(level08_trace.level08_vdp_last_control == 0x008B0400);
+    assert(level08_trace.level08_vdp_last_data == 0x0022);
+    assert(read32(core.ram, kGlobalPrngState) == 384);
+
     return 0;
 }
