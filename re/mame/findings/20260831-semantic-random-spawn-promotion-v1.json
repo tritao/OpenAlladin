@@ -1,0 +1,20 @@
+{
+  "status": "recorded-semantic-promotion",
+  "scope": "random-spawn-variation-role",
+  "promotions": [
+    "ACTOR_ANIM_RANDOM_SPAWN_VARIANT",
+    "ACTOR_TEMPLATE_RANDOM_SPAWN_VARIANT"
+  ],
+  "evidence": [
+    "type89_animation_static_decompilation",
+    "actor_template_type89_random_variant",
+    "actor_spawn_variation_targets"
+  ],
+  "policy": {
+    "old_numeric_names_retained_as_aliases": true,
+    "technical_type_ids_retained": true,
+    "byte_ranges_changed": false,
+    "deasm_ownership_changed": false,
+    "semantic_scope": "provisional_role"
+  }
+}

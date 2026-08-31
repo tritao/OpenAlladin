@@ -336,6 +336,24 @@ def test_player_collision_names_promote_roles_and_preserve_aliases():
     assert mappings["PLAYER_COLLISION_CHILD_SPAWN"].scope == "role"
 
 
+def test_random_spawn_variant_names_promote_role_and_preserve_aliases():
+    symbols = SymbolStore()
+    expected = {
+        0x001241F8: ("ACTOR_ANIM_RANDOM_SPAWN_VARIANT", "ACTOR_ANIM_TYPE89_RANDOM_VARIANT"),
+        0x001B7DA0: ("ACTOR_TEMPLATE_RANDOM_SPAWN_VARIANT", "ACTOR_TEMPLATE_TYPE_89_RANDOM_VARIANT"),
+    }
+    for address, (name, alias) in expected.items():
+        symbol = symbols.at(address, include_ranges=False)
+        assert symbol is not None
+        assert symbol.name == name
+        assert alias in symbol.aliases
+
+    mapping = next(mapping for mapping in load_entity_mappings() if mapping.name == "RANDOM_SPAWN_VARIANT")
+    assert validate_entity_mappings(load_entity_mappings()) == []
+    assert mapping.scope == "role"
+    assert set(expected) == set(mapping.symbol_addresses)
+
+
 def test_terminal_transition_and_level_object_names_promote_roles_and_preserve_aliases():
     symbols = SymbolStore()
     expected = {

@@ -5292,17 +5292,18 @@
   name: ACTOR_ANIM_LEVEL_EXIT_TERMINAL_ALTERNATE
   size: 48
   confidence: decompiled
-  description: Alternate terminal-transition animation selected by Level_ExitAndTerminalTransition at 0x001AFA76. Its exact 48-byte region publishes ACTOR_MOVE_TYPE84_RANDOM_VARIANT_B at 0x001209F8 to the actor movement field through the Type-0x84 conversion path, calls the terminal actor-event callback at 0x001ACE30, and loops from 0x001241F2 to 0x001241EA before ACTOR_ANIM_TYPE89_RANDOM_VARIANT.
+  description: Alternate terminal-transition animation selected by Level_ExitAndTerminalTransition at 0x001AFA76. Its exact 48-byte region publishes ACTOR_MOVE_TYPE84_RANDOM_VARIANT_B at 0x001209F8 to the actor movement field through the Type-0x84 conversion path, calls the terminal actor-event callback at 0x001ACE30, and loops from 0x001241F2 to 0x001241EA before ACTOR_ANIM_RANDOM_SPAWN_VARIANT.
   evidence:
     - level_exit_terminal_transition_decompile
     - type8d-type76-terminal-animation_static_decompilation
     - animation_stream_decoder
 
 0x001241F8:
-  name: ACTOR_ANIM_TYPE89_RANDOM_VARIANT
+  name: ACTOR_ANIM_RANDOM_SPAWN_VARIANT
+  aliases: [ACTOR_ANIM_TYPE89_RANDOM_VARIANT]
   size: 46
   confidence: decompiled
-  description: Type-0x89 random-variant animation selected by ACTOR_TEMPLATE_TYPE_89_RANDOM_VARIANT. Its packed 46-byte region starts at 0x001241F8, provides the alternate entry at 0x001241FC used by Actor_ApplyRandomSpawnVariation, cycles the 0x16AE/0x16B2/0x16B6/0x16BA frame groups with clear commands, and loops from 0x00124220 to 0x00124208.
+  description: Random-spawn-variant animation selected by ACTOR_TEMPLATE_RANDOM_SPAWN_VARIANT. Its packed 46-byte region starts at 0x001241F8, provides the alternate entry at 0x001241FC used by Actor_ApplyRandomSpawnVariation, cycles the 0x16AE/0x16B2/0x16B6/0x16BA frame groups with clear commands, and loops from 0x00124220 to 0x00124208.
   evidence:
     - type89_animation_static_decompilation
     - actor_template_type89_random_variant
@@ -8412,11 +8413,12 @@
     - actor_template_grid_xrefs
 
 0x001B7DA0:
-  name: ACTOR_TEMPLATE_TYPE_89_RANDOM_VARIANT
+  name: ACTOR_TEMPLATE_RANDOM_SPAWN_VARIANT
+  aliases: [ACTOR_TEMPLATE_TYPE_89_RANDOM_VARIANT]
   type: actor_template
   size: 20
   confidence: decompiled
-  description: Type-0x89 source template loaded by the two random-variant spawn branches at 0x001B67CC and 0x001B67E6; it has no movement stream, uses ACTOR_ANIM_TYPE89_RANDOM_VARIANT at 0x001241F8, and owns two resources before Actor_ApplyRandomSpawnVariation optionally switches to its embedded entry at 0x001241FC and applies the branch-specific variation.
+  description: Source template loaded by the two random-variant spawn branches at 0x001B67CC and 0x001B67E6; it has no movement stream, uses ACTOR_ANIM_RANDOM_SPAWN_VARIANT at 0x001241F8, and owns two resources before Actor_ApplyRandomSpawnVariation optionally switches to its embedded entry at 0x001241FC and applies the branch-specific variation.
   evidence:
     - ghidra_level_actor_spawn_block
     - actor_template_grid_xrefs

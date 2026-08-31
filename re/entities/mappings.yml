@@ -400,3 +400,14 @@ mappings:
       - type3e_3f_player_collision_response_static_v1
       - player_collision_response_entry_family_static_decompilation
     description: Player-collision MovementVM/AnimationVM paths that spawn staged collision-response children.
+
+  - name: RANDOM_SPAWN_VARIANT
+    scope: role
+    symbol_addresses: [0x001241F8, 0x001B7DA0]
+    technical_types: [0x89]
+    confidence: decompiled
+    evidence:
+      - type89_animation_static_decompilation
+      - actor_template_type89_random_variant
+      - actor_spawn_variation_targets
+    description: PRNG-selected actor spawn-variation template and animation family.
