@@ -2045,6 +2045,13 @@ def test_camera_scroll_callbacks_have_stable_profile_identities():
         assert legacy in symbol.aliases
 
 
+def test_actor_type84_collision_transition_has_stable_identity():
+    symbol = SymbolStore().at(0x001AC0D2, include_ranges=False)
+    assert symbol is not None
+    assert symbol.name == "Actor_EnterType84CollisionResponse"
+    assert "Actor_EnterType84Animation12319C" in symbol.aliases
+
+
 def test_analysis_database_function_references_use_sparse_ranges(tmp_path):
     database_root = tmp_path / "full-rom"
     _write_database(database_root)

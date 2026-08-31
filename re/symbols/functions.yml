@@ -1722,17 +1722,20 @@
     - ghidra_disassembly_001A9502
     - mame_player_state_trace
 0x001AC0D2:
-  name: Actor_EnterType84Animation12319C
+  name: Actor_EnterType84CollisionResponse
+  aliases:
+    - Actor_EnterType84Animation12319C
   confidence: confirmed
-  description: Shared actor transition block that clears the current type, releases owned resources, performs the common actor cleanup, then installs type 0x84 with animation stream 0x0012319C and clears the animation timer.
+  description: Shared actor collision-response transition block that clears the current type, releases owned resources, performs the common actor cleanup, then installs type 0x84 with ACTOR_ANIM_TYPE84_COLLISION_RESPONSE and clears the animation timer.
   evidence:
     - ghidra_disassembly_001AC0D2
     - ghidra_decompile_actor_combat_targets
+    - actor_type84_collision_transition_identity_promotion_static_v1
 0x001ABFFA:
   name: ActorType23_SpawnCollisionResponsePair
   size: 68
   confidence: decompiled
-  description: Type-0x23 collision-response helper called with the source actor in A2. It converts that source to type 0x84 with animation 0x0012319C, allocates a zero-template companion at the source position and promotes it to type 0x3B with animation 0x00122BD8, then allocates and initializes a second actor from ACTOR_TEMPLATE_COLLISION_TYPE_84 and copies the source X/Y coordinates.
+  description: Type-0x23 collision-response helper called with the source actor in A2. It converts that source through Actor_EnterType84CollisionResponse, allocates a zero-template companion at the source position and promotes it to type 0x3B with animation 0x00122BD8, then allocates and initializes a second actor from ACTOR_TEMPLATE_COLLISION_TYPE_84 and copies the source X/Y coordinates.
   evidence:
     - ghidra_disassembly_001ABFFA
     - ghidra_disassembly_001AEECA

@@ -1,0 +1,35 @@
+{
+  "format": "openaladdin-semantic-promotion-target-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "focus": {
+    "name": "actor-type84-collision-transition-identity",
+    "purpose": "Replace the animation-address-bearing shared actor transition name with its exact collision-response role."
+  },
+  "targets": [
+    {
+      "address": "0x001AC0D2",
+      "name": "Actor_EnterType84CollisionResponse",
+      "legacy_name": "Actor_EnterType84Animation12319C",
+      "range": "0x001AC0D2-0x001AC0ED",
+      "size": 28,
+      "installed_type": "0x84",
+      "installed_animation": "ACTOR_ANIM_TYPE84_COLLISION_RESPONSE",
+      "cleanup": ["clear current type", "release owned resources", "common actor cleanup", "clear animation timer"],
+      "callers": [
+        "ActorCollision_SpawnType40CompanionFromType24",
+        "ActorCollision_SpawnType40CompanionFromType25",
+        "ActorCollision_EnterType84Response",
+        "ActorCollision_SpawnType46CompanionFromType27",
+        "ActorCollision_SpawnType84CompanionFromType28"
+      ]
+    }
+  ],
+  "evidence": [
+    "exact shared transition body",
+    "five direct actor-collision callers",
+    "canonical ACTOR_ANIM_TYPE84_COLLISION_RESPONSE identity",
+    "common cleanup and type-0x84 installation contract"
+  ],
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6",
+  "ghidra_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365"
+}

@@ -1,0 +1,23 @@
+{
+  "format": "openaladdin-recorded-semantic-promotion-v1",
+  "recorded_at": "2026-08-31",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "target_manifest": "re/ghidra/targets/actor-type84-collision-transition-identity-semantic-targets.json",
+  "promoted_symbols": ["Actor_EnterType84CollisionResponse"],
+  "legacy_aliases": ["Actor_EnterType84Animation12319C"],
+  "contracts": [
+    "0x001AC0D2 is the shared five-caller actor-collision transition block for the Type-24/25/27/28 companion paths and the direct Type-0x84 response entry.",
+    "The block releases the current actor's resources and common state, installs type 0x84 with ACTOR_ANIM_TYPE84_COLLISION_RESPONSE, and clears the animation timer.",
+    "ActorType23_SpawnCollisionResponsePair also uses this transition before allocating its companion actors."
+  ],
+  "limitations": [
+    "The promoted name identifies the transition role, while the precise user-facing effect of the installed collision-response animation remains defined by the animation stream and its callers.",
+    "The legacy animation-address name remains an alias for historical findings and downstream references."
+  ],
+  "conclusion": "The shared actor-collision Type-0x84 transition now has a stable collision-response identity instead of an animation-address-bearing name.",
+  "confidence": "confirmed",
+  "status": "recorded-semantic-promotion"
+}
