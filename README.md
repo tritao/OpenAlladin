@@ -52,6 +52,15 @@ with `genie ghidra function`, `callers`, `callees`, `writers`, `readers`,
 query combines callers, callees, RAM references, xrefs, nearby layout objects,
 runtime coverage, and known symbols referenced by one address.
 
+Use `vm-writers` to inventory exact AnimationVM commands that write a global
+RAM address. It scans only ranges already classified as animation streams, so
+it is a fast offline aid for closing RAM producer contracts:
+
+```bash
+genie ghidra vm-writers 0x00FFF101
+genie ghidra vm-writers 0x00FFF0DA --json
+```
+
 Decompile one function on demand. The first request uses the disposable Ghidra
 project; later requests reuse the cached pseudocode:
 

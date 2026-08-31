@@ -70,6 +70,19 @@ def build_parser() -> argparse.ArgumentParser:
     add_analysis_query("writers", "show writes to an address", command_ghidra_writers)
     add_analysis_query("readers", "show reads from an address", command_ghidra_readers)
     add_analysis_query("xrefs", "show references to an address", command_ghidra_xrefs)
+    vm_writers = ghidra_commands.add_parser(
+        "vm-writers",
+        help="show encoded AnimationVM writes to a global RAM address",
+    )
+    vm_writers.add_argument("address", type=lambda value: int(value, 0))
+    add_rom_argument(vm_writers)
+    vm_writers.add_argument(
+        "--layout",
+        type=Path,
+        default=ROOT / "build/re/full-rom/layout.json",
+    )
+    vm_writers.add_argument("--json", action="store_true", dest="json_output")
+    vm_writers.set_defaults(function=command_ghidra_vm_writers)
     decompile = ghidra_commands.add_parser(
         "decompile",
         help="decompile and cache one function or the semantic review queue",

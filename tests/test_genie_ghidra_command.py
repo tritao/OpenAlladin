@@ -15,6 +15,7 @@ def test_ghidra_subcommands_dispatch_to_ghidra_command_module():
     rebuild = build_parser().parse_args(["ghidra", "rebuild", "--rom", "rom.bin", "--no-analysis"])
     scan = build_parser().parse_args(["ghidra", "scan", "--rom", "rom.bin", "--allow-unverified"])
     validate_db = build_parser().parse_args(["ghidra", "validate-db", "--json"])
+    vm_writers = build_parser().parse_args(["ghidra", "vm-writers", "0x00FFF101", "--json"])
     layout = build_parser().parse_args(["layout", "show", "0x1234", "--json"])
     layout_candidates = build_parser().parse_args(
         ["layout", "candidates", "--limit", "3", "--json", "--strong-only"]
@@ -43,6 +44,9 @@ def test_ghidra_subcommands_dispatch_to_ghidra_command_module():
     assert scan.function is ghidra.command_ghidra_scan
     assert scan.allow_unverified is True
     assert validate_db.function is ghidra.command_ghidra_validate_db
+    assert vm_writers.function is ghidra.command_ghidra_vm_writers
+    assert vm_writers.address == 0x00FFF101
+    assert vm_writers.json_output is True
     assert validate_db.json_output is True
     assert layout.address == 0x1234
     assert layout_candidates.limit == 3
