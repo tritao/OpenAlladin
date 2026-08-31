@@ -1,0 +1,42 @@
+{
+  "format": "openaladdin-semantic-promotion-target-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "focus": {
+    "name": "actor-collision-type23-pair-semantic",
+    "purpose": "Promote the Type-0x23 collision-response pair builder and its zero-template/source-position helper to stable actor-collision identities."
+  },
+  "targets": [
+    {
+      "address": "0x001ABFFA",
+      "name": "ActorCollision_SpawnType23ResponsePair",
+      "legacy_name": "ActorType23_SpawnCollisionResponsePair",
+      "range": ["0x001ABFFA", "0x001AC03D"],
+      "caller": "0x001AEECA PlayerCollision_ActivateType23ResponsePair",
+      "contract": "Convert the source actor to Type-0x84, create a Type-0x3B zero-template companion at the source position when a slot is available, then initialize a second Type-0x84 collision-template actor from the source coordinates."
+    },
+    {
+      "address": "0x001AC0BA",
+      "name": "ActorCollision_SpawnZeroTemplateAtSourcePosition",
+      "legacy_name": "Actor_SpawnZeroTemplateAtSourcePosition",
+      "range": ["0x001AC0BA", "0x001AC0D1"],
+      "caller": "0x001ABFFA ActorCollision_SpawnType23ResponsePair",
+      "contract": "Initialize the destination from ACTOR_TEMPLATE_BASE_ZERO and copy source actor offsets +0x02/+0x04 into the destination position fields."
+    }
+  ],
+  "contracts": [
+    "The Type-0x23 response pair is entered only through the existing player-collision activation path when PLAYER_ACTION_RESPONSE_FIELD is nonzero.",
+    "The pair builder retains the exact Type-0x84 source conversion, Type-0x3B companion animation, second Type-0x84 collision template, source-position copy, and free-slot failure behavior.",
+    "The helper has a separate non-overlapping function boundary and owns only the zero-template initialization and source-position copy."
+  ],
+  "evidence": [
+    "player-collision-response-helper-targets",
+    "player-collision-response-helper-static-v1",
+    "player-response-cleanup-family-semantic-targets",
+    "Exact function boundaries and established Type-0x23 collision contracts"
+  ],
+  "limitations": [
+    "The names identify the collision-response allocation roles, not the user-facing interaction that triggers them.",
+    "The pair's dynamic actor lifetime after allocation remains governed by the existing collision and AnimationVM services."
+  ],
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+}

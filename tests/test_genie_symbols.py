@@ -692,6 +692,20 @@ def test_collision_cluster_promotions_have_semantic_names_and_legacy_aliases():
         assert legacy in symbol.aliases
 
 
+def test_type23_actor_collision_pair_helpers_have_semantic_names_and_aliases():
+    expected = {
+        0x001ABFFA: ("ActorCollision_SpawnType23ResponsePair", "ActorType23_SpawnCollisionResponsePair"),
+        0x001AC0BA: ("ActorCollision_SpawnZeroTemplateAtSourcePosition", "Actor_SpawnZeroTemplateAtSourcePosition"),
+    }
+    symbols = SymbolStore()
+    for address, (name, alias) in expected.items():
+        symbol = symbols.at(address, include_ranges=False)
+        assert symbol is not None
+        assert symbol.name == name
+        assert alias in symbol.aliases
+        assert symbol.confidence == "decompiled"
+
+
 def test_actor_collision_response_cluster_has_behavior_names_and_legacy_aliases():
     expected = {
         0x001AC1D0: ("ActorCollision_ProcessType13Response", "ActorType13_ActorCollisionHandler"),
