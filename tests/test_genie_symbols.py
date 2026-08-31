@@ -254,6 +254,8 @@ def test_shared_interaction_names_promote_roles_and_preserve_numeric_aliases():
         0x00122C12: ("ACTOR_ANIM_INTERACTION_SHARED", "ACTOR_ANIM_TYPE40_INTERACTION"),
         0x00123E36: ("ACTOR_ANIM_INTERACTION_CHILD_SPAWN", "ACTOR_ANIM_TYPE84_RUNTIME47_4C"),
         0x00123FE4: ("ACTOR_ANIM_INTERACTION_TERMINAL_RESPONSE", "ACTOR_ANIM_TYPE2B_INTERACTION"),
+        0x001B7B0C: ("ACTOR_TEMPLATE_INTERACTION_TERMINAL_RESPONSE", "ACTOR_TEMPLATE_TYPE_2B_INTERACTION"),
+        0x001B7B20: ("ACTOR_TEMPLATE_INTERACTION_TERMINAL_RESPONSE_CHILD", "ACTOR_TEMPLATE_TYPE_84_TYPE2B_CHILD"),
         0x0012585C: ("ACTOR_ANIM_LEVEL_ENTRY_SHARED", "ACTOR_ANIM_TYPE84_LEVEL_ENTRY_SHARED"),
         0x001B7904: ("ACTOR_TEMPLATE_INTERACTION_SHARED_BASE", "ACTOR_TEMPLATE_TYPE_6E_73_BASE"),
         0x001B7A1C: ("ACTOR_TEMPLATE_INTERACTION_POSITION_VARIANTS", "ACTOR_TEMPLATE_TYPE_55_INTERACTION_7B_7E"),
@@ -279,6 +281,7 @@ def test_shared_interaction_names_promote_roles_and_preserve_numeric_aliases():
         "INTERACTION_POSITION_VARIANTS",
     } <= mapping_names
     mappings_by_name = {mapping.name: mapping for mapping in mappings}
+    assert {0x00123FE4, 0x001B7B0C, 0x001B7B20} <= set(mappings_by_name["INTERACTION_TERMINAL_RESPONSE"].symbol_addresses)
     assert all(
         mappings_by_name[name].scope == "role"
         for name in (

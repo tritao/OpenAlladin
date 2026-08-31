@@ -436,8 +436,8 @@ mappings:
 
   - name: INTERACTION_TERMINAL_RESPONSE
     scope: role
-    symbol_addresses: [0x00123FE4]
-    technical_types: [0x2B]
+    symbol_addresses: [0x00123FE4, 0x001B7B0C, 0x001B7B20]
+    technical_types: [0x2B, 0x84]
     confidence: decompiled
     evidence:
       - type2b_animation_static_decompilation

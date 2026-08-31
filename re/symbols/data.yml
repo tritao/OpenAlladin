@@ -4990,7 +4990,7 @@
   aliases: [ACTOR_ANIM_TYPE2B_INTERACTION]
   size: 80
   confidence: decompiled
-  description: Type-0x2B interaction animation selected by the backward-slot consumer. Its packed 80-byte region performs the initial child spawn for template 0x001B7B20, clears actor state, presents the 0x1772-0x1782 sequence, destroys or clears the actor, then cycles the 0x0F02-0x0F1E terminal sequence before looping.
+  description: Type-0x2B terminal interaction animation selected by the backward-slot consumer. Its packed 80-byte region performs the initial child spawn for ACTOR_TEMPLATE_INTERACTION_TERMINAL_RESPONSE_CHILD at 0x001B7B20, clears actor state, presents the 0x1772-0x1782 sequence, destroys or clears the actor, then cycles the 0x0F02-0x0F1E terminal sequence before looping.
   evidence:
     - type2b_animation_static_decompilation
     - actor_template_type2b_interaction
@@ -7889,11 +7889,12 @@
     - ghidra_actor_template_initializer_001AE30A
 
 0x001B7B20:
-  name: ACTOR_TEMPLATE_TYPE_84_TYPE2B_CHILD
+  name: ACTOR_TEMPLATE_INTERACTION_TERMINAL_RESPONSE_CHILD
+  aliases: [ACTOR_TEMPLATE_TYPE_84_TYPE2B_CHILD]
   type: actor_template
   size: 20
   confidence: decompiled
-  description: Type-0x84 child template supplied by the F5 record in ACTOR_ANIM_INTERACTION_TERMINAL_RESPONSE. It has no movement stream or template word, animation root 0x0012400E, and one owned resource; the parent interaction stream performs the child spawn before clearing and cycling its own response state.
+  description: Terminal-interaction child template supplied by the F5 record in ACTOR_ANIM_INTERACTION_TERMINAL_RESPONSE. It has no movement stream or template word, animation root 0x0012400E, and one owned resource; the parent interaction stream performs the child spawn before clearing and cycling its own response state.
   evidence:
     - type2b-animation-static-targets
     - type2b-animation-static-decompilation
@@ -8593,11 +8594,12 @@
     - actor_template_grid_xrefs
 
 0x001B7B0C:
-  name: ACTOR_TEMPLATE_TYPE_2B_INTERACTION
+  name: ACTOR_TEMPLATE_INTERACTION_TERMINAL_RESPONSE
+  aliases: [ACTOR_TEMPLATE_TYPE_2B_INTERACTION]
   type: actor_template
   size: 20
   confidence: decompiled
-  description: Type-0x2B interaction template loaded by the backward-slot spawn entry at 0x001B688A; it has no movement stream, uses animation stream ACTOR_ANIM_INTERACTION_TERMINAL_RESPONSE, and owns seven resources.
+  description: Terminal-interaction template loaded by the backward-slot spawn entry at 0x001B688A; it has no movement stream, uses animation stream ACTOR_ANIM_INTERACTION_TERMINAL_RESPONSE, and owns seven resources.
   evidence:
     - ghidra_interaction_dispatch_block
     - actor_template_grid_xrefs

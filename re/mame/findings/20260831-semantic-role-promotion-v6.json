@@ -1,0 +1,31 @@
+{
+  "finding": "semantic-role-promotion-v6",
+  "status": "confirmed",
+  "scope": "Type-2B terminal interaction family",
+  "evidence": [
+    "type2b_animation_static_decompilation",
+    "actor_template_type2b_interaction",
+    "animation-f5-child-template-family-static-v1",
+    "ghidra_interaction_dispatch_block"
+  ],
+  "promotions": [
+    {
+      "address": "0x00123FE4",
+      "name": "ACTOR_ANIM_INTERACTION_TERMINAL_RESPONSE",
+      "technical_alias": "ACTOR_ANIM_TYPE2B_INTERACTION",
+      "reason": "Terminal interaction animation that spawns the child template, clears the source actor, and cycles the terminal response sequence."
+    },
+    {
+      "address": "0x001B7B0C",
+      "name": "ACTOR_TEMPLATE_INTERACTION_TERMINAL_RESPONSE",
+      "technical_alias": "ACTOR_TEMPLATE_TYPE_2B_INTERACTION",
+      "reason": "Backward-slot terminal interaction template directly selects the promoted terminal response animation."
+    },
+    {
+      "address": "0x001B7B20",
+      "name": "ACTOR_TEMPLATE_INTERACTION_TERMINAL_RESPONSE_CHILD",
+      "technical_alias": "ACTOR_TEMPLATE_TYPE_84_TYPE2B_CHILD",
+      "reason": "F5-spawned child template owned by the terminal response animation, with one resource and animation root 0x0012400E."
+    }
+  ]
+}

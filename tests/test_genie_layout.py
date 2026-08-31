@@ -4919,6 +4919,20 @@ def test_interaction_anchor_forward_spawn_is_exact():
     )
 
 
+def test_terminal_interaction_templates_preserve_semantic_roles_and_aliases():
+    symbols = SymbolStore()
+    expected = {
+        0x001B7B0C: ("ACTOR_TEMPLATE_INTERACTION_TERMINAL_RESPONSE", "ACTOR_TEMPLATE_TYPE_2B_INTERACTION"),
+        0x001B7B20: ("ACTOR_TEMPLATE_INTERACTION_TERMINAL_RESPONSE_CHILD", "ACTOR_TEMPLATE_TYPE_84_TYPE2B_CHILD"),
+    }
+    for address, (name, alias) in expected.items():
+        symbol = symbols.at(address, include_ranges=False)
+        assert symbol is not None
+        assert symbol.name == name
+        assert alias in symbol.aliases
+        assert symbol.metadata["type"] == "actor_template"
+
+
 def test_interaction_spawn_and_player_gate_entrypoints_have_semantic_names():
     symbols = SymbolStore()
     expected = {
