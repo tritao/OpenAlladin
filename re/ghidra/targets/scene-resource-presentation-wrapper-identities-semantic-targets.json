@@ -1,0 +1,137 @@
+{
+  "format": "openaladdin-semantic-promotion-target-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "focus": {
+    "name": "scene-resource-presentation-wrapper-identities",
+    "purpose": "Replace source-address-bearing scene presentation wrapper names with stable state, resource, stream, and parameter identities."
+  },
+  "targets": [
+    {
+      "address": "0x001B49DA",
+      "name": "SceneResource_LoadSharedC000AndPrepareFrame",
+      "legacy_name": "SceneResource_LoadC000ResourceAndPrepareFrame",
+      "range": "0x001B49DA-0x001B4A01",
+      "size": 40,
+      "resource": "SCENE_SHARED_C000_GRAPHICS",
+      "destination": "0x00C000",
+      "palettes": ["SCENE_RESOURCE_PALETTE_BAND0_FOR_SHARED_C000_GRAPHICS", "SCENE_RESOURCE_PALETTE_BAND1_FOR_SHARED_STATE01_C000_GRAPHICS"],
+      "callers": [
+        "SceneResource_RunState03Presentation",
+        "SceneResource_RunState00Presentation",
+        "SceneResource_RunState05PrimaryPresentation",
+        "SceneResource_RunState05SecondaryPresentation"
+      ]
+    },
+    {
+      "address": "0x001B4BB8",
+      "name": "SceneResource_RunState01PrimaryPresentation",
+      "legacy_name": "SceneResource_Run12E34AStream1270A8",
+      "range": "0x001B4BB8-0x001B4BDB",
+      "size": 36,
+      "scene_state": "0x01",
+      "branch": "primary",
+      "resource": "SCENE_STATE01_C000_GRAPHICS_PRIMARY",
+      "stream": "SCENE_RESOURCE_PRESENTATION_STREAM_STATE_01_PRIMARY",
+      "parameters": [21, 8]
+    },
+    {
+      "address": "0x001B4BDC",
+      "name": "SceneResource_RunState01SecondaryPresentation",
+      "legacy_name": "SceneResource_Run12E176Stream127134",
+      "range": "0x001B4BDC-0x001B4C01",
+      "size": 38,
+      "scene_state": "0x01",
+      "branch": "secondary",
+      "resource": "SCENE_STATE01_C000_GRAPHICS_SECONDARY",
+      "stream": "SCENE_RESOURCE_PRESENTATION_STREAM_STATE_01_SECONDARY",
+      "parameters": [2, 10]
+    },
+    {
+      "address": "0x001B4C02",
+      "name": "SceneResource_RunState03Presentation",
+      "legacy_name": "SceneResource_Run12DD76Stream127207",
+      "range": "0x001B4C02-0x001B4C27",
+      "size": 38,
+      "scene_state": "0x03",
+      "resource": "SCENE_SHARED_C000_GRAPHICS",
+      "stream": "SCENE_RESOURCE_PRESENTATION_STREAM_STATE_03",
+      "parameters": [17, 5]
+    },
+    {
+      "address": "0x001B4C28",
+      "name": "SceneResource_RunState00Presentation",
+      "legacy_name": "SceneResource_Run12DD76Stream127338",
+      "range": "0x001B4C28-0x001B4C4D",
+      "size": 38,
+      "scene_state": "0x00",
+      "resource": "SCENE_SHARED_C000_GRAPHICS",
+      "stream": "SCENE_RESOURCE_PRESENTATION_STREAM_STATE_00",
+      "parameters": [19, 5]
+    },
+    {
+      "address": "0x001B4C4E",
+      "name": "SceneResource_RunState04Presentation",
+      "legacy_name": "SceneResource_Run12DA04Stream1273E9",
+      "range": "0x001B4C4E-0x001B4C73",
+      "size": 38,
+      "scene_state": "0x04",
+      "resource": "SCENE_STATE04_C000_GRAPHICS",
+      "stream": "SCENE_RESOURCE_PRESENTATION_STREAM_STATE_04",
+      "parameters": [19, 3]
+    },
+    {
+      "address": "0x001B4C74",
+      "name": "SceneResource_RunState05PrimaryPresentation",
+      "legacy_name": "SceneResource_Run12DD76Stream127571",
+      "range": "0x001B4C74-0x001B4C99",
+      "size": 38,
+      "scene_state": "0x05",
+      "branch": "primary",
+      "resource": "SCENE_SHARED_C000_GRAPHICS",
+      "stream": "SCENE_RESOURCE_PRESENTATION_STREAM_STATE_05_PRIMARY",
+      "parameters": [18, 8]
+    },
+    {
+      "address": "0x001B4C9A",
+      "name": "SceneResource_RunState05SecondaryPresentation",
+      "legacy_name": "SceneResource_Run12DD76Stream1275EE",
+      "range": "0x001B4C9A-0x001B4CBF",
+      "size": 38,
+      "scene_state": "0x05",
+      "branch": "secondary",
+      "resource": "SCENE_SHARED_C000_GRAPHICS",
+      "stream": "SCENE_RESOURCE_PRESENTATION_STREAM_STATE_05_SECONDARY",
+      "parameters": [17, 7]
+    },
+    {
+      "address": "0x001B4CC0",
+      "name": "SceneResource_RunState07Presentation",
+      "legacy_name": "SceneResource_Run12D870Stream12772D",
+      "range": "0x001B4CC0-0x001B4CE5",
+      "size": 38,
+      "scene_state": "0x07",
+      "resource": "SCENE_STATE07_C000_GRAPHICS",
+      "stream": "SCENE_RESOURCE_PRESENTATION_STREAM_STATE_07",
+      "parameters": [21, 10]
+    },
+    {
+      "address": "0x001B4DD2",
+      "name": "SceneResource_RunState0BPresentation",
+      "legacy_name": "SceneResource_Run12DF6CStream12792B",
+      "range": "0x001B4DD2-0x001B4DF7",
+      "size": 38,
+      "scene_state": "0x0B",
+      "resource": "SCENE_STATE0B_C000_GRAPHICS",
+      "stream": "SCENE_RESOURCE_PRESENTATION_STREAM_STATE_0B",
+      "parameters": [18, 7]
+    }
+  ],
+  "evidence": [
+    "exact wrapper instruction bodies",
+    "canonical scene-state resources and command streams",
+    "direct SceneResource_Dispatch and wrapper call graph",
+    "fixed interpreter parameter pairs"
+  ],
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6",
+  "ghidra_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365"
+}

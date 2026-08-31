@@ -1990,6 +1990,30 @@ def test_scene_resource_c000_loaders_have_stable_state_identities():
         assert legacy in symbol.aliases
 
 
+def test_scene_resource_presentation_wrappers_have_stable_state_identities():
+    expected = {
+        0x001B4BB8: ("SceneResource_RunState01PrimaryPresentation", "SceneResource_Run12E34AStream1270A8"),
+        0x001B4BDC: ("SceneResource_RunState01SecondaryPresentation", "SceneResource_Run12E176Stream127134"),
+        0x001B4C02: ("SceneResource_RunState03Presentation", "SceneResource_Run12DD76Stream127207"),
+        0x001B4C28: ("SceneResource_RunState00Presentation", "SceneResource_Run12DD76Stream127338"),
+        0x001B4C4E: ("SceneResource_RunState04Presentation", "SceneResource_Run12DA04Stream1273E9"),
+        0x001B4C74: ("SceneResource_RunState05PrimaryPresentation", "SceneResource_Run12DD76Stream127571"),
+        0x001B4C9A: ("SceneResource_RunState05SecondaryPresentation", "SceneResource_Run12DD76Stream1275EE"),
+        0x001B4CC0: ("SceneResource_RunState07Presentation", "SceneResource_Run12D870Stream12772D"),
+        0x001B4DD2: ("SceneResource_RunState0BPresentation", "SceneResource_Run12DF6CStream12792B"),
+    }
+    for address, (name, legacy) in expected.items():
+        symbol = SymbolStore().at(address, include_ranges=False)
+        assert symbol is not None
+        assert symbol.name == name
+        assert legacy in symbol.aliases
+
+    shared = SymbolStore().at(0x001B49DA, include_ranges=False)
+    assert shared is not None
+    assert shared.name == "SceneResource_LoadSharedC000AndPrepareFrame"
+    assert "SceneResource_LoadC000ResourceAndPrepareFrame" in shared.aliases
+
+
 def test_analysis_database_function_references_use_sparse_ranges(tmp_path):
     database_root = tmp_path / "full-rom"
     _write_database(database_root)

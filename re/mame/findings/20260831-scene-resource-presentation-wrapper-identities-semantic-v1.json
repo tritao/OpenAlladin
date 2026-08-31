@@ -1,0 +1,46 @@
+{
+  "format": "openaladdin-recorded-semantic-promotion-v1",
+  "recorded_at": "2026-08-31",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "target_manifest": "re/ghidra/targets/scene-resource-presentation-wrapper-identities-semantic-targets.json",
+  "promoted_symbols": [
+    "SceneResource_LoadSharedC000AndPrepareFrame",
+    "SceneResource_RunState01PrimaryPresentation",
+    "SceneResource_RunState01SecondaryPresentation",
+    "SceneResource_RunState03Presentation",
+    "SceneResource_RunState00Presentation",
+    "SceneResource_RunState04Presentation",
+    "SceneResource_RunState05PrimaryPresentation",
+    "SceneResource_RunState05SecondaryPresentation",
+    "SceneResource_RunState07Presentation",
+    "SceneResource_RunState0BPresentation"
+  ],
+  "legacy_aliases": [
+    "SceneResource_LoadC000ResourceAndPrepareFrame",
+    "SceneResource_Run12E34AStream1270A8",
+    "SceneResource_Run12E176Stream127134",
+    "SceneResource_Run12DD76Stream127207",
+    "SceneResource_Run12DD76Stream127338",
+    "SceneResource_Run12DA04Stream1273E9",
+    "SceneResource_Run12DD76Stream127571",
+    "SceneResource_Run12DD76Stream1275EE",
+    "SceneResource_Run12D870Stream12772D",
+    "SceneResource_Run12DF6CStream12792B"
+  ],
+  "contracts": [
+    "SceneResource_LoadSharedC000AndPrepareFrame loads SCENE_SHARED_C000_GRAPHICS to C000 and prepares its shared palette frame for four direct presentation wrappers.",
+    "The state-01 primary and secondary wrappers select the corresponding C000 graphics and presentation streams with fixed interpreter parameter pairs.",
+    "The state-00, state-03, state-05 primary/secondary, state-07, and state-0B wrappers select the canonical shared/state-specific C000 resource and state presentation stream recorded in the ROM dispatcher."
+  ],
+  "limitations": [
+    "These names identify exact wrapper state/resource/stream contracts; they do not claim that every presentation state has been reached by a natural runtime route.",
+    "Blank-frame wrapper families remain separately named because their shared blank resource and stream roles are distinct.",
+    "The legacy source-address names remain aliases for historical findings and downstream references."
+  ],
+  "conclusion": "Nine scene presentation wrappers and their shared C000 loader now have stable state and resource identities while preserving exact stream parameters and legacy aliases.",
+  "confidence": "decompiled",
+  "status": "recorded-semantic-promotion"
+}
