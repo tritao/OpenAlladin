@@ -1,0 +1,26 @@
+{
+  "status": "recorded-semantic-promotion",
+  "scope": "interaction-response-and-presentation-identities",
+  "promotions": [
+    "ACTOR_ANIM_INTERACTION_RESPONSE_SPAWN",
+    "ACTOR_TEMPLATE_INTERACTION_RESPONSE_SPAWN",
+    "ACTOR_ANIM_INTERACTION_PRESENTATION_RESPONSE",
+    "ACTOR_TEMPLATE_INTERACTION_PRESENTATION_RESPONSE",
+    "ACTOR_MOVE_INTERACTION_PRESENTATION_CHILD",
+    "ACTOR_ANIM_INTERACTION_PRESENTATION_CHILD",
+    "ACTOR_TEMPLATE_INTERACTION_PRESENTATION_CHILD"
+  ],
+  "evidence": [
+    "type10-animation-static-decompilation",
+    "actor-template-type10-interaction-response",
+    "actor-template-type84-type4d-child-family-static-decompilation",
+    "interaction-spawn-type12-presentation-static-decompilation"
+  ],
+  "policy": {
+    "old_numeric_names_retained_as_aliases": true,
+    "technical_type_ids_retained": true,
+    "byte_ranges_changed": false,
+    "deasm_ownership_changed": false,
+    "semantic_scope": "provisional_role"
+  }
+}

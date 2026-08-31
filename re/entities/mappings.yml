@@ -219,6 +219,26 @@ mappings:
       - actor_collision_handler_family_static_decompilation
     description: Shared interaction-response animation used by the Type-0x3A/0x3B producer family.
 
+  - name: INTERACTION_RESPONSE_SPAWN
+    scope: role
+    symbol_addresses: [0x001239CA, 0x001B7B84]
+    technical_types: [0x10]
+    confidence: decompiled
+    evidence:
+      - type10-animation-static-decompilation
+      - actor-template-type10-interaction-response
+    description: Interaction-response animation/template whose response path conditionally spawns a child actor.
+
+  - name: INTERACTION_PRESENTATION_RESPONSE
+    scope: role
+    symbol_addresses: [0x00121710, 0x0012512C, 0x00126074, 0x001B7EA4, 0x001B83B8]
+    technical_types: [0x12, 0x4D]
+    confidence: decompiled
+    evidence:
+      - actor-template-type84-type4d-child-family-static-decompilation
+      - interaction-spawn-type12-presentation-static-decompilation
+    description: Interaction-presentation response animation, child movement, and child template family.
+
   - name: INTERACTION_GUARD_RESPONSE
     scope: role
     symbol_addresses: [0x00124658, 0x001B7F1C]

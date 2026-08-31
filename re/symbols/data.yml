@@ -3573,7 +3573,7 @@
   type: movement_stream
   size: 10
   confidence: decompiled
-  description: Shared ten-byte Type-0x13 interaction-response movement tail targeted by the conditional branches in ACTOR_MOVE_TYPE13_INTERACTION_RESPONSE. Its five signed delta pairs restore the Type-0x13 response presentation before the independently owned ACTOR_MOVE_TYPE4D_TYPE12_RESPONSE_CHILD root at 0x00121710.
+  description: Shared ten-byte Type-0x13 interaction-response movement tail targeted by the conditional branches in ACTOR_MOVE_TYPE13_INTERACTION_RESPONSE. Its five signed delta pairs restore the Type-0x13 response presentation before the independently owned ACTOR_MOVE_INTERACTION_PRESENTATION_CHILD root at 0x00121710.
   evidence:
     - type13_interaction_movement_static_decompilation
     - movement_stream_decoder
@@ -3601,11 +3601,12 @@
     - movement_stream_decoder
 
 0x00121710:
-  name: ACTOR_MOVE_TYPE4D_TYPE12_RESPONSE_CHILD
+  name: ACTOR_MOVE_INTERACTION_PRESENTATION_CHILD
+  aliases: [ACTOR_MOVE_TYPE4D_TYPE12_RESPONSE_CHILD]
   type: movement_stream
   size: 12
   confidence: decompiled
-  description: Type-0x4D response-child movement loop supplied by ACTOR_TEMPLATE_TYPE_4D_TYPE12_RESPONSE_CHILD at 0x001B83B8. Its exact 12-byte body applies the signed sprite/position offset (+1, -16) and loops from 0x00121716 back to the root.
+  description: Presentation-child movement loop supplied by ACTOR_TEMPLATE_INTERACTION_PRESENTATION_CHILD at 0x001B83B8. Its exact 12-byte body applies the signed sprite/position offset (+1, -16) and loops from 0x00121716 back to the root.
   evidence:
     - actor_template_type84_type4d_child_family_static_decompilation
     - movement_stream_decoder
@@ -4307,10 +4308,10 @@
 
 0x001239DE:
   name: ACTOR_ANIM_TYPE10_COLLISION_RESPONSE_CONTINUATION
-  alias_of: ACTOR_ANIM_TYPE10_INTERACTION_RESPONSE
+  alias_of: ACTOR_ANIM_INTERACTION_RESPONSE_SPAWN
   entry_offset: 20
   confidence: decompiled
-  description: Embedded Type-0x10 collision-response continuation entered by ACTOR_ANIM_TYPE10_COLLISION_RESPONSE after its temporary type-0x84 presentation. It aliases the existing Type-0x10 interaction-response owner and does not claim a second ROM ownership range.
+  description: Embedded collision-response continuation entered by ACTOR_ANIM_TYPE10_COLLISION_RESPONSE after its temporary type-0x84 presentation. It aliases ACTOR_ANIM_INTERACTION_RESPONSE_SPAWN and does not claim a second ROM ownership range.
   evidence:
     - type10_collision_response_animation_static_decompilation
     - animation_stream_decoder
@@ -4389,10 +4390,11 @@
     - animation_stream_decoder
 
 0x001239CA:
-  name: ACTOR_ANIM_TYPE10_INTERACTION_RESPONSE
+  name: ACTOR_ANIM_INTERACTION_RESPONSE_SPAWN
+  aliases: [ACTOR_ANIM_TYPE10_INTERACTION_RESPONSE]
   size: 158
   confidence: decompiled
-  description: Type-0x10 interaction-response animation selected by the direct reverse-slot spawn path. Its packed 158-byte region presents the 0x1912 lead-in and 0x18F6-0x1932 response frames, reloads timer 0x31, conditionally spawns the template at 0x001B7BFC, and loops through the local response branch at 0x00123A26.
+  description: Interaction-response animation selected by ACTOR_TEMPLATE_INTERACTION_RESPONSE_SPAWN through the direct reverse-slot spawn path. Its packed 158-byte region presents the 0x1912 lead-in and 0x18F6-0x1932 response frames, reloads timer 0x31, conditionally spawns the template at 0x001B7BFC, and loops through the local response branch at 0x00123A26.
   evidence:
     - type10_animation_static_decompilation
     - actor_template_type10_interaction_response
@@ -6811,10 +6813,11 @@
     - animation_stream_decoder
 
 0x0012512C:
-  name: ACTOR_ANIM_TYPE12_INTERACTION_RESPONSE
+  name: ACTOR_ANIM_INTERACTION_PRESENTATION_RESPONSE
+  aliases: [ACTOR_ANIM_TYPE12_INTERACTION_RESPONSE]
   size: 122
   confidence: decompiled
-  description: Type-0x12 interaction-response animation installed by ACTOR_TEMPLATE_TYPE_12_INTERACTION_RESPONSE. Its packed 122-byte region presents the repeated 0x1536-0x1552 response sequence, spawns the Type-0x4D child template at 0x001B83B8 with payload-specific placement words, and loops through the local random response branches.
+  description: Interaction-presentation response animation installed by ACTOR_TEMPLATE_INTERACTION_PRESENTATION_RESPONSE. Its packed 122-byte region presents the repeated 0x1536-0x1552 response sequence, spawns the presentation child template at 0x001B83B8 with payload-specific placement words, and loops through the local random response branches.
   evidence:
     - actor_template_type84_type4d_child_family_static_decompilation
     - animation_stream_decoder
@@ -7411,10 +7414,11 @@
     - animation_stream_decoder
 
 0x00126074:
-  name: ACTOR_ANIM_TYPE4D_INTERACTION_RESPONSE_CHILD
+  name: ACTOR_ANIM_INTERACTION_PRESENTATION_CHILD
+  aliases: [ACTOR_ANIM_TYPE4D_INTERACTION_RESPONSE_CHILD]
   size: 42
   confidence: decompiled
-  description: Type-0x4D interaction-response child animation selected by ACTOR_TEMPLATE_TYPE_4D_TYPE12_RESPONSE_CHILD at 0x001B83B8. It presents the 0x0F7A/0x0F7E/0x0F82 response frames, plays sound 0x68, clears its facing flag, and loops at 0x00126078.
+  description: Interaction-presentation child animation selected by ACTOR_TEMPLATE_INTERACTION_PRESENTATION_CHILD at 0x001B83B8. It presents the 0x0F7A/0x0F7E/0x0F82 response frames, plays sound 0x68, clears its facing flag, and loops at 0x00126078.
   evidence:
     - actor_template_type84_type4d_child_family_static_decompilation
     - animation_stream_decoder
@@ -7690,7 +7694,7 @@
   type: actor_template
   size: 20
   confidence: decompiled
-  description: Type-0x2F child template supplied by the first F5 branch in ACTOR_ANIM_TYPE10_INTERACTION_RESPONSE. It carries template bytes 0x01000000, movement stream 0x00120ACC, template word 0x6000, animation root 0x00123A68, four owned resources, and trailing flags 0x0200.
+  description: Type-0x2F child template supplied by the first F5 branch in ACTOR_ANIM_INTERACTION_RESPONSE_SPAWN. It carries template bytes 0x01000000, movement stream 0x00120ACC, template word 0x6000, animation root 0x00123A68, four owned resources, and trailing flags 0x0200.
   evidence:
     - type10-animation-static-targets
     - type10-animation-static-decompilation
@@ -8234,11 +8238,12 @@
     - actor_template_grid_xrefs
 
 0x001B7EA4:
-  name: ACTOR_TEMPLATE_TYPE_12_INTERACTION_RESPONSE
+  name: ACTOR_TEMPLATE_INTERACTION_PRESENTATION_RESPONSE
+  aliases: [ACTOR_TEMPLATE_TYPE_12_INTERACTION_RESPONSE]
   type: actor_template
   size: 20
   confidence: decompiled
-  description: Type-0x12 interaction-response template selected by InteractionSpawn_Type12WithPresentation_4D at 0x001B6CCE; it has no movement stream, uses animation stream 0x0012512C, carries template word 0x4000, and owns fourteen resources.
+  description: Interaction-presentation response template selected by InteractionSpawn_Type12WithPresentation_4D at 0x001B6CCE; it has no movement stream, uses ACTOR_ANIM_INTERACTION_PRESENTATION_RESPONSE at 0x0012512C, carries template word 0x4000, and owns fourteen resources.
   evidence:
     - interaction_spawn_type12-presentation-targets
     - interaction_spawn_type12-presentation-static-decompilation
@@ -8277,11 +8282,12 @@
     - actor_template_grid_xrefs
 
 0x001B7B84:
-  name: ACTOR_TEMPLATE_TYPE_10_INTERACTION_RESPONSE
+  name: ACTOR_TEMPLATE_INTERACTION_RESPONSE_SPAWN
+  aliases: [ACTOR_TEMPLATE_TYPE_10_INTERACTION_RESPONSE]
   type: actor_template
   size: 20
   confidence: decompiled
-  description: Type-0x10 interaction-response template loaded by the direct reverse-slot spawn entry at 0x001B6C5A; the entry queues the actor's interaction audio when VDP updates are enabled, and the record has no movement stream, animation stream ACTOR_ANIM_TYPE10_INTERACTION_RESPONSE, and twelve resources.
+  description: Interaction-response template loaded by the direct reverse-slot spawn entry at 0x001B6C5A; the entry queues the actor's interaction audio when VDP updates are enabled, and the record has no movement stream, animation stream ACTOR_ANIM_INTERACTION_RESPONSE_SPAWN, and twelve resources.
   evidence:
     - ghidra_interaction_dispatch_block
     - actor_template_grid_xrefs
@@ -8850,11 +8856,12 @@
     - ghidra_actor_template_initializer_001AE30A
 
 0x001B83B8:
-  name: ACTOR_TEMPLATE_TYPE_4D_TYPE12_RESPONSE_CHILD
+  name: ACTOR_TEMPLATE_INTERACTION_PRESENTATION_CHILD
+  aliases: [ACTOR_TEMPLATE_TYPE_4D_TYPE12_RESPONSE_CHILD]
   type: actor_template
   size: 20
   confidence: decompiled
-  description: Type-0x4D interaction-response child template supplied by the three F5 commands at 0x0012514C, 0x00125162, and 0x0012517C inside ACTOR_ANIM_TYPE12_INTERACTION_RESPONSE. It uses movement stream 0x00121710, template word 0x6000, animation entry 0x00126074, owns one resource, and carries no trailing flags; the three producer payloads select the response placement words.
+  description: Interaction-presentation child template supplied by the three F5 commands at 0x0012514C, 0x00125162, and 0x0012517C inside ACTOR_ANIM_INTERACTION_PRESENTATION_RESPONSE. It uses ACTOR_MOVE_INTERACTION_PRESENTATION_CHILD at 0x00121710, template word 0x6000, animation entry ACTOR_ANIM_INTERACTION_PRESENTATION_CHILD at 0x00126074, owns one resource, and carries no trailing flags; the three producer payloads select the response placement words.
   evidence:
     - actor_template_type84_type4d_child_family_static_decompilation
     - ghidra_actor_template_initializer_001AE30A

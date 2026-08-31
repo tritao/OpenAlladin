@@ -1114,7 +1114,7 @@ def test_type10_collision_response_animation_is_exact():
     continuation = symbols.at(0x001239DE, include_ranges=False)
     assert continuation is not None
     assert continuation.name == "ACTOR_ANIM_TYPE10_COLLISION_RESPONSE_CONTINUATION"
-    assert continuation.metadata["alias_of"] == "ACTOR_ANIM_TYPE10_INTERACTION_RESPONSE"
+    assert continuation.metadata["alias_of"] == "ACTOR_ANIM_INTERACTION_RESPONSE_SPAWN"
     assert continuation.metadata["entry_offset"] == 20
 
 
@@ -1950,7 +1950,7 @@ def test_menu_presentation_child_movement_prefixes_are_exact():
 def test_type4d_type7b_response_child_movement_streams_are_exact():
     symbols = SymbolStore()
     expected = {
-        0x00121710: (0x0012171B, 12, "ACTOR_MOVE_TYPE4D_TYPE12_RESPONSE_CHILD"),
+        0x00121710: (0x0012171B, 12, "ACTOR_MOVE_INTERACTION_PRESENTATION_CHILD"),
         0x0012171C: (0x001217A1, 134, "ACTOR_MOVE_TYPE7B_RESPONSE_CHILD"),
     }
     for address, (end, size, name) in expected.items():

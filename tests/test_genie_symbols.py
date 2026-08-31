@@ -471,6 +471,28 @@ def test_interaction_response_family_promotes_semantic_roles_and_preserves_alias
     assert {"INTERACTION_GUARD_RESPONSE", "INTERACTION_WALL_RESPONSE", "PRESENTATION_CHILD"} <= mappings.keys()
 
 
+def test_interaction_spawn_and_presentation_response_names_preserve_aliases():
+    symbols = SymbolStore()
+    expected = {
+        0x00121710: ("ACTOR_MOVE_INTERACTION_PRESENTATION_CHILD", "ACTOR_MOVE_TYPE4D_TYPE12_RESPONSE_CHILD"),
+        0x001239CA: ("ACTOR_ANIM_INTERACTION_RESPONSE_SPAWN", "ACTOR_ANIM_TYPE10_INTERACTION_RESPONSE"),
+        0x0012512C: ("ACTOR_ANIM_INTERACTION_PRESENTATION_RESPONSE", "ACTOR_ANIM_TYPE12_INTERACTION_RESPONSE"),
+        0x00126074: ("ACTOR_ANIM_INTERACTION_PRESENTATION_CHILD", "ACTOR_ANIM_TYPE4D_INTERACTION_RESPONSE_CHILD"),
+        0x001B7B84: ("ACTOR_TEMPLATE_INTERACTION_RESPONSE_SPAWN", "ACTOR_TEMPLATE_TYPE_10_INTERACTION_RESPONSE"),
+        0x001B7EA4: ("ACTOR_TEMPLATE_INTERACTION_PRESENTATION_RESPONSE", "ACTOR_TEMPLATE_TYPE_12_INTERACTION_RESPONSE"),
+        0x001B83B8: ("ACTOR_TEMPLATE_INTERACTION_PRESENTATION_CHILD", "ACTOR_TEMPLATE_TYPE_4D_TYPE12_RESPONSE_CHILD"),
+    }
+    for address, (name, alias) in expected.items():
+        symbol = symbols.at(address, include_ranges=False)
+        assert symbol is not None
+        assert symbol.name == name
+        assert alias in symbol.aliases
+
+    mappings = {mapping.name: mapping for mapping in load_entity_mappings()}
+    assert validate_entity_mappings(mappings.values()) == []
+    assert {"INTERACTION_RESPONSE_SPAWN", "INTERACTION_PRESENTATION_RESPONSE"} <= mappings.keys()
+
+
 def test_actor_template_roles_promote_numeric_names_with_aliases():
     symbols = SymbolStore()
     expected = {
