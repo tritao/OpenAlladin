@@ -3343,28 +3343,31 @@
     - actor_collision_handler_family_extended_static_decompilation
 
 0x001EFA:
-  name: ACTOR_COLLISION_HANDLER_TYPE_10
+  name: ACTOR_COLLISION_HANDLER_STAGED_TERMINAL_RESPONSE
+  aliases: [ACTOR_COLLISION_HANDLER_TYPE_10]
   type: rom_pointer
   confidence: confirmed
-  description: Actor-collision dispatch pointer for receiving actor type 0x10; its big-endian ROM value is 0x001AC2BC, whose terminal branch arms SCENE_SCRIPT_COUNTDOWN=0x20.
+  description: Actor-collision dispatch pointer for the staged terminal-response path; its technical receiving actor-type selector is 0x10 and its big-endian ROM value is 0x001AC2BC, whose terminal branch arms SCENE_SCRIPT_COUNTDOWN=0x20.
   evidence:
     - rom_handler_table_decode
     - ghidra_level01_countdown_producer_decompile
 
 0x001EFE:
-  name: ACTOR_COLLISION_HANDLER_TYPE_11
+  name: ACTOR_COLLISION_HANDLER_WALL_TERMINAL_RESPONSE
+  aliases: [ACTOR_COLLISION_HANDLER_TYPE_11]
   type: rom_pointer
   confidence: confirmed
-  description: Actor-collision dispatch pointer for receiving actor type 0x11; its big-endian ROM value is 0x001AC4E8, whose timed cleanup branch arms SCENE_SCRIPT_COUNTDOWN=0x14.
+  description: Actor-collision dispatch pointer for the wall terminal-response path; its technical receiving actor-type selector is 0x11 and its big-endian ROM value is 0x001AC4E8, whose timed cleanup branch arms SCENE_SCRIPT_COUNTDOWN=0x14.
   evidence:
     - rom_handler_table_decode
     - ghidra_level01_countdown_producer_decompile
 
 0x001F06:
-  name: ACTOR_COLLISION_HANDLER_TYPE_13
+  name: ACTOR_COLLISION_HANDLER_INTERACTION_RESPONSE
+  aliases: [ACTOR_COLLISION_HANDLER_TYPE_13]
   type: rom_pointer
   confidence: confirmed
-  description: Actor-collision dispatch pointer for receiving actor type 0x13; its big-endian ROM value is 0x001AC1D0, whose recovered body has no direct scene-countdown assignment.
+  description: Actor-collision dispatch pointer for the interaction-response path; its technical receiving actor-type selector is 0x13 and its big-endian ROM value is 0x001AC1D0, whose recovered body has no direct scene-countdown assignment.
   evidence:
     - rom_handler_table_decode
     - ghidra_level01_countdown_producer_decompile
@@ -3378,46 +3381,51 @@
     - actor_template_guard_sword_child
 
 0x001EBE:
-  name: ACTOR_COLLISION_HANDLER_TYPE_01
+  name: ACTOR_COLLISION_HANDLER_NOOP
+  aliases: [ACTOR_COLLISION_HANDLER_TYPE_01]
   type: rom_pointer
   confidence: decompiled
-  description: Actor-collision dispatch pointer for receiving actor type 0x01; its big-endian ROM value is 0x001ABF9A, an empty RTS handler.
+  description: Actor-collision dispatch pointer for the empty/no-op path; its technical receiving actor-type selector is 0x01 and its big-endian ROM value is 0x001ABF9A.
   evidence:
     - rom_handler_table_decode
     - actor_collision_dispatch_family_extended_static_decompilation
 
 0x001EC2:
-  name: ACTOR_COLLISION_HANDLER_TYPE_02
+  name: ACTOR_COLLISION_HANDLER_CLEAR_SOURCE_AND_HANDLE
+  aliases: [ACTOR_COLLISION_HANDLER_TYPE_02]
   type: rom_pointer
   confidence: decompiled
-  description: Actor-collision dispatch pointer for receiving actor type 0x02; its big-endian ROM value is 0x001ABF8E, shared with actor types 0x08 and 0x09.
+  description: Actor-collision dispatch pointer for the clear-source-and-handle path; its technical receiving actor-type selector is 0x02 and its big-endian ROM value is 0x001ABF8E. The same handler is shared with selectors 0x08 and 0x09.
   evidence:
     - rom_handler_table_decode
     - actor_collision_dispatch_family_extended_static_decompilation
 
 0x001EC6:
-  name: ACTOR_COLLISION_HANDLER_TYPE_03
+  name: ACTOR_COLLISION_HANDLER_TERMINAL_RESPONSE_SETUP
+  aliases: [ACTOR_COLLISION_HANDLER_TYPE_03]
   type: rom_pointer
   confidence: decompiled
-  description: Actor-collision dispatch pointer for receiving actor type 0x03; its big-endian ROM value is 0x001AC0EE.
+  description: Actor-collision dispatch pointer for terminal-response setup; its technical receiving actor-type selector is 0x03 and its big-endian ROM value is 0x001AC0EE.
   evidence:
     - rom_handler_table_decode
     - actor_collision_dispatch_family_extended_static_decompilation
 
 0x001ECA:
-  name: ACTOR_COLLISION_HANDLER_TYPE_04
+  name: ACTOR_COLLISION_HANDLER_DEATH_RESPONSE
+  aliases: [ACTOR_COLLISION_HANDLER_TYPE_04]
   type: rom_pointer
   confidence: decompiled
-  description: Actor-collision dispatch pointer for receiving actor type 0x04; its big-endian ROM value is 0x001AC102.
+  description: Actor-collision dispatch pointer for the death-response path; its technical receiving actor-type selector is 0x04 and its big-endian ROM value is 0x001AC102.
   evidence:
     - rom_handler_table_decode
     - actor_collision_dispatch_family_extended_static_decompilation
 
 0x001ECE:
-  name: ACTOR_COLLISION_HANDLER_TYPE_05
+  name: ACTOR_COLLISION_HANDLER_INTERACTION_MOVEMENT_RESPONSE
+  aliases: [ACTOR_COLLISION_HANDLER_TYPE_05]
   type: rom_pointer
   confidence: decompiled
-  description: Actor-collision dispatch pointer for receiving actor type 0x05; its big-endian ROM value is 0x001AC1B4.
+  description: Actor-collision dispatch pointer for the interaction movement-response path; its technical receiving actor-type selector is 0x05 and its big-endian ROM value is 0x001AC1B4.
   evidence:
     - rom_handler_table_decode
     - actor_collision_dispatch_family_extended_static_decompilation
@@ -3459,100 +3467,111 @@
     - actor_collision_dispatch_family_extended_static_decompilation
 
 0x001F22:
-  name: ACTOR_COLLISION_HANDLER_TYPE_1A
+  name: ACTOR_COLLISION_HANDLER_FACING_ALIGNED_INTERACTION
+  aliases: [ACTOR_COLLISION_HANDLER_TYPE_1A]
   type: rom_pointer
   confidence: decompiled
-  description: Actor-collision dispatch pointer for receiving actor type 0x1A; its big-endian ROM value is 0x001AC408.
+  description: Actor-collision dispatch pointer for the facing-aligned interaction path; its technical receiving actor-type selector is 0x1A and its big-endian ROM value is 0x001AC408.
   evidence:
     - rom_handler_table_decode
     - actor_collision_dispatch_family_extended_static_decompilation
 
 0x001F26:
-  name: ACTOR_COLLISION_HANDLER_TYPE_1B
+  name: ACTOR_COLLISION_HANDLER_TERRAIN_INTERACTION_LATCH_A
+  aliases: [ACTOR_COLLISION_HANDLER_TYPE_1B]
   type: rom_pointer
   confidence: decompiled
-  description: Actor-collision dispatch pointer for receiving actor type 0x1B; its big-endian ROM value is 0x001AC432.
+  description: Actor-collision dispatch pointer for the first terrain-interaction latch path; its technical receiving actor-type selector is 0x1B and its big-endian ROM value is 0x001AC432.
   evidence:
     - rom_handler_table_decode
     - actor_collision_dispatch_family_extended_static_decompilation
 
 0x001F2A:
-  name: ACTOR_COLLISION_HANDLER_TYPE_1C
+  name: ACTOR_COLLISION_HANDLER_TERRAIN_INTERACTION_LATCH_B
+  aliases: [ACTOR_COLLISION_HANDLER_TYPE_1C]
   type: rom_pointer
   confidence: decompiled
-  description: Actor-collision dispatch pointer for receiving actor type 0x1C; its big-endian ROM value is 0x001AC444.
+  description: Actor-collision dispatch pointer for the second terrain-interaction latch path; its technical receiving actor-type selector is 0x1C and its big-endian ROM value is 0x001AC444.
   evidence:
     - rom_handler_table_decode
     - actor_collision_dispatch_family_extended_static_decompilation
 
 0x001F36:
-  name: ACTOR_COLLISION_HANDLER_TYPE_1F
+  name: ACTOR_COLLISION_HANDLER_UPPER_RESPONSE_PRIMARY
+  aliases: [ACTOR_COLLISION_HANDLER_TYPE_1F]
   type: rom_pointer
   confidence: decompiled
-  description: Actor-collision dispatch pointer for receiving actor type 0x1F; its big-endian ROM value is 0x001AC2E0.
+  description: Actor-collision dispatch pointer for the primary upper-response animation path; its technical receiving actor-type selector is 0x1F and its big-endian ROM value is 0x001AC2E0.
   evidence:
     - rom_handler_table_decode
     - actor_collision_dispatch_family_extended_static_decompilation
 
 0x001F42:
-  name: ACTOR_COLLISION_HANDLER_TYPE_22
+  name: ACTOR_COLLISION_HANDLER_UPPER_RESPONSE_SECONDARY
+  aliases: [ACTOR_COLLISION_HANDLER_TYPE_22]
   type: rom_pointer
   confidence: decompiled
-  description: Actor-collision dispatch pointer for receiving actor type 0x22; its big-endian ROM value is 0x001AC2FC.
+  description: Actor-collision dispatch pointer for the secondary upper-response animation path; its technical receiving actor-type selector is 0x22 and its big-endian ROM value is 0x001AC2FC.
   evidence:
     - rom_handler_table_decode
     - actor_collision_dispatch_family_extended_static_decompilation
 
 0x001F46:
-  name: ACTOR_COLLISION_HANDLER_TYPE_23
+  name: ACTOR_COLLISION_HANDLER_SPAWN_RESPONSE_PAIR
+  aliases: [ACTOR_COLLISION_HANDLER_TYPE_23]
   type: rom_pointer
   confidence: decompiled
-  description: Actor-collision dispatch pointer for receiving actor type 0x23; its big-endian ROM value is 0x001ABFF0, the prefix that falls through into ActorType23_SpawnCollisionResponsePair.
+  description: Actor-collision dispatch pointer for the response-pair spawn path; its technical receiving actor-type selector is 0x23 and its big-endian ROM value is 0x001ABFF0, whose prefix falls through into ActorCollision_SpawnType23ResponsePair.
   evidence:
     - rom_handler_table_decode
     - actor_collision_dispatch_family_extended_static_decompilation
 
 0x001F4A:
-  name: ACTOR_COLLISION_HANDLER_TYPE_24
+  name: ACTOR_COLLISION_HANDLER_SPAWN_COMPANION_PRIMARY
+  aliases: [ACTOR_COLLISION_HANDLER_TYPE_24]
   type: rom_pointer
   confidence: decompiled
-  description: Actor-collision dispatch pointer for receiving actor type 0x24; its big-endian ROM value is 0x001AC03E.
+  description: Actor-collision dispatch pointer for the primary companion-spawn response; its technical receiving actor-type selector is 0x24 and its big-endian ROM value is 0x001AC03E.
   evidence:
     - rom_handler_table_decode
     - actor_collision_dispatch_family_extended_static_decompilation
 
 0x001F4E:
-  name: ACTOR_COLLISION_HANDLER_TYPE_25
+  name: ACTOR_COLLISION_HANDLER_SPAWN_COMPANION_SECONDARY
+  aliases: [ACTOR_COLLISION_HANDLER_TYPE_25]
   type: rom_pointer
   confidence: decompiled
-  description: Actor-collision dispatch pointer for receiving actor type 0x25; its big-endian ROM value is 0x001AC05A.
+  description: Actor-collision dispatch pointer for the secondary companion-spawn response; its technical receiving actor-type selector is 0x25 and its big-endian ROM value is 0x001AC05A.
   evidence:
     - rom_handler_table_decode
     - actor_collision_dispatch_family_extended_static_decompilation
 
 0x001F52:
-  name: ACTOR_COLLISION_HANDLER_TYPE_26
+  name: ACTOR_COLLISION_HANDLER_ENTER_RESPONSE_STATE
+  aliases: [ACTOR_COLLISION_HANDLER_TYPE_26]
   type: rom_pointer
   confidence: decompiled
-  description: Actor-collision dispatch pointer for receiving actor type 0x26; its big-endian ROM value is 0x001AC076.
+  description: Actor-collision dispatch pointer for entering the shared response state; its technical receiving actor-type selector is 0x26 and its big-endian ROM value is 0x001AC076.
   evidence:
     - rom_handler_table_decode
     - actor_collision_dispatch_family_extended_static_decompilation
 
 0x001F56:
-  name: ACTOR_COLLISION_HANDLER_TYPE_27
+  name: ACTOR_COLLISION_HANDLER_SPAWN_MOVEMENT_COMPANION
+  aliases: [ACTOR_COLLISION_HANDLER_TYPE_27]
   type: rom_pointer
   confidence: decompiled
-  description: Actor-collision dispatch pointer for receiving actor type 0x27; its big-endian ROM value is 0x001AC07C.
+  description: Actor-collision dispatch pointer for the movement-companion spawn response; its technical receiving actor-type selector is 0x27 and its big-endian ROM value is 0x001AC07C.
   evidence:
     - rom_handler_table_decode
     - actor_collision_dispatch_family_extended_static_decompilation
 
 0x001F5A:
-  name: ACTOR_COLLISION_HANDLER_TYPE_28
+  name: ACTOR_COLLISION_HANDLER_SPAWN_POSITIONED_COMPANION
+  aliases: [ACTOR_COLLISION_HANDLER_TYPE_28]
   type: rom_pointer
   confidence: decompiled
-  description: Actor-collision dispatch pointer for receiving actor type 0x28; its big-endian ROM value is 0x001AC098.
+  description: Actor-collision dispatch pointer for the positioned companion-spawn response; its technical receiving actor-type selector is 0x28 and its big-endian ROM value is 0x001AC098.
   evidence:
     - rom_handler_table_decode
     - actor_collision_dispatch_family_extended_static_decompilation

@@ -1,0 +1,40 @@
+{
+  "status": "recorded-semantic-promotion",
+  "scope": "actor-collision-dispatch-pointer-family",
+  "promotions": [
+    "ACTOR_COLLISION_HANDLER_NOOP",
+    "ACTOR_COLLISION_HANDLER_CLEAR_SOURCE_AND_HANDLE",
+    "ACTOR_COLLISION_HANDLER_TERMINAL_RESPONSE_SETUP",
+    "ACTOR_COLLISION_HANDLER_DEATH_RESPONSE",
+    "ACTOR_COLLISION_HANDLER_INTERACTION_MOVEMENT_RESPONSE",
+    "ACTOR_COLLISION_HANDLER_STAGED_TERMINAL_RESPONSE",
+    "ACTOR_COLLISION_HANDLER_WALL_TERMINAL_RESPONSE",
+    "ACTOR_COLLISION_HANDLER_INTERACTION_RESPONSE",
+    "ACTOR_COLLISION_HANDLER_FACING_ALIGNED_INTERACTION",
+    "ACTOR_COLLISION_HANDLER_TERRAIN_INTERACTION_LATCH_A",
+    "ACTOR_COLLISION_HANDLER_TERRAIN_INTERACTION_LATCH_B",
+    "ACTOR_COLLISION_HANDLER_UPPER_RESPONSE_PRIMARY",
+    "ACTOR_COLLISION_HANDLER_UPPER_RESPONSE_SECONDARY",
+    "ACTOR_COLLISION_HANDLER_SPAWN_RESPONSE_PAIR",
+    "ACTOR_COLLISION_HANDLER_SPAWN_COMPANION_PRIMARY",
+    "ACTOR_COLLISION_HANDLER_SPAWN_COMPANION_SECONDARY",
+    "ACTOR_COLLISION_HANDLER_ENTER_RESPONSE_STATE",
+    "ACTOR_COLLISION_HANDLER_SPAWN_MOVEMENT_COMPANION",
+    "ACTOR_COLLISION_HANDLER_SPAWN_POSITIONED_COMPANION"
+  ],
+  "evidence": [
+    "rom_handler_table_decode",
+    "actor_collision_dispatch_family_extended_static_decompilation",
+    "actor_collision_handler_family_static_decompilation",
+    "final-player-actor-dispatch-family-semantic-targets",
+    "player-followup-response-family-semantic-targets"
+  ],
+  "policy": {
+    "old_numeric_names_retained_as_aliases": true,
+    "technical_type_ids_retained_in_descriptions": true,
+    "shared_target_entries_without_distinct_role_evidence_deferred": true,
+    "byte_ranges_changed": false,
+    "deasm_ownership_changed": false,
+    "semantic_scope": "decompiled_actor_collision_handler_roles"
+  }
+}
