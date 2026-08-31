@@ -1722,7 +1722,8 @@
     - scene_palette_bank_extents_static_v1
 
 0x00128F52:
-  name: MENU_OPTIONS_PALETTE_BANK_128F52
+  name: MENU_OPTIONS_PALETTE_BANK
+  aliases: [MENU_OPTIONS_PALETTE_BANK_128F52]
   type: palette_data
   size: 0x80
   confidence: decompiled
@@ -1869,7 +1870,8 @@
   evidence: [ghidra_level_table_palette_pointer, ghidra_palette_transition_source_contract, level_palette_source_extents_static_v1]
 
 0x001296B2:
-  name: MENU_PALETTE_RECORD_BANK_1296B2
+  name: MENU_OPTIONS_PALETTE_RECORD_BANK
+  aliases: [MENU_PALETTE_RECORD_BANK_1296B2]
   type: palette_data
   size: 0x140
   confidence: decompiled

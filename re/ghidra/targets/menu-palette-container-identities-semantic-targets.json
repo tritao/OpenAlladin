@@ -1,0 +1,40 @@
+{
+  "format": "openaladdin-semantic-promotion-target-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "focus": {
+    "name": "menu-palette-container-identities",
+    "purpose": "Replace address-bearing names for menu-owned palette containers while preserving unresolved internal transfer semantics."
+  },
+  "targets": [
+    {
+      "address": "0x00128F52",
+      "name": "MENU_OPTIONS_PALETTE_BANK",
+      "legacy_name": "MENU_OPTIONS_PALETTE_BANK_128F52",
+      "range": "0x00128F52-0x00129011",
+      "size": 128,
+      "format": "four 16-word Genesis palette bands",
+      "context": "options-menu continuation passes the base to Render_RunPaletteTransitionFrom"
+    },
+    {
+      "address": "0x001296B2",
+      "name": "MENU_OPTIONS_PALETTE_RECORD_BANK",
+      "legacy_name": "MENU_PALETTE_RECORD_BANK_1296B2",
+      "range": "0x001296B2-0x001297F1",
+      "size": 320,
+      "format": "ten 16-word Genesis palette records",
+      "context": "Menu_RunOptionsAndSelectNextState stages the bank base"
+    }
+  ],
+  "evidence": [
+    "exact palette-shaped boundaries",
+    "direct menu staging/consumer context",
+    "independent neighboring range ownership",
+    "existing static menu palette findings"
+  ],
+  "limitations": [
+    "No per-record theme or active upload timing is inferred for the ten-record bank.",
+    "The four-band bank retains its unresolved continuation transfer semantics."
+  ],
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6",
+  "ghidra_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365"
+}

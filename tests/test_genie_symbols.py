@@ -788,6 +788,18 @@ def test_scene_resource_coordinate_stream_has_stable_name():
     assert "SCENE_RESOURCE_ACTOR_SPAWN_COORDINATES_6744" in symbol.aliases
 
 
+def test_menu_palette_containers_have_stable_names():
+    expected = {
+        0x00128F52: ("MENU_OPTIONS_PALETTE_BANK", "MENU_OPTIONS_PALETTE_BANK_128F52"),
+        0x001296B2: ("MENU_OPTIONS_PALETTE_RECORD_BANK", "MENU_PALETTE_RECORD_BANK_1296B2"),
+    }
+    for address, (name, legacy) in expected.items():
+        symbol = SymbolStore().at(address, include_ranges=False)
+        assert symbol is not None
+        assert symbol.name == name
+        assert legacy in symbol.aliases
+
+
 def test_symbol_review_queue_keeps_named_open_questions_actionable(tmp_path):
     database_root = tmp_path / "full-rom"
     _write_database(database_root)
