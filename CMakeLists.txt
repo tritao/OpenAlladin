@@ -146,6 +146,8 @@ add_library(openaladdin_clean_core STATIC
     src/core/ram.hpp
     src/core/rom.cpp
     src/core/rom.hpp
+    src/core/scene.cpp
+    src/core/scene.hpp
     src/core/terrain.cpp
     src/core/terrain.hpp
     src/core/trace.cpp

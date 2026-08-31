@@ -1,6 +1,7 @@
 #include "core/level.hpp"
 
 #include "core/level_event.hpp"
+#include "core/scene.hpp"
 
 #include "core/trace.hpp"
 
@@ -216,6 +217,24 @@ int main() {
     assert(read32(core.ram, kPlayerAnimationPc) == 0x00122350);
     assert(read16(core.ram, kLevel08EventCounterHigh) == 6);
     assert(read8(core.ram, kCameraScrollApplyGate) == 0xFF);
+
+    // SceneScript_CompleteToState1 consumes one byte per active call. A
+    // nonzero byte is published to the query latch; a zero terminator resets
+    // the pending script and reloads the selected level-table record.
+    rom[0x0300] = 0x42;
+    rom[0x0301] = 0;
+    write32(core.ram, kSceneScriptData, 0x0300);
+    write8(core.ram, kSceneScriptPending, 1);
+    write8(core.ram, kSceneState, 8);
+    scene_script_complete_to_state1(core);
+    assert(read8(core.ram, kPlayerTerrainQueryResult) == 0x42);
+    assert(read32(core.ram, kSceneScriptData) == 0x0301);
+    assert(read8(core.ram, kSceneScriptPending) == 1);
+    scene_script_complete_to_state1(core);
+    assert(read8(core.ram, kSceneState) == 1);
+    assert(read8(core.ram, kSceneScriptPending) == 0);
+    assert(actor_read8(actor_view(core.ram, 1), kActorTypeOffset) == 0);
+    assert(read16(core.ram, kWorldCameraX) == 0x0200);
 
     return 0;
 }

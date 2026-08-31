@@ -6,6 +6,7 @@
 #include "core/level.hpp"
 #include "core/movement_vm.hpp"
 #include "core/player.hpp"
+#include "core/scene.hpp"
 #include "core/terrain.hpp"
 #include "core/trace.hpp"
 
@@ -163,6 +164,8 @@ void step_frame(
             level_invoke_frame_callback(core, trace);
         } else if (service.ordinal == 30) {
             animation_vm_tick_actors(core);
+        } else if (service.ordinal == 37) {
+            scene_script_complete_to_state1(core, trace);
         } else if (service.ordinal == 36) {
             camera_publish_scroll(core, trace);
         }
