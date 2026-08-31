@@ -421,6 +421,35 @@ def test_interaction_child_and_vertical_object_names_promote_roles_and_preserve_
     )
 
 
+def test_exit_and_transition_families_promote_semantic_names_and_preserve_aliases():
+    symbols = SymbolStore()
+    expected = {
+        0x00121D5A: ("ACTOR_ANIM_TRANSITION_INTERACTION_SHARED", "ACTOR_ANIM_TYPE29_TRANSITION_SHARED"),
+        0x0012434C: ("ACTOR_ANIM_LEVEL_EXIT_PRESENTATION", "ACTOR_ANIM_EXIT_TYPE84_PRESENTATION"),
+        0x001244E6: ("ACTOR_ANIM_TERRAIN_EXIT_RESPONSE", "ACTOR_ANIM_TYPE74_TERRAIN_EXIT_RESPONSE"),
+        0x001B7B70: ("ACTOR_TEMPLATE_TRANSITION_INTERACTION", "ACTOR_TEMPLATE_TYPE_29_INTERACTION"),
+        0x001B7E04: ("ACTOR_TEMPLATE_LEVEL_EXIT_PRESENTATION", "ACTOR_TEMPLATE_EXIT_TYPE_84"),
+        0x001B7E68: ("ACTOR_TEMPLATE_TERRAIN_EXIT_RESPONSE", "ACTOR_TEMPLATE_TYPE_74_TERRAIN_RESPONSE"),
+        0x001B7E7C: ("ACTOR_TEMPLATE_LEVEL_EXIT_CHILD", "ACTOR_TEMPLATE_TYPE_84_LEVEL_EXIT_CHILD"),
+        0x001B82F0: ("ACTOR_TEMPLATE_LEVEL06_EXIT", "ACTOR_TEMPLATE_TYPE_74_LEVEL06_EXIT"),
+    }
+    for address, (name, alias) in expected.items():
+        symbol = symbols.at(address, include_ranges=False)
+        assert symbol is not None
+        assert symbol.name == name
+        assert alias in symbol.aliases
+
+    mappings = {mapping.name: mapping for mapping in load_entity_mappings()}
+    assert validate_entity_mappings(mappings.values()) == []
+    assert {
+        "LEVEL_EXIT_PRESENTATION",
+        "TRANSITION_INTERACTION_SHARED",
+        "TERRAIN_EXIT_RESPONSE",
+        "LEVEL_EXIT_CHILD",
+        "LEVEL06_EXIT",
+    } <= mappings.keys()
+
+
 def test_actor_template_roles_promote_numeric_names_with_aliases():
     symbols = SymbolStore()
     expected = {

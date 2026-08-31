@@ -1,0 +1,31 @@
+{
+  "status": "recorded-semantic-promotion",
+  "scope": "level-exit-transition-and-terrain-response-identities",
+  "promotions": [
+    "ACTOR_ANIM_LEVEL_EXIT_PRESENTATION",
+    "ACTOR_TEMPLATE_LEVEL_EXIT_PRESENTATION",
+    "ACTOR_ANIM_TRANSITION_INTERACTION_SHARED",
+    "ACTOR_TEMPLATE_TRANSITION_INTERACTION",
+    "ACTOR_ANIM_TERRAIN_EXIT_RESPONSE",
+    "ACTOR_TEMPLATE_TERRAIN_EXIT_RESPONSE",
+    "ACTOR_TEMPLATE_LEVEL_EXIT_CHILD",
+    "ACTOR_TEMPLATE_LEVEL06_EXIT"
+  ],
+  "evidence": [
+    "exit_type84_animation_static_decompilation",
+    "actor_template_service_family_static_decompilation",
+    "level_exit_terminal_transition",
+    "type29-transition-shared-animation-static-decompilation",
+    "actor-template-interaction-family-static-decompilation",
+    "type74-terrain-exit-response-animation-static-decompilation",
+    "actor-template-level-spawn-family-static-decompilation",
+    "ghidra-level-table-enter-exit-targeted-decompile"
+  ],
+  "policy": {
+    "old_numeric_names_retained_as_aliases": true,
+    "technical_type_ids_retained": true,
+    "byte_ranges_changed": false,
+    "deasm_ownership_changed": false,
+    "semantic_scope": "provisional_role_or_event"
+  }
+}

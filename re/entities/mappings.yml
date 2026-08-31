@@ -289,6 +289,57 @@ mappings:
       - actor_template_terminal_transition_static_decompilation
     description: Primary and secondary terminal-transition actor template/animation pairs used by the level-exit presentation.
 
+  - name: LEVEL_EXIT_PRESENTATION
+    scope: event
+    symbol_addresses: [0x0012434C, 0x001B7E04]
+    technical_types: [0x84]
+    confidence: decompiled
+    evidence:
+      - exit_type84_animation_static_decompilation
+      - actor_template_service_family_static_decompilation
+      - level_exit_terminal_transition
+    description: Level-exit transition-presentation animation and actor template.
+
+  - name: TRANSITION_INTERACTION_SHARED
+    scope: role
+    symbol_addresses: [0x00121D5A, 0x001B7B70]
+    technical_types: [0x29]
+    confidence: confirmed
+    evidence:
+      - type29-transition-shared-animation-static-decompilation
+      - actor-template-interaction-family-static-decompilation
+    description: Shared interaction/transition-presentation animation and template family for the Type-0x29 dispatch path.
+
+  - name: TERRAIN_EXIT_RESPONSE
+    scope: role
+    symbol_addresses: [0x001244E6, 0x001B7E68]
+    technical_types: [0x74]
+    confidence: decompiled
+    evidence:
+      - type74-terrain-exit-response-animation-static-decompilation
+      - actor-template-level-spawn-family-static-decompilation
+    description: Shared terrain and Level 06 exit response animation/template family.
+
+  - name: LEVEL_EXIT_CHILD
+    scope: event
+    symbol_addresses: [0x001B7E7C]
+    technical_types: [0x84]
+    confidence: decompiled
+    evidence:
+      - level-exit-type84-child-template-static-decompilation
+      - ghidra-level-exit-terminal-transition
+    description: Level-exit child actor template loaded by the terminal-transition service.
+
+  - name: LEVEL06_EXIT
+    scope: event
+    symbol_addresses: [0x001B82F0]
+    technical_types: [0x74]
+    confidence: decompiled
+    evidence:
+      - ghidra-level-table-enter-exit-targeted-decompile
+      - actor-template-late-dispatch-family-static-decompilation
+    description: Level 06 exit callback actor template and its fixed placement setup.
+
   - name: TRANSITION_PRESENTATION
     scope: role
     symbol_addresses: [0x001B7B48]

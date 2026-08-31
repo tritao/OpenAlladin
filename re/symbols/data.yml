@@ -5393,10 +5393,11 @@
     - animation_stream_decoder
 
 0x0012434C:
-  name: ACTOR_ANIM_EXIT_TYPE84_PRESENTATION
+  name: ACTOR_ANIM_LEVEL_EXIT_PRESENTATION
+  aliases: [ACTOR_ANIM_EXIT_TYPE84_PRESENTATION]
   size: 104
   confidence: decompiled
-  description: Type-0x84 exit-transition presentation stream installed by ACTOR_TEMPLATE_EXIT_TYPE_84. Its packed 104-byte region presents the 0x12F2-0x1306 opening sequence with timer field 0x82, clears the current actor, spawns the 0x001B7E18 child record, presents the 0x17A6/0x17A2/0x179E/0x179A terminal sequence, and loops from 0x001243AE to 0x00124390.
+  description: Level-exit transition-presentation stream installed by ACTOR_TEMPLATE_LEVEL_EXIT_PRESENTATION. Its packed 104-byte region presents the 0x12F2-0x1306 opening sequence with timer field 0x82, clears the current actor, spawns the 0x001B7E18 child record, presents the 0x17A6/0x17A2/0x179E/0x179A terminal sequence, and loops from 0x001243AE to 0x00124390.
   evidence:
     - exit_type84_animation_static_decompilation
     - actor_template_exit_type84
@@ -5447,10 +5448,11 @@
     - animation_stream_decoder
 
 0x001244E6:
-  name: ACTOR_ANIM_TYPE74_TERRAIN_EXIT_RESPONSE
+  name: ACTOR_ANIM_TERRAIN_EXIT_RESPONSE
+  aliases: [ACTOR_ANIM_TYPE74_TERRAIN_EXIT_RESPONSE]
   size: 230
   confidence: decompiled
-  description: Shared Type-0x74 terrain/Level 06 exit response family selected by ACTOR_TEMPLATE_TYPE_74_TERRAIN_RESPONSE and ACTOR_TEMPLATE_TYPE_74_LEVEL06_EXIT. Its 230-byte region opens with the 0x169A response and three F5 child placements through ACTOR_TEMPLATE_TYPE_84_TYPE74_RESPONSE_CHILD, calls the local substream at 0x00124574 and shared substream at 0x001245AE, and loops through the response body at 0x00124560; the embedded streams return with FC80 and are owned by this family.
+  description: Shared terrain/Level 06 exit response family selected by ACTOR_TEMPLATE_TERRAIN_EXIT_RESPONSE and ACTOR_TEMPLATE_LEVEL06_EXIT. Its 230-byte region opens with the 0x169A response and three F5 child placements through ACTOR_TEMPLATE_TYPE_84_TYPE74_RESPONSE_CHILD, calls the local substream at 0x00124574 and shared substream at 0x001245AE, and loops through the response body at 0x00124560; the embedded streams return with FC80 and are owned by this family.
   evidence:
     - type74_terrain_exit_response_animation_static_decompilation
     - actor_template_level_spawn_family_static_decompilation
@@ -6252,10 +6254,11 @@
     - animation_stream_decoder
 
 0x00121D5A:
-  name: ACTOR_ANIM_TYPE29_TRANSITION_SHARED
+  name: ACTOR_ANIM_TRANSITION_INTERACTION_SHARED
+  aliases: [ACTOR_ANIM_TYPE29_TRANSITION_SHARED]
   size: 46
   confidence: confirmed
-  description: Shared Type-0x29 interaction and transition-presentation animation. Its exact 46-byte loop presents the 0x0782-0x0792 frame sequence with two encoded random branches and returns to its root; the transition presentation enters this same stream after its state-handoff command.
+  description: Shared interaction/transition-presentation animation entered by ACTOR_TEMPLATE_TRANSITION_INTERACTION and the scene transition handoff. Its exact 46-byte loop presents the 0x0782-0x0792 frame sequence with two encoded random branches and returns to its root.
   evidence:
     - actor_template_type29_interaction
     - transition_presentation_animation_static_decompilation
@@ -8134,11 +8137,12 @@
     - actor_vm_orphans_transition_checkpoints_runtime_negative_v1
 
 0x001B7E04:
-  name: ACTOR_TEMPLATE_EXIT_TYPE_84
+  name: ACTOR_TEMPLATE_LEVEL_EXIT_PRESENTATION
+  aliases: [ACTOR_TEMPLATE_EXIT_TYPE_84]
   type: actor_template
   size: 20
   confidence: decompiled
-  description: Type-0x84 exit-transition template initialized by Level_ExitAndTerminalTransition at both of its actor setup sites; it uses animation stream 0x0012434C.
+  description: Level-exit transition-presentation template initialized by Level_ExitAndTerminalTransition at both of its actor setup sites; it uses ACTOR_ANIM_LEVEL_EXIT_PRESENTATION at 0x0012434C.
   evidence:
     - ghidra_level_exit_terminal_transition
     - level01_upper_frontier_initializer_targets
@@ -8259,11 +8263,12 @@
     - ghidra_actor_template_initializer_001AE30A
 
 0x001B7B70:
-  name: ACTOR_TEMPLATE_TYPE_29_INTERACTION
+  name: ACTOR_TEMPLATE_TRANSITION_INTERACTION
+  aliases: [ACTOR_TEMPLATE_TYPE_29_INTERACTION]
   type: actor_template
   size: 20
   confidence: decompiled
-  description: Type-0x29 interaction template loaded by two direct reverse-slot spawn entries in the interaction dispatch block; it has no movement stream, uses ACTOR_ANIM_TYPE29_TRANSITION_SHARED at 0x00121D5A, and owns fourteen resources.
+  description: Shared transition/interaction template loaded by two direct reverse-slot spawn entries in the interaction dispatch block; it has no movement stream, uses ACTOR_ANIM_TRANSITION_INTERACTION_SHARED at 0x00121D5A, and owns fourteen resources.
   evidence:
     - ghidra_interaction_dispatch_block
     - actor_template_grid_xrefs
@@ -8476,21 +8481,23 @@
     - actor_template_grid_xrefs
 
 0x001B7E68:
-  name: ACTOR_TEMPLATE_TYPE_74_TERRAIN_RESPONSE
+  name: ACTOR_TEMPLATE_TERRAIN_EXIT_RESPONSE
+  aliases: [ACTOR_TEMPLATE_TYPE_74_TERRAIN_RESPONSE]
   type: actor_template
   size: 20
   confidence: decompiled
-  description: Type-0x74 terrain-response template loaded by the reverse-slot entry at 0x001B674A; it has no movement stream, uses ACTOR_ANIM_TYPE74_TERRAIN_EXIT_RESPONSE at 0x001244E6, and owns five resources.
+  description: Terrain/exit-response template loaded by the reverse-slot entry at 0x001B674A; it has no movement stream, uses ACTOR_ANIM_TERRAIN_EXIT_RESPONSE at 0x001244E6, and owns five resources.
   evidence:
     - ghidra_level_actor_spawn_block
     - actor_template_grid_xrefs
 
 0x001B7E7C:
-  name: ACTOR_TEMPLATE_TYPE_84_LEVEL_EXIT_CHILD
+  name: ACTOR_TEMPLATE_LEVEL_EXIT_CHILD
+  aliases: [ACTOR_TEMPLATE_TYPE_84_LEVEL_EXIT_CHILD]
   type: actor_template
   size: 20
   confidence: decompiled
-  description: Type-0x84 level-exit child template loaded directly by Level_ExitAndTerminalTransition at 0x001AFB1E; it has no movement stream, uses the embedded ACTOR_ANIM_TYPE74_TERRAIN_EXIT_RESPONSE entry at 0x001244EA, and owns eleven resources before the caller copies the source actor position.
+  description: Level-exit child template loaded directly by Level_ExitAndTerminalTransition at 0x001AFB1E; it has no movement stream, uses the embedded ACTOR_ANIM_TERRAIN_EXIT_RESPONSE entry at 0x001244EA, and owns eleven resources before the caller copies the source actor position.
   evidence:
     - level_exit_type84_child_template_static_decompilation
     - ghidra_level_exit_terminal_transition
@@ -8942,11 +8949,12 @@
     - animation_stream_decoder
 
 0x001B82F0:
-  name: ACTOR_TEMPLATE_TYPE_74_LEVEL06_EXIT
+  name: ACTOR_TEMPLATE_LEVEL06_EXIT
+  aliases: [ACTOR_TEMPLATE_TYPE_74_LEVEL06_EXIT]
   type: actor_template
   size: 20
   confidence: decompiled
-  description: Type-0x74 template selected by Level06_ExitCallback at 0x001B644E after a reverse-slot availability check; it has no movement stream, uses ACTOR_ANIM_TYPE74_TERRAIN_EXIT_RESPONSE at 0x001244E6, and owns five resources before the caller initializes position (0x00A0,0x01C0), facing, and transition flags.
+  description: Level 06 exit template selected by Level06_ExitCallback at 0x001B644E after a reverse-slot availability check; it has no movement stream, uses ACTOR_ANIM_TERRAIN_EXIT_RESPONSE at 0x001244E6, and owns five resources before the caller initializes position (0x00A0,0x01C0), facing, and transition flags.
   evidence:
     - ghidra_level_table_enter_exit_targeted_decompile
     - actor_template_grid_xrefs
