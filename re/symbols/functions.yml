@@ -5525,6 +5525,7 @@
   aliases: [InteractionSpawn_RuntimeType57_AdjacentVariant]
   size: 0x12
   confidence: decompiled
+  review_status: closed
   description: Complete unindexed interaction-spawn variant that reverse-spawns ACTOR_TEMPLATE_TYPE_55_INTERACTION_7B_7E at 0x001B7A1C and, on successful allocation, publishes runtime type 0x57. No current INTERACTION_HANDLER_TABLE pointer or other static xref reaches this body, so its selector remains unresolved.
   evidence:
     - ghidra_disassembly_001B6BFC
@@ -6094,6 +6095,7 @@
   aliases: [InteractionSpawn_RuntimeType45_AdjacentVariant]
   size: 0x20
   confidence: decompiled
+  review_status: closed
   description: Complete unindexed interaction-spawn variant that allocates ACTOR_TEMPLATE_BASE_ZERO through LevelObjectSpawnEntry and, on success, publishes runtime type 0x45, ACTOR_ANIM_TYPE44_INTERACTION at 0x00122C40, and actor byte +0x29 as 1. The current INTERACTION_HANDLER_TABLE has no direct pointer to this body, so its selector remains unresolved.
   evidence:
     - ghidra_disassembly_001B7474
@@ -6115,6 +6117,7 @@
   aliases: [InteractionSpawn_RuntimeType5B_AdjacentVariant]
   size: 0x12
   confidence: decompiled
+  review_status: closed
   description: Complete unindexed interaction-spawn variant that allocates ACTOR_TEMPLATE_TYPE_5A_LEVEL_OBJECT through LevelObjectSpawnEntry and, on successful allocation, publishes runtime type 0x5B. The current INTERACTION_HANDLER_TABLE has no direct pointer to this body, so its selector remains unresolved.
   evidence:
     - ghidra_disassembly_001B74A0

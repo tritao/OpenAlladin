@@ -3634,6 +3634,7 @@
   type: movement_stream
   size: 164
   confidence: decompiled
+  review_status: closed
   description: 164-byte MovementVM interaction-anchor grid response immediately after LEVEL_F800_TILEMAP_SOURCE and before ACTOR_MOVE_TYPE5E84_PAIR_E1E2. Its exact decoder coverage contains the signed displacement grid, twelve pushes of Actor_SetInteractionAnchorFromActor, timer-parameter phases, a terminal write of 0x01 to INTERACTION_SPAWN_HANDOFF_MARKER at 0x0011F89C, and the clear-state step through 0x0011F8A3; its external template or producer remains unresolved.
   evidence:
     - unreferenced_movement_streams_static_v1
@@ -4411,6 +4412,7 @@
   type: animation_stream
   size: 8
   confidence: decompiled
+  review_status: closed
   description: Eight-byte AnimationVM single-frame self-loop containing frame reference 0x001ADE followed by EA back to its own entry. Its exact range is bounded between ACTOR_ANIM_TYPE84_TYPE0F_CHILD and ACTOR_ANIM_TYPE6E_73_BASE_DEFAULT; the external template or producer that selects this default loop remains unresolved.
   evidence:
     - type0f_child_and_type6e_default_animation_static_v1
@@ -7991,6 +7993,7 @@
   type: actor_template
   size: 20
   confidence: decompiled
+  review_status: closed
   description: "Exact 20-byte Type-0x84 actor-template record with initializer payload 0x08000000, no movement or default animation root, template word 0x6000, ten owned resources, and no trailing flags. Its compact initializer fields are decoded; no current exported producer, consumer, or runtime sample references this record, so its external reachability remains unresolved."
   evidence:
     - actor_template_record_layout_static_decompilation
@@ -8041,6 +8044,7 @@
   type: actor_template
   size: 20
   confidence: decompiled
+  review_status: closed
   description: "Exact 20-byte Type-0x84 actor-template record with initializer payload 0x40001400, no movement or default animation root, template word 0x6000, zero resources, and no trailing flags. Its compact initializer fields are decoded; no current exported producer, consumer, or runtime sample references this record, so its external reachability remains unresolved."
   evidence:
     - actor_template_record_layout_static_decompilation

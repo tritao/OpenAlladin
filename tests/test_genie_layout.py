@@ -754,7 +754,7 @@ def test_type84_interaction_base_b6_animation_range_is_exact():
     symbols = SymbolStore()
     handler = symbols.at(0x001B70F8, include_ranges=False)
     assert handler is not None
-    assert handler.name == "InteractionSpawn_Type84Base_B6"
+    assert handler.name == "InteractionSpawn_CreateType84Base_B6"
 
     symbol = symbols.at(0x001242B0, include_ranges=False)
     assert symbol is not None
@@ -773,7 +773,7 @@ def test_runtime_type22_interaction_handler_is_canonical():
     symbols = SymbolStore()
     handler = symbols.at(0x001B6EEE, include_ranges=False)
     assert handler is not None
-    assert handler.name == "InteractionSpawn_RuntimeType22_19"
+    assert handler.name == "InteractionSpawn_CreateType22ProximityActor"
     assert handler.confidence == "decompiled"
     assert "ACTOR_TEMPLATE_TYPE_1F" in handler.description
     assert "0x001238B2" in handler.description
@@ -2412,8 +2412,8 @@ def test_extended_player_collision_handler_family_is_exact():
         0x001AFD84: (0x001AFE1B, "PlayerCollision_StartProximityBounce"),
         0x001ABF9C: (0x001ABFCF, "Actor_InstallType01CollisionResponse"),
         0x001ABFD0: (0x001ABFEF, "Actor_ReinitializeCollisionResponseAfterType2D"),
-        0x001B7474: (0x001B7493, "InteractionSpawn_RuntimeType45_AdjacentVariant"),
-        0x001B74A0: (0x001B74B1, "InteractionSpawn_RuntimeType5B_AdjacentVariant"),
+        0x001B7474: (0x001B7493, "InteractionSpawn_CreateType45ActorVariant"),
+        0x001B74A0: (0x001B74B1, "InteractionSpawn_CreateType5BFromType5ATemplateVariant"),
         0x001AFE1C: (0x001AFF3F, "PlayerCollision_ProcessSceneTransition"),
         0x001AFF82: (0x001AFFE3, "PlayerCollision_ResolveType02GroundContact"),
         0x001AC60E: (0x001AC613, "ActorCollision_ToggleFacing"),
@@ -2485,7 +2485,7 @@ def test_unindexed_interaction_spawn_variant_is_exact():
     symbols = SymbolStore()
     function = symbols.at(0x001B6BFC, include_ranges=False)
     assert function is not None
-    assert function.name == "InteractionSpawn_RuntimeType57_AdjacentVariant"
+    assert function.name == "InteractionSpawn_CreateType57FromType55TemplateVariant"
     assert function.end == 0x001B6C0D
     assert function.size == 0x12
 
@@ -4914,11 +4914,11 @@ def test_interaction_spawn_and_player_gate_entrypoints_have_semantic_names():
     symbols = SymbolStore()
     expected = {
         0x001B5256: ("InteractionSpawn_BackwardSlot", "confirmed"),
-        0x001B6F0C: ("InteractionSpawn_RuntimeType87_80", "confirmed"),
+        0x001B6F0C: ("InteractionSpawn_CreateType87Response", "confirmed"),
         0x001B03F2: ("Player_ArmTerminalOrInteractionLock", "confirmed"),
         0x001B5266: ("InteractionSpawn_AllocateAndConsumeRow", "confirmed"),
         0x001B52A0: ("InteractionSpawn_AllocatePreserveRow", "decompiled"),
-        0x001B6ED0: ("InteractionSpawn_RuntimeType21_1A", "confirmed"),
+        0x001B6ED0: ("InteractionSpawn_CreateType21ProximityActor", "confirmed"),
         0x001B2E9A: ("VDP_SetControl9001AndBuildTileRows", "decompiled"),
         0x001ADB36: ("Terrain_RenderViewportWithPhaseOffset", "decompiled"),
     }
@@ -4930,7 +4930,10 @@ def test_interaction_spawn_and_player_gate_entrypoints_have_semantic_names():
 
     assert symbols.at(0x001B5266, include_ranges=False).aliases == ("LevelObjectSpawnEntry",)
     assert symbols.at(0x001B52A0, include_ranges=False).aliases == ("LevelObjectSpawnVariant",)
-    assert symbols.at(0x001B6ED0, include_ranges=False).aliases == ("InteractionHandler_Type21",)
+    assert symbols.at(0x001B6ED0, include_ranges=False).aliases == (
+        "InteractionSpawn_RuntimeType21_1A",
+        "InteractionHandler_Type21",
+    )
     assert symbols.at(0x001B2E9A, include_ranges=False).aliases == ("SceneTransition_VDPHelper",)
     assert symbols.at(0x001ADB36, include_ranges=False).aliases == (
         "Terrain_ContourLookupHelper",

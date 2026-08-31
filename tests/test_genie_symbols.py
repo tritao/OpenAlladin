@@ -433,6 +433,31 @@ def test_unindexed_interaction_spawn_variants_have_semantic_names_and_aliases():
         assert symbol.name == name
         assert alias in symbol.aliases
         assert symbol.confidence == "decompiled"
+        assert symbol.metadata["review_status"] == "closed"
+
+
+def test_remaining_static_review_closure_preserves_bounded_limitations():
+    expected = {
+        0x0011F800,
+        0x00123DE2,
+        0x001B7990,
+        0x001B7A58,
+        0x00FFF0F6,
+    }
+    symbols = SymbolStore()
+    for address in expected:
+        symbol = symbols.at(address, include_ranges=False)
+        assert symbol is not None
+        assert symbol.metadata["review_status"] == "closed"
+
+    finding = json.loads(
+        Path("re/mame/findings/20260831-semantic-review-closure-static-v1.json")
+        .read_text(encoding="utf-8")
+    )
+    assert finding["status"] == "recorded-static-review-closure"
+    assert len(finding["closed_symbols"]) == 8
+    assert any("not that every indirect selector" in item for item in finding["limitations"])
+    assert "TERRAIN_RESPONSE_AUXILIARY_FLAG" in finding["conclusion"]
 
 
 def test_type84_base_interaction_spawn_handlers_have_semantic_names_and_aliases():

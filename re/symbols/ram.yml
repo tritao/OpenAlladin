@@ -2476,6 +2476,7 @@
   type: u8
   format: integer
   confidence: decompiled
+  review_status: closed
   description: Transient actor-type byte for the current player-collision candidate. Actor_PlayerCollisionPass clears it at entry and writes the overlapping common actor's type immediately before indirect dispatch through PLAYER_COLLISION_HANDLER_TABLE. No direct absolute reader is exported, so any handler-visible downstream role remains unresolved.
   evidence:
     - ghidra_disassembly_001ABB40
