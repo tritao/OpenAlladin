@@ -278,6 +278,19 @@ def test_shared_interaction_names_promote_roles_and_preserve_numeric_aliases():
         "INTERACTION_SHARED_BASE",
         "INTERACTION_POSITION_VARIANTS",
     } <= mapping_names
+    mappings_by_name = {mapping.name: mapping for mapping in mappings}
+    assert all(
+        mappings_by_name[name].scope == "role"
+        for name in (
+            "WALL_OSCILLATION",
+            "INTERACTION_RESPONSE_SHARED",
+            "INTERACTION_SHARED",
+            "INTERACTION_CHILD_SPAWN",
+            "INTERACTION_TERMINAL_RESPONSE",
+            "INTERACTION_SHARED_BASE",
+            "INTERACTION_POSITION_VARIANTS",
+        )
+    )
 
 
 def test_terminal_transition_and_level_object_names_promote_roles_and_preserve_aliases():
@@ -300,6 +313,51 @@ def test_terminal_transition_and_level_object_names_promote_roles_and_preserve_a
     assert validate_entity_mappings(mappings) == []
     mapping_names = {mapping.name for mapping in mappings}
     assert {"TERMINAL_TRANSITION", "TRANSITION_PRESENTATION", "LEVEL_OBJECT_BASE"} <= mapping_names
+    mappings_by_name = {mapping.name: mapping for mapping in mappings}
+    assert mappings_by_name["TERMINAL_TRANSITION"].scope == "event"
+    assert mappings_by_name["TRANSITION_PRESENTATION"].scope == "role"
+    assert mappings_by_name["LEVEL_OBJECT_BASE"].scope == "role"
+
+
+def test_interaction_child_and_vertical_object_names_promote_roles_and_preserve_aliases():
+    symbols = SymbolStore()
+    expected = {
+        0x00120B62: ("ACTOR_MOVE_INTERACTION_CHILD_SHARED", "ACTOR_MOVE_TYPE31_F5_CHILD_SHARED"),
+        0x00120F76: ("ACTOR_MOVE_VERTICAL_BOB", "ACTOR_MOVE_TYPE2A_VERTICAL_BOB"),
+        0x00123154: ("ACTOR_ANIM_INTERACTION_PAIR_COMPANION", "ACTOR_ANIM_TYPE84_INTERACTION_PAIR_COMPANION"),
+        0x001231DC: ("ACTOR_ANIM_VERTICAL_BOB", "ACTOR_ANIM_TYPE2A_VERTICAL_BOB"),
+        0x00124450: ("ACTOR_ANIM_INTERACTION_SPAWN_RESPONSE", "ACTOR_ANIM_TYPE43_8A_INTERACTION"),
+        0x001B7AF8: ("ACTOR_TEMPLATE_VERTICAL_BOB_OBJECT", "ACTOR_TEMPLATE_TYPE_2A"),
+        0x001B79E0: ("ACTOR_TEMPLATE_INTERACTION_SPAWN_BASE", "ACTOR_TEMPLATE_TYPE_43"),
+        0x001B8098: ("ACTOR_TEMPLATE_INTERACTION_RESPONSE_CHILD", "ACTOR_TEMPLATE_F5_TYPE_7F"),
+        0x001B8034: ("ACTOR_TEMPLATE_INTERACTION_CHILD_A", "ACTOR_TEMPLATE_TYPE_31_F5_CHILD_A"),
+        0x001B8048: ("ACTOR_TEMPLATE_INTERACTION_CHILD_B", "ACTOR_TEMPLATE_TYPE_31_F5_CHILD_B"),
+    }
+    for address, (name, alias) in expected.items():
+        symbol = symbols.at(address, include_ranges=False)
+        assert symbol is not None
+        assert symbol.name == name
+        assert alias in symbol.aliases
+
+    mappings = load_entity_mappings()
+    assert validate_entity_mappings(mappings) == []
+    mapping_names = {mapping.name for mapping in mappings}
+    assert {
+        "INTERACTION_PAIR_COMPANION",
+        "VERTICAL_BOB_OBJECT",
+        "INTERACTION_SPAWN_RESPONSE",
+        "INTERACTION_CHILD_MOVEMENT",
+    } <= mapping_names
+    mappings_by_name = {mapping.name: mapping for mapping in mappings}
+    assert all(
+        mappings_by_name[name].scope == "role"
+        for name in (
+            "INTERACTION_PAIR_COMPANION",
+            "VERTICAL_BOB_OBJECT",
+            "INTERACTION_SPAWN_RESPONSE",
+            "INTERACTION_CHILD_MOVEMENT",
+        )
+    )
 
 
 def test_actor_template_roles_promote_numeric_names_with_aliases():

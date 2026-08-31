@@ -1534,7 +1534,7 @@ def test_type31_f5_child_movement_stream_is_exact():
     symbols = SymbolStore()
     stream = symbols.at(0x00120B62, include_ranges=False)
     assert stream is not None
-    assert stream.name == "ACTOR_MOVE_TYPE31_F5_CHILD_SHARED"
+    assert stream.name == "ACTOR_MOVE_INTERACTION_CHILD_SHARED"
     assert stream.end == 0x00120D79
     assert stream.size == 536
     assert stream.metadata["type"] == "movement_stream"

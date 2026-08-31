@@ -1,0 +1,29 @@
+{
+  "status": "recorded-semantic-promotion",
+  "scope": "interaction-child-and-vertical-object-identities",
+  "promotions": [
+    "ACTOR_ANIM_INTERACTION_PAIR_COMPANION",
+    "ACTOR_ANIM_VERTICAL_BOB",
+    "ACTOR_ANIM_INTERACTION_SPAWN_RESPONSE",
+    "ACTOR_MOVE_INTERACTION_CHILD_SHARED",
+    "ACTOR_MOVE_VERTICAL_BOB",
+    "ACTOR_TEMPLATE_VERTICAL_BOB_OBJECT",
+    "ACTOR_TEMPLATE_INTERACTION_SPAWN_BASE",
+    "ACTOR_TEMPLATE_INTERACTION_RESPONSE_CHILD",
+    "ACTOR_TEMPLATE_INTERACTION_CHILD_A",
+    "ACTOR_TEMPLATE_INTERACTION_CHILD_B"
+  ],
+  "evidence": [
+    "type84_interaction_pair_companion_animation_static_decompilation",
+    "actor_type2a_movement_stream_static_decode",
+    "actor_type2a_animation_stream_static_decode",
+    "type43_8a_interaction_animation_static_decompilation",
+    "actor_template_type31_f5_child_family_static_decompilation"
+  ],
+  "policy": {
+    "old_numeric_names_retained_as_aliases": true,
+    "technical_type_ids_retained": true,
+    "byte_ranges_changed": false,
+    "deasm_ownership_changed": false
+  }
+}

@@ -4612,7 +4612,8 @@
     - animation_stream_decoder
 
 0x00123154:
-  name: ACTOR_ANIM_TYPE84_INTERACTION_PAIR_COMPANION
+  name: ACTOR_ANIM_INTERACTION_PAIR_COMPANION
+  aliases: [ACTOR_ANIM_TYPE84_INTERACTION_PAIR_COMPANION]
   size: 136
   confidence: decompiled
   description: Type-0x84 companion animation for the paired type-0x5E interaction spawns. Its packed 136-byte region clears and initializes the companion, cycles the 0x0EC6-0x0EEA frame sequence, spawns the two linked child records at 0x001B8110, publishes actor type 0x84, plays sound 0x39, and terminates before the established Type-0x2A stream at 0x001231DC; the Type-0x23 interaction enters an embedded sub-entry at 0x00123198 within this same region.
@@ -4623,7 +4624,8 @@
     - animation_stream_decoder
 
 0x001231DC:
-  name: ACTOR_ANIM_TYPE2A_VERTICAL_BOB
+  name: ACTOR_ANIM_VERTICAL_BOB
+  aliases: [ACTOR_ANIM_TYPE2A_VERTICAL_BOB]
   size: 36
   confidence: decompiled
   description: Type-0x2A upper-route actor animation root; its lossless 36-byte stream writes 0x02A4 through the actor-field arithmetic command, cycles frame references 0x1C1A, 0x1C1E, 0x1C22, 0x1C26, 0x1C2A, and 0x1C2E, then loops back to its entry.
@@ -4636,7 +4638,7 @@
   name: ACTOR_ANIM_TYPE06_INTERACTION
   size: 116
   confidence: decompiled
-  description: Selector-0x5C Type-0x06 interaction animation state machine. Its packed 116-byte region publishes type 0x84 and queues the Type-0x84 child events on the idle path, tests the player-within-X condition, then runs the Type-0x06 response sequence with frame references 0x0C86-0x0CA6, spawns ACTOR_TEMPLATE_TYPE_2A, and loops back to the root.
+  description: Selector-0x5C Type-0x06 interaction animation state machine. Its packed 116-byte region publishes type 0x84 and queues the Type-0x84 child events on the idle path, tests the player-within-X condition, then runs the Type-0x06 response sequence with frame references 0x0C86-0x0CA6, spawns ACTOR_TEMPLATE_VERTICAL_BOB_OBJECT, and loops back to the root.
   evidence:
     - type06_animation_static_decompilation
     - actor_template_type06
@@ -4902,7 +4904,8 @@
     - animation_stream_decoder
 
 0x00120F76:
-  name: ACTOR_MOVE_TYPE2A_VERTICAL_BOB
+  name: ACTOR_MOVE_VERTICAL_BOB
+  aliases: [ACTOR_MOVE_TYPE2A_VERTICAL_BOB]
   size: 62
   confidence: decompiled
   description: Type-0x2A upper-route actor movement root; its lossless 62-byte stream performs the shared flag-test/write/clear prefix, follows a fixed vertical profile of 0, +2, +2, +3, +3, +4, +4, 0, -1, -1, -1, -2, -2, -2, -3, -2, -2, -1, -1, and loops from 0x00120FAC back to 0x00120F8A.
@@ -5408,10 +5411,11 @@
     - animation_stream_decoder
 
 0x00124450:
-  name: ACTOR_ANIM_TYPE43_8A_INTERACTION
+  name: ACTOR_ANIM_INTERACTION_SPAWN_RESPONSE
+  aliases: [ACTOR_ANIM_TYPE43_8A_INTERACTION]
   size: 150
   confidence: decompiled
-  description: Shared Type-0x43/0x8A interaction animation family selected by ACTOR_TEMPLATE_TYPE_43 and entered at embedded root 0x00124494 by InteractionSpawn_RuntimeType8A_FF. Its packed 150-byte region presents the 0x1326-0x134E interaction sequence, clears actor state, plays the 0x1786-0x1792 response, spawns ACTOR_TEMPLATE_F5_TYPE_7F, writes actor field 0x11 to 0x0065, and loops through the embedded response path at 0x001244AC.
+  description: Shared Type-0x43/0x8A interaction animation family selected by ACTOR_TEMPLATE_INTERACTION_SPAWN_BASE and entered at embedded root 0x00124494 by InteractionSpawn_RuntimeType8A_FF. Its packed 150-byte region presents the 0x1326-0x134E interaction sequence, clears actor state, plays the 0x1786-0x1792 response, spawns ACTOR_TEMPLATE_INTERACTION_RESPONSE_CHILD, writes actor field 0x11 to 0x0065, and loops through the embedded response path at 0x001244AC.
   evidence:
     - type43_8a_interaction_animation_static_decompilation
     - interaction_spawn_runtime37_3b_type43_static_decompilation
@@ -5749,7 +5753,7 @@
   type: animation_stream
   size: 146
   confidence: decompiled
-  description: Type-0x31 child animation entry selected by ACTOR_TEMPLATE_TYPE_31_F5_CHILD_A. Its exact 146-byte region presents the 0x199A-0x19A2 sequence, performs the shared F5 spawn, and loops through its deterministic frame-delay progression.
+  description: Type-0x31 child animation entry selected by ACTOR_TEMPLATE_INTERACTION_CHILD_A. Its exact 146-byte region presents the 0x199A-0x19A2 sequence, performs the shared F5 spawn, and loops through its deterministic frame-delay progression.
   evidence:
     - actor_template_type31_f5_child_family_static_decompilation
     - actor_animation_stream_family_static_decompilation
@@ -5760,7 +5764,7 @@
   type: animation_stream
   size: 146
   confidence: decompiled
-  description: Paired Type-0x31 child animation entry selected by ACTOR_TEMPLATE_TYPE_31_F5_CHILD_B. Its exact 146-byte region presents the 0x198E-0x1996 sequence, performs the shared F5 spawn, and loops through its distinct frame-delay progression.
+  description: Paired Type-0x31 child animation entry selected by ACTOR_TEMPLATE_INTERACTION_CHILD_B. Its exact 146-byte region presents the 0x198E-0x1996 sequence, performs the shared F5 spawn, and loops through its distinct frame-delay progression.
   evidence:
     - actor_template_type31_f5_child_family_static_decompilation
     - actor_animation_stream_family_static_decompilation
@@ -6879,7 +6883,8 @@
     - movement_stream_decoder
 
 0x00120B62:
-  name: ACTOR_MOVE_TYPE31_F5_CHILD_SHARED
+  name: ACTOR_MOVE_INTERACTION_CHILD_SHARED
+  aliases: [ACTOR_MOVE_TYPE31_F5_CHILD_SHARED]
   type: movement_stream
   size: 536
   confidence: decompiled
@@ -7185,7 +7190,7 @@
   name: ACTOR_ANIM_TYPE2C_LEVEL_EVENT_CHILD
   size: 46
   confidence: decompiled
-  description: Shared 0x1C56-0x1C7A child-animation body selected directly by ACTOR_TEMPLATE_F5_TYPE_7F and ACTOR_TEMPLATE_TYPE_2C_LEVEL_EVENT_CHILD, and reached after ACTOR_ANIM_TYPE52_LEVEL09_RESPONSE_PREFIX clears the Level-09 actor. It presents the paired frame sequence and loops from 0x00125424 to the local 0x00125404 entry.
+  description: Shared 0x1C56-0x1C7A child-animation body selected directly by ACTOR_TEMPLATE_INTERACTION_RESPONSE_CHILD and ACTOR_TEMPLATE_TYPE_2C_LEVEL_EVENT_CHILD, and reached after ACTOR_ANIM_TYPE52_LEVEL09_RESPONSE_PREFIX clears the Level-09 actor. It presents the paired frame sequence and loops from 0x00125424 to the local 0x00125404 entry.
   evidence:
     - actor_template_scene_level_family_static_decompilation
     - type52_level09_animation_static_decompilation
@@ -7760,11 +7765,12 @@
     - ghidra_actor_template_initializer_001AE30A
 
 0x001B7AF8:
-  name: ACTOR_TEMPLATE_TYPE_2A
+  name: ACTOR_TEMPLATE_VERTICAL_BOB_OBJECT
+  aliases: [ACTOR_TEMPLATE_TYPE_2A]
   type: actor_template
   size: 20
   confidence: confirmed
-  description: Type-0x2A actor template used by the upper-route moving object; its movement stream is ACTOR_MOVE_TYPE2A_VERTICAL_BOB and its animation stream is ACTOR_ANIM_TYPE2A_VERTICAL_BOB.
+  description: Upper-route moving-object template; its movement stream is ACTOR_MOVE_VERTICAL_BOB and its animation stream is ACTOR_ANIM_VERTICAL_BOB.
   evidence:
     - actor_type2a_targets
     - level01_actor_type2a_decomp
@@ -7881,11 +7887,12 @@
     - level01_upper_frontier_initializer_targets
 
 0x001B79E0:
-  name: ACTOR_TEMPLATE_TYPE_43
+  name: ACTOR_TEMPLATE_INTERACTION_SPAWN_BASE
+  aliases: [ACTOR_TEMPLATE_TYPE_43]
   type: actor_template
   size: 20
   confidence: decompiled
-  description: Selector-0x40 actor template for runtime type 0x43; it has no movement stream and uses ACTOR_ANIM_TYPE43_8A_INTERACTION at 0x00124450, whose embedded entry at 0x00124494 is installed by the runtime type-0x8A selector.
+  description: Selector-0x40 actor template for the interaction-spawn family; it has no movement stream and uses ACTOR_ANIM_INTERACTION_SPAWN_RESPONSE at 0x00124450, whose embedded entry at 0x00124494 is installed by the runtime Type-0x8A selector.
   evidence:
     - level01_upstream_transfer_writer_graph
     - level01_upper_frontier_initializer_targets
@@ -7902,11 +7909,12 @@
     - ghidra_actor_template_initializer_001AE30A
 
 0x001B8098:
-  name: ACTOR_TEMPLATE_F5_TYPE_7F
+  name: ACTOR_TEMPLATE_INTERACTION_RESPONSE_CHILD
+  aliases: [ACTOR_TEMPLATE_F5_TYPE_7F]
   type: actor_template
   size: 20
   confidence: decompiled
-  description: Stationary type-0x7F child-actor template supplied by the type-0x43 interaction path through AnimationVM opcode F5.
+  description: Stationary child-actor template supplied by the interaction-spawn response path through AnimationVM opcode F5.
   evidence:
     - level01_upstream_transfer_writer_graph
     - level01_upper_frontier_initializer_targets
@@ -8298,7 +8306,7 @@
   type: actor_template
   size: 20
   confidence: decompiled
-  description: Type-0x23 interaction template loaded by the reverse-slot spawn entry at 0x001B6864; it has no movement stream, enters the embedded 0x00123198 sub-entry within ACTOR_ANIM_TYPE84_INTERACTION_PAIR_COMPANION, and owns three resources.
+  description: Type-0x23 interaction template loaded by the reverse-slot spawn entry at 0x001B6864; it has no movement stream, enters the embedded 0x00123198 sub-entry within ACTOR_ANIM_INTERACTION_PAIR_COMPANION, and owns three resources.
   evidence:
     - ghidra_interaction_dispatch_block
     - actor_template_grid_xrefs
@@ -8350,7 +8358,7 @@
   type: actor_template
   size: 20
   confidence: decompiled
-  description: Type-0x84 companion template for the paired type-0x5E interaction spawns; it uses movement stream 0x0011F7A6, animation stream ACTOR_ANIM_TYPE84_INTERACTION_PAIR_COMPANION, and owns two resources before the caller links and positions it.
+  description: Type-0x84 companion template for the paired type-0x5E interaction spawns; it uses movement stream 0x0011F7A6, animation stream ACTOR_ANIM_INTERACTION_PAIR_COMPANION, and owns two resources before the caller links and positions it.
   evidence:
     - ghidra_early_interaction_dispatch_block
     - actor_template_grid_xrefs
@@ -9072,21 +9080,23 @@
     - actor_template_grid_xrefs
 
 0x001B8034:
-  name: ACTOR_TEMPLATE_TYPE_31_F5_CHILD_A
+  name: ACTOR_TEMPLATE_INTERACTION_CHILD_A
+  aliases: [ACTOR_TEMPLATE_TYPE_31_F5_CHILD_A]
   type: actor_template
   size: 20
   confidence: decompiled
-  description: Type-0x31 AnimationVM child template supplied by five direct F5 commands in the 0x00124F30 animation region. It uses movement stream 0x00120B62, animation entry 0x00124F96, template word 0x4000, no owned resources, and trailing flags 0x1000; the producer payloads select the child-specific placement/response words.
+  description: AnimationVM interaction-child template supplied by five direct F5 commands in the 0x00124F30 animation region. It uses ACTOR_MOVE_INTERACTION_CHILD_SHARED at 0x00120B62, animation entry 0x00124F96, template word 0x4000, no owned resources, and trailing flags 0x1000; the producer payloads select the child-specific placement/response words.
   evidence:
     - actor_template_type31_f5_child_family_static_decompilation
     - ghidra_actor_template_initializer_001AE30A
 
 0x001B8048:
-  name: ACTOR_TEMPLATE_TYPE_31_F5_CHILD_B
+  name: ACTOR_TEMPLATE_INTERACTION_CHILD_B
+  aliases: [ACTOR_TEMPLATE_TYPE_31_F5_CHILD_B]
   type: actor_template
   size: 20
   confidence: decompiled
-  description: Type-0x31 AnimationVM child template supplied by two direct F5 commands in the 0x00124F30 animation region. It shares movement stream 0x00120B62 and template word 0x4000 with the paired Type-0x31 record, uses animation entry 0x00125028, owns no resources, and carries trailing flags 0x1000; the producer payloads select the child-specific placement/response words.
+  description: AnimationVM interaction-child template supplied by two direct F5 commands in the 0x00124F30 animation region. It shares ACTOR_MOVE_INTERACTION_CHILD_SHARED and template word 0x4000 with the paired child record, uses animation entry 0x00125028, owns no resources, and carries trailing flags 0x1000; the producer payloads select the child-specific placement/response words.
   evidence:
     - actor_template_type31_f5_child_family_static_decompilation
     - ghidra_actor_template_initializer_001AE30A

@@ -64,7 +64,7 @@ mappings:
     description: Level-exit movement response installed by the type-0x74 collision path.
 
   - name: LEVEL_EVENT_VARIANT_B
-    scope: event
+    scope: role
     symbol_addresses: [0x00120FB4]
     technical_types: [0x84]
     confidence: decompiled
@@ -72,7 +72,7 @@ mappings:
     description: Level-event movement variant B.
 
   - name: LEVEL_EVENT_MODE_READY
-    scope: event
+    scope: role
     symbol_addresses: [0x00120FFE]
     technical_types: [0x46]
     confidence: decompiled
@@ -80,7 +80,7 @@ mappings:
     description: Level-event movement selected when the mode is ready.
 
   - name: LEVEL_EVENT_SHARED
-    scope: event
+    scope: role
     symbol_addresses: [0x0012118A, 0x001211C4]
     technical_types: [0x7C, 0x7D]
     confidence: decompiled
@@ -104,7 +104,7 @@ mappings:
     description: Level 09 entry movement stream.
 
   - name: PRESENTATION_RESPONSE
-    scope: event
+    scope: role
     symbol_addresses: [0x001214B2]
     technical_types: [0x84]
     confidence: decompiled
@@ -128,7 +128,7 @@ mappings:
     description: Scene reset movement loop.
 
   - name: UPPER_COLLISION_RESPONSE
-    scope: event
+    scope: role
     symbol_addresses: [0x001B7CC4]
     technical_types: [0x84]
     confidence: decompiled
@@ -136,7 +136,7 @@ mappings:
     description: Shared Type-0x84 collision-response actor template.
 
   - name: COLLISION_RESPONSE_CHILD
-    scope: event
+    scope: role
     symbol_addresses: [0x001B8368]
     technical_types: [0x3D]
     confidence: decompiled
@@ -144,7 +144,7 @@ mappings:
     description: Type-0x3D collision-response child template.
 
   - name: WALL_RESPONSE
-    scope: event
+    scope: role
     symbol_addresses: [0x001B7CD8]
     technical_types: [0x8D]
     confidence: decompiled
@@ -152,7 +152,7 @@ mappings:
     description: Type-0x8D wall-response child template.
 
   - name: TERRAIN_RESPONSE
-    scope: event
+    scope: role
     symbol_addresses: [0x001B7DF0]
     technical_types: [0x84]
     confidence: decompiled
@@ -160,7 +160,7 @@ mappings:
     description: Alternate Type-0x84 terrain-response template.
 
   - name: INTERACTION_PAIR
-    scope: event
+    scope: role
     symbol_addresses: [0x001B78A0, 0x001B78C8]
     technical_types: [0x5E, 0x84]
     confidence: decompiled
@@ -168,7 +168,7 @@ mappings:
     description: Type-0x5E interaction-pair source and its Type-0x84 companion.
 
   - name: INTERACTION_BASE
-    scope: event
+    scope: role
     symbol_addresses: [0x001B78F0]
     technical_types: [0x84]
     confidence: decompiled
@@ -176,7 +176,7 @@ mappings:
     description: Shared Type-0x84 interaction base template.
 
   - name: PRESENTATION_RESPONSE_TEMPLATE
-    scope: event
+    scope: role
     symbol_addresses: [0x001B7F6C]
     technical_types: [0x8B]
     confidence: decompiled
@@ -184,7 +184,7 @@ mappings:
     description: Shared Type-0x8B presentation-response template.
 
   - name: MENU_PRESENTATION
-    scope: event
+    scope: role
     symbol_addresses: [0x001B7A44]
     technical_types: [0x84]
     confidence: decompiled
@@ -192,7 +192,7 @@ mappings:
     description: Type-0x84 menu-presentation template.
 
   - name: SCENE_INITIALIZATION
-    scope: event
+    scope: role
     symbol_addresses: [0x001B8318, 0x001B832C]
     technical_types: [0x84]
     confidence: decompiled
@@ -210,7 +210,7 @@ mappings:
     description: Type-0x34 movement stream for the oscillating wall actor.
 
   - name: INTERACTION_RESPONSE_SHARED
-    scope: event
+    scope: role
     symbol_addresses: [0x00122BD8]
     technical_types: [0x3A, 0x3B]
     confidence: decompiled
@@ -220,7 +220,7 @@ mappings:
     description: Shared interaction-response animation used by the Type-0x3A/0x3B producer family.
 
   - name: INTERACTION_SHARED
-    scope: event
+    scope: role
     symbol_addresses: [0x00122C12]
     technical_types: [0x40]
     confidence: decompiled
@@ -230,7 +230,7 @@ mappings:
     description: Shared Type-0x40 interaction animation and response stream.
 
   - name: INTERACTION_CHILD_SPAWN
-    scope: event
+    scope: role
     symbol_addresses: [0x00123E36]
     technical_types: [0x47, 0x48, 0x49, 0x4A, 0x4B, 0x4C, 0x84]
     confidence: decompiled
@@ -240,7 +240,7 @@ mappings:
     description: Shared Type-0x84 child-spawn animation for the runtime Type-0x47 through Type-0x4C interaction family.
 
   - name: INTERACTION_TERMINAL_RESPONSE
-    scope: event
+    scope: role
     symbol_addresses: [0x00123FE4]
     technical_types: [0x2B]
     confidence: decompiled
@@ -260,7 +260,7 @@ mappings:
     description: Shared level-entry animation/template pair used by the level-entry actor creation family.
 
   - name: INTERACTION_SHARED_BASE
-    scope: event
+    scope: role
     symbol_addresses: [0x001B7904]
     technical_types: [0x6E, 0x6F, 0x70, 0x71, 0x72, 0x73]
     confidence: decompiled
@@ -270,7 +270,7 @@ mappings:
     description: Shared actor-template base for the runtime Type-0x6E through Type-0x73 interaction-spawn family.
 
   - name: INTERACTION_POSITION_VARIANTS
-    scope: event
+    scope: role
     symbol_addresses: [0x001B7A1C]
     technical_types: [0x55, 0x7B, 0x7C, 0x7D, 0x7E]
     confidence: decompiled
@@ -290,7 +290,7 @@ mappings:
     description: Primary and secondary terminal-transition actor template/animation pairs used by the level-exit presentation.
 
   - name: TRANSITION_PRESENTATION
-    scope: event
+    scope: role
     symbol_addresses: [0x001B7B48]
     technical_types: [0x84]
     confidence: decompiled
@@ -300,7 +300,7 @@ mappings:
     description: Scene-resource transition-presentation actor template.
 
   - name: LEVEL_OBJECT_BASE
-    scope: actor
+    scope: role
     symbol_addresses: [0x001B7A08]
     technical_types: [0x5A, 0x5B, 0x5C, 0x5D]
     confidence: decompiled
@@ -308,3 +308,45 @@ mappings:
       - ghidra_level_actor_spawn_block
       - actor_template_grid_xrefs
     description: Shared zero-resource level-object template used by the Type-0x5A source and its Type-0x5C/0x5D promoted variants.
+
+  - name: INTERACTION_PAIR_COMPANION
+    scope: role
+    symbol_addresses: [0x00123154]
+    technical_types: [0x84]
+    confidence: decompiled
+    evidence:
+      - type84_interaction_pair_companion_animation_static_decompilation
+      - actor_template_type84_interaction_pair_companion
+    description: Companion animation for the paired interaction-spawn actor.
+
+  - name: VERTICAL_BOB_OBJECT
+    scope: role
+    symbol_addresses: [0x00120F76, 0x001231DC, 0x001B7AF8]
+    technical_types: [0x2A]
+    confidence: decompiled
+    evidence:
+      - actor_type2a_movement_stream_static_decode
+      - actor_type2a_animation_stream_static_decode
+      - level01_actor_type2a_decomp
+    description: Upper-route moving object with a fixed vertical bob movement and animation pair.
+
+  - name: INTERACTION_SPAWN_RESPONSE
+    scope: role
+    symbol_addresses: [0x00124450, 0x001B79E0, 0x001B8098]
+    technical_types: [0x43, 0x7F, 0x8A]
+    confidence: decompiled
+    evidence:
+      - type43_8a_interaction_animation_static_decompilation
+      - interaction_spawn_runtime37_3b_type43_static_decompilation
+      - actor_template_additional_family_static_decompilation
+    description: Type-0x43/0x8A interaction-spawn response family and its AnimationVM child template.
+
+  - name: INTERACTION_CHILD_MOVEMENT
+    scope: role
+    symbol_addresses: [0x00120B62, 0x001B8034, 0x001B8048]
+    technical_types: [0x31]
+    confidence: decompiled
+    evidence:
+      - actor_template_type31_f5_child_family_static_decompilation
+      - actor_template_type31_f5_child_movement_static_decompilation
+    description: Shared MovementVM path and paired templates for AnimationVM interaction children.
