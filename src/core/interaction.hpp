@@ -28,6 +28,19 @@ struct InteractionSpawnResult {
     bool handler_applied = false;
 };
 
+enum class InteractionRowProfile : std::uint8_t {
+    A,
+    ACore,
+    B,
+    BCore,
+};
+
+struct InteractionRowPassResult {
+    std::size_t rows_visited = 0;
+    std::size_t selector_count = 0;
+    std::size_t spawn_count = 0;
+};
+
 InteractionDispatch interaction_dispatch(
     const CoreRuntime& core,
     std::uint8_t selector
@@ -40,6 +53,29 @@ InteractionSpawnResult interaction_spawn_dispatch(
     CoreRuntime& core,
     std::uint16_t interaction_index,
     std::uint8_t selector,
+    CoreTrace* trace = nullptr
+);
+
+InteractionRowPassResult interaction_process_rows(
+    CoreRuntime& core,
+    InteractionRowProfile profile,
+    CoreTrace* trace = nullptr
+);
+
+InteractionRowPassResult interaction_process_rows_a(
+    CoreRuntime& core,
+    CoreTrace* trace = nullptr
+);
+InteractionRowPassResult interaction_process_rows_a_core(
+    CoreRuntime& core,
+    CoreTrace* trace = nullptr
+);
+InteractionRowPassResult interaction_process_rows_b(
+    CoreRuntime& core,
+    CoreTrace* trace = nullptr
+);
+InteractionRowPassResult interaction_process_rows_b_core(
+    CoreRuntime& core,
     CoreTrace* trace = nullptr
 );
 
