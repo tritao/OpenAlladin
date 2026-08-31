@@ -1,0 +1,19 @@
+{
+  "format": "openaladdin-targeted-decompile-request-v1",
+  "recorded_at": "2026-08-31",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "focus": "Canonicalize the menu byte that brackets the controller-port handshake and routes unavailable polls away from selection handling.",
+  "targets": [
+    { "address": "0x001B3C7C", "name": "Menu_RunOptionsPresentationContinuation", "ram": "0x00FFEFFE" },
+    { "address": "0x00FFEFFE", "name": "MENU_CONTROLLER_POLL_GATE" }
+  ],
+  "contracts": [
+    "Menu_RunOptionsPresentationContinuation stores 0xFF to 0x00FFEFFE before the primary-selection controller poll at 0x001B3E6E.",
+    "The controller-port handshake occupies 0x001B3F52 through 0x001B3F98 and clears 0x00FFEFFE at 0x001B3FDC after the successful handshake path.",
+    "Reads at 0x001B3F9C and 0x001B4044 test the byte before selecting menu-state handling; INPUT_EDGE_LATCH at 0x00FFEFFD remains a distinct action debounce latch."
+  ],
+  "conclusion": "The controller-handshake byte is a menu-local controller-poll/availability gate, not another presentation or input-edge state."
+}

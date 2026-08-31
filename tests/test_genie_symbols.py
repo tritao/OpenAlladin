@@ -1752,6 +1752,7 @@ def test_real_input_and_menu_phase_state_have_canonical_roles():
     symbols = SymbolStore()
     expected = {
         0x00FFEFFD: ("INPUT_EDGE_LATCH", "boolean"),
+        0x00FFEFFE: ("MENU_CONTROLLER_POLL_GATE", "boolean"),
         0x00FF7274: ("MENU_OPTIONS_SUBPHASE", "counter"),
     }
     for address, (name, format_name) in expected.items():

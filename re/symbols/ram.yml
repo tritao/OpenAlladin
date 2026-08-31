@@ -2662,6 +2662,17 @@
     - ghidra_disassembly_001A8F0C
     - ghidra_disassembly_001AA484
 
+0xFFEFFE:
+  name: MENU_CONTROLLER_POLL_GATE
+  type: u8
+  format: boolean
+  confidence: decompiled
+  description: Menu controller-poll/availability gate. Menu_RunOptionsPresentationContinuation sets it before each primary-selection poll, clears it after the controller handshake succeeds, and tests it to route failed or unavailable polls away from selection-state handling; its neighboring input edge latch remains a separate action debounce state.
+  evidence:
+    - ghidra_disassembly_001B3C7C
+    - ghidra_context_00FFEFFE
+    - menu_controller_poll_static_decompilation
+
 0xFF7274:
   name: MENU_OPTIONS_SUBPHASE
   type: u8
