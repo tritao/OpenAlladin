@@ -1,0 +1,36 @@
+{
+  "format": "openaladdin-recorded-semantic-promotion-v1",
+  "recorded_at": "2026-08-31",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "target_manifest": "re/ghidra/targets/interaction-spawn-unindexed-variants-semantic-targets.json",
+  "promoted_symbols": [
+    "InteractionSpawn_CreateType57FromType55TemplateVariant",
+    "InteractionSpawn_CreateType45ActorVariant",
+    "InteractionSpawn_CreateType5BFromType5ATemplateVariant"
+  ],
+  "legacy_aliases": [
+    "InteractionSpawn_RuntimeType57_AdjacentVariant",
+    "InteractionSpawn_RuntimeType45_AdjacentVariant",
+    "InteractionSpawn_RuntimeType5B_AdjacentVariant"
+  ],
+  "contracts": [
+    "The Type-0x57 variant reverse-spawns ACTOR_TEMPLATE_TYPE_55_INTERACTION_7B_7E and publishes runtime type 0x57 after successful allocation.",
+    "The Type-0x45 variant allocates ACTOR_TEMPLATE_BASE_ZERO, publishes runtime type 0x45, installs ACTOR_ANIM_TYPE44_INTERACTION, and sets actor byte +0x29 to 1.",
+    "The Type-0x5B variant allocates ACTOR_TEMPLATE_TYPE_5A_LEVEL_OBJECT and publishes runtime type 0x5B after successful allocation."
+  ],
+  "evidence": [
+    "Exact bodies at 0x001B6BFC, 0x001B7474, and 0x001B74A0",
+    "Existing unindexed-variant and actor-template static findings",
+    "No incoming INTERACTION_HANDLER_TABLE pointer or other current static xref"
+  ],
+  "limitations": [
+    "Selector membership and global runtime reachability remain unresolved for all three variants.",
+    "No user-facing object identity is claimed."
+  ],
+  "conclusion": "The three complete unindexed interaction-spawn variants now have stable template- and runtime-type-based identities while their unresolved dispatch status remains explicit.",
+  "confidence": "decompiled",
+  "status": "recorded-semantic-promotion"
+}

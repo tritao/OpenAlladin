@@ -1,0 +1,50 @@
+{
+  "format": "openaladdin-semantic-promotion-target-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "focus": {
+    "name": "interaction-spawn-unindexed-variants-semantic",
+    "purpose": "Promote the three complete unindexed interaction-spawn variants to stable template/type identities without claiming unresolved selectors."
+  },
+  "variants": [
+    {
+      "address": "0x001B6BFC",
+      "name": "InteractionSpawn_CreateType57FromType55TemplateVariant",
+      "legacy_name": "InteractionSpawn_RuntimeType57_AdjacentVariant",
+      "range": "0x001B6BFC-0x001B6C0D",
+      "runtime_type": "0x57",
+      "template": "ACTOR_TEMPLATE_TYPE_55_INTERACTION_7B_7E",
+      "allocator": "InteractionSpawn_ReverseSlot"
+    },
+    {
+      "address": "0x001B7474",
+      "name": "InteractionSpawn_CreateType45ActorVariant",
+      "legacy_name": "InteractionSpawn_RuntimeType45_AdjacentVariant",
+      "range": "0x001B7474-0x001B7493",
+      "runtime_type": "0x45",
+      "template": "ACTOR_TEMPLATE_BASE_ZERO",
+      "allocator": "LevelObjectSpawnEntry",
+      "animation": "ACTOR_ANIM_TYPE44_INTERACTION at 0x00122C40",
+      "post_spawn": ["actor flag byte +0x29 = 1"]
+    },
+    {
+      "address": "0x001B74A0",
+      "name": "InteractionSpawn_CreateType5BFromType5ATemplateVariant",
+      "legacy_name": "InteractionSpawn_RuntimeType5B_AdjacentVariant",
+      "range": "0x001B74A0-0x001B74B1",
+      "runtime_type": "0x5B",
+      "template": "ACTOR_TEMPLATE_TYPE_5A_LEVEL_OBJECT",
+      "allocator": "LevelObjectSpawnEntry"
+    }
+  ],
+  "evidence": [
+    "Exact 68000 function boundaries and bodies",
+    "Direct template loads and allocation-helper calls",
+    "Exact runtime-type, animation, flag, and facing mutations where present",
+    "Existing unindexed-variant static findings"
+  ],
+  "limitations": [
+    "No INTERACTION_HANDLER_TABLE selector, incoming static xref, or runtime observation currently reaches these variants.",
+    "The names identify their exact template/type contracts but do not assign user-facing object roles."
+  ],
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+}
