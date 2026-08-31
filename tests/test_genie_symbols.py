@@ -1455,6 +1455,19 @@ def test_real_vdp_tile_row_command_tables_have_canonical_roles():
         assert symbol.confidence == "decompiled"
 
 
+def test_real_renderer_and_counter_word_ranges_cover_low_byte_references():
+    symbols = SymbolStore()
+    expected = {
+        0x00FFEFE1: "INTERACTION_COUNTER_DIGITS",
+        0x00FFEFE3: "INTERACTION_COUNTER_SECONDARY_DIGITS",
+        0x00FFEFEF: "ACTOR_SPRITE_PAYLOAD_COUNT",
+    }
+    for address, name in expected.items():
+        symbol = symbols.at(address)
+        assert symbol is not None
+        assert symbol.name == name
+
+
 def test_real_level07_spawn_cooldown_has_canonical_role():
     symbol = SymbolStore().at(0x00FFF113, include_ranges=False)
     assert symbol is not None

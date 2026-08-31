@@ -1135,6 +1135,7 @@
   aliases:
     - PLAYER_APPLE_COUNT_DIGITS
   type: u16
+  size: 2
   format: ascii_digits
   confidence: confirmed
   description: Two ASCII digits for the player apple inventory, initialized to 15, 10, or 05 from GAME_DIFFICULTY_MODE and decremented by the PLAYER_ANIM_THROW_APPLE AnimationVM callback. The same word is also advanced/decremented by shared interaction and scene-resource handlers, so INTERACTION_COUNTER_DIGITS remains the address-level canonical name while PLAYER_APPLE_COUNT_DIGITS is the gameplay resource projection.
@@ -1147,6 +1148,7 @@
 0xFFEFE2:
   name: INTERACTION_COUNTER_SECONDARY_DIGITS
   type: u16
+  size: 2
   format: ascii_digits
   confidence: confirmed
   description: Secondary two-digit interaction counter reset to ASCII "00", incremented up to "99", and consumed by interaction handlers and actor-record rendering.
@@ -1167,6 +1169,7 @@
 0xFFEFEE:
   name: ACTOR_SPRITE_PAYLOAD_COUNT
   type: u16
+  size: 2
   format: record_count
   confidence: confirmed
   description: Number of 14-byte actor sprite payload records waiting in the renderer buffer. AnimationVM pass setup clears it, Render_BuildActorSpritePayload increments its low byte for each expanded frame record, and Render_SubmitActorSprites consumes the word to transfer exactly that many records to the VDP.
