@@ -3638,6 +3638,7 @@
   evidence:
     - unreferenced_movement_streams_static_v1
     - vm_stream_semantic_naming_static_v1
+    - unresolved_vm_streams_natural_route_runtime_v1
     - movement_stream_decoder
 
 0x0011FD18:
@@ -4409,6 +4410,7 @@
     - type0f_child_and_type6e_default_animation_static_v1
     - unreferenced_animation_self_loop_static_v1
     - vm_stream_semantic_naming_static_v1
+    - unresolved_vm_streams_natural_route_runtime_v1
     - animation_stream_decoder
 
 0x00123DEA:

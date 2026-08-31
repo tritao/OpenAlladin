@@ -647,6 +647,20 @@ def test_vm_stream_promotions_and_spawn_handoff_marker_have_stable_names():
     assert marker.metadata["format"] == "boolean"
 
 
+def test_unresolved_vm_stream_runtime_finding_keeps_negative_evidence_bounded():
+    finding = json.loads(
+        Path("re/mame/findings/20260831-unresolved-vm-streams-runtime-negative-v1.json")
+        .read_text(encoding="utf-8")
+    )
+    assert finding["status"] == "recorded-runtime-negative-evidence"
+    assert finding["route"]["frames"] == 2296
+    assert finding["route"]["rom_read_count"] == 0
+    assert finding["route"]["checkpoints_reached"][-1] == "frontier-end"
+    assert len(finding["ranges"]) == 2
+    assert all(item["read_count"] == 0 for item in finding["ranges"])
+    assert any("not an exhaustive reachability proof" in item for item in finding["limitations"])
+
+
 def test_scene_graphics_resources_have_stable_state_and_destination_names():
     expected = {
         0x0012DA04: ("SCENE_STATE04_C000_GRAPHICS", "SCENE_RNC_GRAPHICS_0012DA04"),
