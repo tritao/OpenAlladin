@@ -1597,51 +1597,57 @@
   evidence: [ghidra_scene_resource_mode_record_consumer, scene_resource_mode_stream_extents_static_v1]
 
 0x001270A8:
-  name: SCENE_RESOURCE_PRESENTATION_STREAM_12E34A_1270A8
+  name: SCENE_RESOURCE_PRESENTATION_STREAM_STATE_01_PRIMARY
+  aliases: [SCENE_RESOURCE_PRESENTATION_STREAM_12E34A_1270A8]
   type: scene_resource_stream
   size: 0x8C
   confidence: decompiled
-  description: Scene-resource presentation command stream loaded with resource 0x0012E34A by SceneResource_Run12E34AStream1270A8; the shared interpreter reaches its command-0 terminator at 0x00127133.
+  description: State-0x01 scene-resource presentation command stream loaded with SCENE_STATE01_C000_GRAPHICS_PRIMARY by the first state-01 presentation wrapper; the shared interpreter reaches its command-0 terminator at 0x00127133.
   evidence: [ghidra_scene_resource_presentation_wrappers, scene_resource_presentation_stream_extents_static_v1]
 
 0x00127134:
-  name: SCENE_RESOURCE_PRESENTATION_STREAM_12E176_127134
+  name: SCENE_RESOURCE_PRESENTATION_STREAM_STATE_01_SECONDARY
+  aliases: [SCENE_RESOURCE_PRESENTATION_STREAM_12E176_127134]
   type: scene_resource_stream
   size: 0xD3
   confidence: decompiled
-  description: Scene-resource presentation command stream loaded with resource 0x0012E176 by SceneResource_Run12E176Stream127134; the shared interpreter reaches its command-0 terminator at 0x00127206.
+  description: State-0x01 scene-resource presentation command stream loaded with SCENE_STATE01_C000_GRAPHICS_SECONDARY by the second state-01 presentation wrapper; the shared interpreter reaches its command-0 terminator at 0x00127206.
   evidence: [ghidra_scene_resource_presentation_wrappers, scene_resource_presentation_stream_extents_static_v1]
 
 0x00127207:
-  name: SCENE_RESOURCE_PRESENTATION_STREAM_12DD76_127207
+  name: SCENE_RESOURCE_PRESENTATION_STREAM_STATE_03
+  aliases: [SCENE_RESOURCE_PRESENTATION_STREAM_12DD76_127207]
   type: scene_resource_stream
   size: 0x131
   confidence: decompiled
-  description: Scene-resource presentation command stream loaded with resource 0x0012DD76 by SceneResource_Run12DD76Stream127207; the shared interpreter reaches its command-0 terminator at 0x00127337.
+  description: State-0x03 scene-resource presentation command stream loaded with SCENE_SHARED_C000_GRAPHICS by its direct presentation wrapper; the shared interpreter reaches its command-0 terminator at 0x00127337.
   evidence: [ghidra_scene_resource_presentation_wrappers, scene_resource_presentation_stream_extents_static_v1]
 
 0x00127338:
-  name: SCENE_RESOURCE_PRESENTATION_STREAM_12DD76_127338
+  name: SCENE_RESOURCE_PRESENTATION_STREAM_STATE_00
+  aliases: [SCENE_RESOURCE_PRESENTATION_STREAM_12DD76_127338]
   type: scene_resource_stream
   size: 0xB1
   confidence: decompiled
-  description: Scene-resource presentation command stream loaded with resource 0x0012DD76 by SceneResource_Run12DD76Stream127338; the shared interpreter reaches its command-0 terminator at 0x001273E8.
+  description: State-0x00 scene-resource presentation command stream loaded with SCENE_SHARED_C000_GRAPHICS by its direct presentation wrapper; the shared interpreter reaches its command-0 terminator at 0x001273E8.
   evidence: [ghidra_scene_resource_presentation_wrappers, scene_resource_presentation_stream_extents_static_v1]
 
 0x001273E9:
-  name: SCENE_RESOURCE_PRESENTATION_STREAM_12DA04_1273E9
+  name: SCENE_RESOURCE_PRESENTATION_STREAM_STATE_04
+  aliases: [SCENE_RESOURCE_PRESENTATION_STREAM_12DA04_1273E9]
   type: scene_resource_stream
   size: 0x107
   confidence: decompiled
-  description: Scene-resource presentation command stream loaded with resource 0x0012DA04 by SceneResource_Run12DA04Stream1273E9; the shared interpreter reaches its command-0 terminator at 0x001274EF.
+  description: State-0x04 scene-resource presentation command stream loaded with SCENE_STATE04_C000_GRAPHICS by its direct presentation wrapper; the shared interpreter reaches its command-0 terminator at 0x001274EF.
   evidence: [ghidra_scene_resource_presentation_wrappers, scene_resource_presentation_stream_extents_static_v1]
 
 0x00127571:
-  name: SCENE_RESOURCE_PRESENTATION_STREAM_12DD76_127571
+  name: SCENE_RESOURCE_PRESENTATION_STREAM_STATE_05_PRIMARY
+  aliases: [SCENE_RESOURCE_PRESENTATION_STREAM_12DD76_127571]
   type: scene_resource_stream
   size: 0x7D
   confidence: decompiled
-  description: Scene-resource presentation command stream loaded with resource 0x0012DD76 by SceneResource_Run12DD76Stream127571; the shared interpreter reaches its command-0 terminator at 0x001275ED.
+  description: First state-0x05 scene-resource presentation command stream loaded with SCENE_SHARED_C000_GRAPHICS by its direct presentation wrapper; the shared interpreter reaches its command-0 terminator at 0x001275ED.
   evidence: [ghidra_scene_resource_presentation_wrappers, scene_resource_presentation_stream_extents_static_v1]
 
 0x001274F0:
@@ -1667,35 +1673,39 @@
     - scene_resource_text_terminator_layout
 
 0x001275EE:
-  name: SCENE_RESOURCE_PRESENTATION_STREAM_12DD76_1275EE
+  name: SCENE_RESOURCE_PRESENTATION_STREAM_STATE_05_SECONDARY
+  aliases: [SCENE_RESOURCE_PRESENTATION_STREAM_12DD76_1275EE]
   type: scene_resource_stream
   size: 0x13F
   confidence: decompiled
-  description: Scene-resource presentation command stream loaded with resource 0x0012DD76 by SceneResource_Run12DD76Stream1275EE; the shared interpreter reaches its command-0 terminator at 0x0012772C.
+  description: Second state-0x05 scene-resource presentation command stream loaded with SCENE_SHARED_C000_GRAPHICS by its direct presentation wrapper; the shared interpreter reaches its command-0 terminator at 0x0012772C.
   evidence: [ghidra_scene_resource_presentation_wrappers, scene_resource_presentation_stream_extents_static_v1]
 
 0x0012772D:
-  name: SCENE_RESOURCE_PRESENTATION_STREAM_12D870_12772D
+  name: SCENE_RESOURCE_PRESENTATION_STREAM_STATE_07
+  aliases: [SCENE_RESOURCE_PRESENTATION_STREAM_12D870_12772D]
   type: scene_resource_stream
   size: 0x98
   confidence: decompiled
-  description: Scene-resource presentation command stream loaded with resource 0x0012D870 by SceneResource_Run12D870Stream12772D; the shared interpreter reaches its command-0 terminator at 0x001277C4.
+  description: State-0x07 scene-resource presentation command stream loaded with SCENE_STATE07_C000_GRAPHICS by its direct presentation wrapper; the shared interpreter reaches its command-0 terminator at 0x001277C4.
   evidence: [ghidra_scene_resource_presentation_wrappers, scene_resource_presentation_stream_extents_static_v1]
 
 0x001277C5:
-  name: SCENE_RESOURCE_BLANK_STREAM_1277C5
+  name: SCENE_RESOURCE_BLANK_STREAM_STATE_07
+  aliases: [SCENE_RESOURCE_BLANK_STREAM_1277C5]
   type: scene_resource_stream
   size: 0x6F
   confidence: decompiled
-  description: Blank-frame scene-resource command/text stream loaded directly by SceneResource_RunBlankStream1277C5. The shared interpreter reaches its command-0 terminator at 0x00127833, immediately before SCENE_RESOURCE_PRESENTATION_STREAM_STATE_10.
+  description: Blank-frame scene-resource command/text stream for state 0x07 loaded directly by SceneResource_RunBlankStream1277C5. The shared interpreter reaches its command-0 terminator at 0x00127833, immediately before SCENE_RESOURCE_PRESENTATION_STREAM_STATE_10.
   evidence: [gnu_m68k_disassembly_001B4CE6, scene_resource_presentation_stream_extents_static_v1]
 
 0x00127B60:
-  name: SCENE_RESOURCE_BLANK_STREAM_127B60
+  name: SCENE_RESOURCE_BLANK_STREAM_STATE_04_PRELUDE
+  aliases: [SCENE_RESOURCE_BLANK_STREAM_127B60]
   type: scene_resource_stream
   size: 0x72
   confidence: decompiled
-  description: Blank-frame scene-resource command/text stream loaded directly by SceneResource_RunBlankStream127B60. The shared interpreter reaches its command-0 terminator at 0x00127BD1, immediately before the state-0x04 blank-frame stream.
+  description: Blank-frame scene-resource command/text stream for the state-0x04 presentation path loaded directly by SceneResource_RunBlankStream127B60. The shared interpreter reaches its command-0 terminator at 0x00127BD1, immediately before the first separately named state-0x04 blank-frame stream.
   evidence: [gnu_m68k_disassembly_001B4E44, scene_resource_presentation_stream_extents_static_v1]
 
 0x00128ED2:

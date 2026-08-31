@@ -1,0 +1,24 @@
+{
+  "format": "openaladdin-recorded-semantic-promotion-v1",
+  "recorded_at": "2026-08-31",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "target_manifest": "re/ghidra/targets/scene-presentation-streams-semantic-targets.json",
+  "promotions": [
+    { "address": "0x001270A8", "old_name": "SCENE_RESOURCE_PRESENTATION_STREAM_12E34A_1270A8", "name": "SCENE_RESOURCE_PRESENTATION_STREAM_STATE_01_PRIMARY", "alias": "SCENE_RESOURCE_PRESENTATION_STREAM_12E34A_1270A8" },
+    { "address": "0x00127134", "old_name": "SCENE_RESOURCE_PRESENTATION_STREAM_12E176_127134", "name": "SCENE_RESOURCE_PRESENTATION_STREAM_STATE_01_SECONDARY", "alias": "SCENE_RESOURCE_PRESENTATION_STREAM_12E176_127134" },
+    { "address": "0x00127207", "old_name": "SCENE_RESOURCE_PRESENTATION_STREAM_12DD76_127207", "name": "SCENE_RESOURCE_PRESENTATION_STREAM_STATE_03", "alias": "SCENE_RESOURCE_PRESENTATION_STREAM_12DD76_127207" },
+    { "address": "0x00127338", "old_name": "SCENE_RESOURCE_PRESENTATION_STREAM_12DD76_127338", "name": "SCENE_RESOURCE_PRESENTATION_STREAM_STATE_00", "alias": "SCENE_RESOURCE_PRESENTATION_STREAM_12DD76_127338" },
+    { "address": "0x001273E9", "old_name": "SCENE_RESOURCE_PRESENTATION_STREAM_12DA04_1273E9", "name": "SCENE_RESOURCE_PRESENTATION_STREAM_STATE_04", "alias": "SCENE_RESOURCE_PRESENTATION_STREAM_12DA04_1273E9" },
+    { "address": "0x00127571", "old_name": "SCENE_RESOURCE_PRESENTATION_STREAM_12DD76_127571", "name": "SCENE_RESOURCE_PRESENTATION_STREAM_STATE_05_PRIMARY", "alias": "SCENE_RESOURCE_PRESENTATION_STREAM_12DD76_127571" },
+    { "address": "0x001275EE", "old_name": "SCENE_RESOURCE_PRESENTATION_STREAM_12DD76_1275EE", "name": "SCENE_RESOURCE_PRESENTATION_STREAM_STATE_05_SECONDARY", "alias": "SCENE_RESOURCE_PRESENTATION_STREAM_12DD76_1275EE" },
+    { "address": "0x0012772D", "old_name": "SCENE_RESOURCE_PRESENTATION_STREAM_12D870_12772D", "name": "SCENE_RESOURCE_PRESENTATION_STREAM_STATE_07", "alias": "SCENE_RESOURCE_PRESENTATION_STREAM_12D870_12772D" },
+    { "address": "0x001277C5", "old_name": "SCENE_RESOURCE_BLANK_STREAM_1277C5", "name": "SCENE_RESOURCE_BLANK_STREAM_STATE_07", "alias": "SCENE_RESOURCE_BLANK_STREAM_1277C5" },
+    { "address": "0x00127B60", "old_name": "SCENE_RESOURCE_BLANK_STREAM_127B60", "name": "SCENE_RESOURCE_BLANK_STREAM_STATE_04_PRELUDE", "alias": "SCENE_RESOURCE_BLANK_STREAM_127B60" }
+  ],
+  "conclusion": "Replaced address-bearing names for directly wrapped scene presentation and blank streams with stable state and order identities while retaining legacy aliases.",
+  "confidence": "decompiled",
+  "status": "recorded-semantic-promotion"
+}

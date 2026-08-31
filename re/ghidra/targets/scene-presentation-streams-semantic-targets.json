@@ -1,0 +1,28 @@
+{
+  "format": "openaladdin-semantic-promotion-target-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "focus": {
+    "name": "scene-presentation-stream-identities",
+    "purpose": "Replace address-bearing names for directly wrapped presentation and blank command streams with stable state and load-order identities."
+  },
+  "targets": [
+    { "address": "0x001270A8", "name": "SCENE_RESOURCE_PRESENTATION_STREAM_STATE_01_PRIMARY", "legacy_name": "SCENE_RESOURCE_PRESENTATION_STREAM_12E34A_1270A8", "range": "0x001270A8-0x00127133", "scene_state": "0x01", "resource": "SCENE_STATE01_C000_GRAPHICS_PRIMARY", "wrapper": "0x001B4BB8 SceneResource_Run12E34AStream1270A8", "order": 1 },
+    { "address": "0x00127134", "name": "SCENE_RESOURCE_PRESENTATION_STREAM_STATE_01_SECONDARY", "legacy_name": "SCENE_RESOURCE_PRESENTATION_STREAM_12E176_127134", "range": "0x00127134-0x00127206", "scene_state": "0x01", "resource": "SCENE_STATE01_C000_GRAPHICS_SECONDARY", "wrapper": "0x001B4BDC SceneResource_Run12E176Stream127134", "order": 2 },
+    { "address": "0x00127207", "name": "SCENE_RESOURCE_PRESENTATION_STREAM_STATE_03", "legacy_name": "SCENE_RESOURCE_PRESENTATION_STREAM_12DD76_127207", "range": "0x00127207-0x00127337", "scene_state": "0x03", "resource": "SCENE_SHARED_C000_GRAPHICS", "wrapper": "0x001B4C02 SceneResource_Run12DD76Stream127207" },
+    { "address": "0x00127338", "name": "SCENE_RESOURCE_PRESENTATION_STREAM_STATE_00", "legacy_name": "SCENE_RESOURCE_PRESENTATION_STREAM_12DD76_127338", "range": "0x00127338-0x001273E8", "scene_state": "0x00", "resource": "SCENE_SHARED_C000_GRAPHICS", "wrapper": "0x001B4C28 SceneResource_Run12DD76Stream127338" },
+    { "address": "0x001273E9", "name": "SCENE_RESOURCE_PRESENTATION_STREAM_STATE_04", "legacy_name": "SCENE_RESOURCE_PRESENTATION_STREAM_12DA04_1273E9", "range": "0x001273E9-0x001274EF", "scene_state": "0x04", "resource": "SCENE_STATE04_C000_GRAPHICS", "wrapper": "0x001B4C4E SceneResource_Run12DA04Stream1273E9" },
+    { "address": "0x00127571", "name": "SCENE_RESOURCE_PRESENTATION_STREAM_STATE_05_PRIMARY", "legacy_name": "SCENE_RESOURCE_PRESENTATION_STREAM_12DD76_127571", "range": "0x00127571-0x001275ED", "scene_state": "0x05", "resource": "SCENE_SHARED_C000_GRAPHICS", "wrapper": "0x001B4C74 SceneResource_Run12DD76Stream127571", "order": 1 },
+    { "address": "0x001275EE", "name": "SCENE_RESOURCE_PRESENTATION_STREAM_STATE_05_SECONDARY", "legacy_name": "SCENE_RESOURCE_PRESENTATION_STREAM_12DD76_1275EE", "range": "0x001275EE-0x0012772C", "scene_state": "0x05", "resource": "SCENE_SHARED_C000_GRAPHICS", "wrapper": "0x001B4C9A SceneResource_Run12DD76Stream1275EE", "order": 2 },
+    { "address": "0x0012772D", "name": "SCENE_RESOURCE_PRESENTATION_STREAM_STATE_07", "legacy_name": "SCENE_RESOURCE_PRESENTATION_STREAM_12D870_12772D", "range": "0x0012772D-0x001277C4", "scene_state": "0x07", "resource": "SCENE_STATE07_C000_GRAPHICS", "wrapper": "0x001B4CC0 SceneResource_Run12D870Stream12772D" },
+    { "address": "0x001277C5", "name": "SCENE_RESOURCE_BLANK_STREAM_STATE_07", "legacy_name": "SCENE_RESOURCE_BLANK_STREAM_1277C5", "range": "0x001277C5-0x00127833", "scene_state": "0x07", "wrapper": "0x001B4CE6 SceneResource_RunBlankStream1277C5" },
+    { "address": "0x00127B60", "name": "SCENE_RESOURCE_BLANK_STREAM_STATE_04_PRELUDE", "legacy_name": "SCENE_RESOURCE_BLANK_STREAM_127B60", "range": "0x00127B60-0x00127BD1", "scene_state": "0x04", "wrapper": "0x001B4E44 SceneResource_RunBlankStream127B60", "order": 0 }
+  ],
+  "evidence": [
+    "exact interpreter terminators and ROM boundaries",
+    "direct wrapper-to-stream references",
+    "recorded scene-state dispatch mapping",
+    "presentation resource pairing and wrapper order"
+  ],
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6",
+  "ghidra_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365"
+}

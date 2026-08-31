@@ -699,6 +699,26 @@ def test_shared_base_graphics_have_stable_consumer_names():
         assert legacy in symbol.aliases
 
 
+def test_scene_presentation_streams_have_stable_state_names():
+    expected = {
+        0x001270A8: ("SCENE_RESOURCE_PRESENTATION_STREAM_STATE_01_PRIMARY", "SCENE_RESOURCE_PRESENTATION_STREAM_12E34A_1270A8"),
+        0x00127134: ("SCENE_RESOURCE_PRESENTATION_STREAM_STATE_01_SECONDARY", "SCENE_RESOURCE_PRESENTATION_STREAM_12E176_127134"),
+        0x00127207: ("SCENE_RESOURCE_PRESENTATION_STREAM_STATE_03", "SCENE_RESOURCE_PRESENTATION_STREAM_12DD76_127207"),
+        0x00127338: ("SCENE_RESOURCE_PRESENTATION_STREAM_STATE_00", "SCENE_RESOURCE_PRESENTATION_STREAM_12DD76_127338"),
+        0x001273E9: ("SCENE_RESOURCE_PRESENTATION_STREAM_STATE_04", "SCENE_RESOURCE_PRESENTATION_STREAM_12DA04_1273E9"),
+        0x00127571: ("SCENE_RESOURCE_PRESENTATION_STREAM_STATE_05_PRIMARY", "SCENE_RESOURCE_PRESENTATION_STREAM_12DD76_127571"),
+        0x001275EE: ("SCENE_RESOURCE_PRESENTATION_STREAM_STATE_05_SECONDARY", "SCENE_RESOURCE_PRESENTATION_STREAM_12DD76_1275EE"),
+        0x0012772D: ("SCENE_RESOURCE_PRESENTATION_STREAM_STATE_07", "SCENE_RESOURCE_PRESENTATION_STREAM_12D870_12772D"),
+        0x001277C5: ("SCENE_RESOURCE_BLANK_STREAM_STATE_07", "SCENE_RESOURCE_BLANK_STREAM_1277C5"),
+        0x00127B60: ("SCENE_RESOURCE_BLANK_STREAM_STATE_04_PRELUDE", "SCENE_RESOURCE_BLANK_STREAM_127B60"),
+    }
+    for address, (name, legacy) in expected.items():
+        symbol = SymbolStore().at(address, include_ranges=False)
+        assert symbol is not None
+        assert symbol.name == name
+        assert legacy in symbol.aliases
+
+
 def test_symbol_review_queue_keeps_named_open_questions_actionable(tmp_path):
     database_root = tmp_path / "full-rom"
     _write_database(database_root)
