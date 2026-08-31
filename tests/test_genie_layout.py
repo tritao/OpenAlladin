@@ -3308,7 +3308,7 @@ def test_upper_collision_response_animation_family_is_exact():
     symbols = SymbolStore()
     expected = {
             0x001233CC: (0x0012340B, "ACTOR_ANIM_UPPER_COLLISION_RESPONSE"),
-        0x0012340C: (0x001234BD, "ACTOR_ANIM_TYPE1D_INTERACTION_RESPONSE"),
+        0x0012340C: (0x001234BD, "ACTOR_ANIM_UPPER_INTERACTION_RESPONSE"),
         0x001234BE: (0x001234F5, "ACTOR_ANIM_ACTOR_COLLISION_RESPONSE"),
         0x001234F6: (0x0012350B, "ACTOR_ANIM_ACTOR_COLLISION_LANDING_RECOVERY"),
         0x0012350C: (0x00123543, "ACTOR_ANIM_PLAYER_COLLISION_RESPONSE"),
@@ -3326,17 +3326,17 @@ def test_upper_collision_response_animation_family_is_exact():
     assert all(right + 1 == next_left for (_, right), (next_left, _) in zip(owners, owners[1:]))
 
     aliases = {
-        0x0012341E: ("ACTOR_ANIM_TYPE1D_Y_PROXIMITY_ENTRY", 18),
-        0x0012342E: ("ACTOR_ANIM_TYPE1D_STATE_GATE", 34),
-        0x00123450: ("ACTOR_ANIM_TYPE1D_MOVEMENT_RESPONSE", 68),
-        0x00123458: ("ACTOR_ANIM_TYPE1D_MOVEMENT_LOOP", 76),
+        0x0012341E: ("ACTOR_ANIM_UPPER_INTERACTION_Y_PROXIMITY_ENTRY", 18),
+        0x0012342E: ("ACTOR_ANIM_UPPER_INTERACTION_STATE_GATE", 34),
+        0x00123450: ("ACTOR_ANIM_UPPER_INTERACTION_MOVEMENT_RESPONSE", 68),
+        0x00123458: ("ACTOR_ANIM_UPPER_INTERACTION_MOVEMENT_LOOP", 76),
         0x00123490: ("ACTOR_ANIM_GUARD_SPAWN", 132),
     }
     for address, (name, offset) in aliases.items():
         alias = symbols.at(address, include_ranges=False)
         assert alias is not None
         assert alias.name == name
-        assert alias.metadata["alias_of"] == "ACTOR_ANIM_TYPE1D_INTERACTION_RESPONSE"
+        assert alias.metadata["alias_of"] == "ACTOR_ANIM_UPPER_INTERACTION_RESPONSE"
         assert alias.metadata["entry_offset"] == offset
 
 

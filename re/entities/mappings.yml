@@ -148,8 +148,8 @@ mappings:
 
   - name: UPPER_INTERACTION
     scope: role
-    symbol_addresses: [0x00123358, 0x001233CC, 0x001B7C10, 0x001B7C24]
-    technical_types: [0x1E, 0x20]
+    symbol_addresses: [0x00123358, 0x001233CC, 0x0012340C, 0x0012341E, 0x0012342E, 0x00123450, 0x00123458, 0x001B7C10, 0x001B7C24]
+    technical_types: [0x1D, 0x1E, 0x20]
     confidence: decompiled
     evidence:
       - upper_type20_animation_static_decompilation

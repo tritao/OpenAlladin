@@ -1,0 +1,42 @@
+{
+  "finding": "semantic-role-promotion-v5",
+  "status": "confirmed",
+  "scope": "Level 01 upper interaction AnimationVM family",
+  "evidence": [
+    "upper_collision_response_animation_family_static_decompilation",
+    "level01_selector12_dispatch_trace",
+    "animation_stream_decoder"
+  ],
+  "promotions": [
+    {
+      "address": "0x0012340C",
+      "name": "ACTOR_ANIM_UPPER_INTERACTION_RESPONSE",
+      "technical_alias": "ACTOR_ANIM_TYPE1D_INTERACTION_RESPONSE",
+      "reason": "Selector-0x12 runtime type-0x1D stream with proximity gate, movement-response branch, and guard-sword child spawn."
+    },
+    {
+      "address": "0x0012341E",
+      "name": "ACTOR_ANIM_UPPER_INTERACTION_Y_PROXIMITY_ENTRY",
+      "technical_alias": "ACTOR_ANIM_TYPE1D_Y_PROXIMITY_ENTRY",
+      "reason": "Embedded Y-distance branch entry in the upper interaction-response stream."
+    },
+    {
+      "address": "0x0012342E",
+      "name": "ACTOR_ANIM_UPPER_INTERACTION_STATE_GATE",
+      "technical_alias": "ACTOR_ANIM_TYPE1D_STATE_GATE",
+      "reason": "Embedded actor-field state gate in the upper interaction-response stream."
+    },
+    {
+      "address": "0x00123450",
+      "name": "ACTOR_ANIM_UPPER_INTERACTION_MOVEMENT_RESPONSE",
+      "technical_alias": "ACTOR_ANIM_TYPE1D_MOVEMENT_RESPONSE",
+      "reason": "Embedded branch that publishes movement stream 0x0012053E and emits the 0x1172-0x118E response sequence."
+    },
+    {
+      "address": "0x00123458",
+      "name": "ACTOR_ANIM_UPPER_INTERACTION_MOVEMENT_LOOP",
+      "technical_alias": "ACTOR_ANIM_TYPE1D_MOVEMENT_LOOP",
+      "reason": "Embedded loop entry for the upper interaction movement-response branch."
+    }
+  ]
+}

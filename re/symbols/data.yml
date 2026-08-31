@@ -4794,56 +4794,61 @@
     - animation_stream_decoder
 
 0x0012340C:
-  name: ACTOR_ANIM_TYPE1D_INTERACTION_RESPONSE
+  name: ACTOR_ANIM_UPPER_INTERACTION_RESPONSE
+  aliases: [ACTOR_ANIM_TYPE1D_INTERACTION_RESPONSE]
   type: animation_stream
   size: 178
   confidence: decompiled
-  description: Type-0x1D interaction animation observed on the selector-0x12 actor path and bounded immediately before the Type-0x1E collision-response root. Its exact 178-byte composite presents the proximity-gated 0x113A lead-in, the movement-response sequence, and a random guard-sword child spawn through ACTOR_TEMPLATE_GUARD_SWORD_ATTACK before looping to the root.
+  description: Upper interaction-response animation observed on the selector-0x12 actor path for runtime type 0x1D. Its exact 178-byte composite presents the proximity-gated 0x113A lead-in, the movement-response sequence, and a random guard-sword child spawn through ACTOR_TEMPLATE_GUARD_SWORD_ATTACK before looping to the root.
   evidence:
     - upper_collision_response_animation_family_static_decompilation
     - level01_selector12_dispatch_trace
     - animation_stream_decoder
 
 0x0012341E:
-  name: ACTOR_ANIM_TYPE1D_Y_PROXIMITY_ENTRY
+  name: ACTOR_ANIM_UPPER_INTERACTION_Y_PROXIMITY_ENTRY
+  aliases: [ACTOR_ANIM_TYPE1D_Y_PROXIMITY_ENTRY]
   type: animation_stream
-  alias_of: ACTOR_ANIM_TYPE1D_INTERACTION_RESPONSE
+  alias_of: ACTOR_ANIM_UPPER_INTERACTION_RESPONSE
   entry_offset: 18
   confidence: decompiled
-  description: Embedded Type-0x1D Y-proximity branch entry beginning inside ACTOR_ANIM_TYPE1D_INTERACTION_RESPONSE. It is an alias into the owning stream and does not claim a second ROM range.
+  description: Embedded upper-interaction Y-proximity branch entry beginning inside ACTOR_ANIM_UPPER_INTERACTION_RESPONSE. It is an alias into the owning stream and does not claim a second ROM range.
   evidence:
     - upper_collision_response_animation_family_static_decompilation
     - animation_stream_decoder
 
 0x0012342E:
-  name: ACTOR_ANIM_TYPE1D_STATE_GATE
+  name: ACTOR_ANIM_UPPER_INTERACTION_STATE_GATE
+  aliases: [ACTOR_ANIM_TYPE1D_STATE_GATE]
   type: animation_stream
-  alias_of: ACTOR_ANIM_TYPE1D_INTERACTION_RESPONSE
+  alias_of: ACTOR_ANIM_UPPER_INTERACTION_RESPONSE
   entry_offset: 34
   confidence: decompiled
-  description: Embedded Type-0x1D state/field gate entry beginning inside ACTOR_ANIM_TYPE1D_INTERACTION_RESPONSE. It is an alias into the owning stream and does not claim a second ROM range.
+  description: Embedded upper-interaction state/field gate entry beginning inside ACTOR_ANIM_UPPER_INTERACTION_RESPONSE. It is an alias into the owning stream and does not claim a second ROM range.
   evidence:
     - upper_collision_response_animation_family_static_decompilation
     - animation_stream_decoder
 
 0x00123450:
-  name: ACTOR_ANIM_TYPE1D_MOVEMENT_RESPONSE
+  name: ACTOR_ANIM_UPPER_INTERACTION_MOVEMENT_RESPONSE
+  aliases: [ACTOR_ANIM_TYPE1D_MOVEMENT_RESPONSE]
   type: animation_stream
-  alias_of: ACTOR_ANIM_TYPE1D_INTERACTION_RESPONSE
+  alias_of: ACTOR_ANIM_UPPER_INTERACTION_RESPONSE
   entry_offset: 68
   confidence: decompiled
-  description: Embedded Type-0x1D movement-response entry beginning inside ACTOR_ANIM_TYPE1D_INTERACTION_RESPONSE. It publishes movement stream 0x0012053E and runs the 0x1172-0x118E response frames before entering its local loop; it does not claim a second ROM range.
+  description: Embedded upper-interaction movement-response entry beginning inside ACTOR_ANIM_UPPER_INTERACTION_RESPONSE. It publishes movement stream 0x0012053E and runs the 0x1172-0x118E response frames before entering its local loop; it does not claim a second ROM range.
   evidence:
     - upper_collision_response_animation_family_static_decompilation
     - animation_stream_decoder
 
 0x00123458:
-  name: ACTOR_ANIM_TYPE1D_MOVEMENT_LOOP
+  name: ACTOR_ANIM_UPPER_INTERACTION_MOVEMENT_LOOP
+  aliases: [ACTOR_ANIM_TYPE1D_MOVEMENT_LOOP]
   type: animation_stream
-  alias_of: ACTOR_ANIM_TYPE1D_INTERACTION_RESPONSE
+  alias_of: ACTOR_ANIM_UPPER_INTERACTION_RESPONSE
   entry_offset: 76
   confidence: decompiled
-  description: Embedded Type-0x1D movement-response loop beginning inside ACTOR_ANIM_TYPE1D_INTERACTION_RESPONSE. It is an alias into the owning stream and does not claim a second ROM range.
+  description: Embedded upper-interaction movement-response loop beginning inside ACTOR_ANIM_UPPER_INTERACTION_RESPONSE. It is an alias into the owning stream and does not claim a second ROM range.
   evidence:
     - upper_collision_response_animation_family_static_decompilation
     - animation_stream_decoder
@@ -4852,10 +4857,10 @@
   name: ACTOR_ANIM_GUARD_SPAWN
   aliases: [ACTOR_ANIM_TYPE1D_GUARD_SPAWN]
   type: animation_stream
-  alias_of: ACTOR_ANIM_TYPE1D_INTERACTION_RESPONSE
+  alias_of: ACTOR_ANIM_UPPER_INTERACTION_RESPONSE
   entry_offset: 132
   confidence: decompiled
-  description: Embedded Type-0x1D guard-spawn branch beginning inside ACTOR_ANIM_TYPE1D_INTERACTION_RESPONSE. Its F5 command selects ACTOR_TEMPLATE_GUARD_SWORD_ATTACK at 0x001B7CB0 before returning to the root; it does not claim a second ROM range.
+  description: Embedded upper-interaction guard-spawn branch beginning inside ACTOR_ANIM_UPPER_INTERACTION_RESPONSE. Its F5 command selects ACTOR_TEMPLATE_GUARD_SWORD_ATTACK at 0x001B7CB0 before returning to the root; it does not claim a second ROM range.
   evidence:
     - upper_collision_response_animation_family_static_decompilation
     - animation_stream_decoder
