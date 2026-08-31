@@ -437,7 +437,7 @@
   type: graphics_data
   size: 0x673
   confidence: decompiled
-  description: RNC-compressed Genesis tile payload loaded to VRAM C000 by Level08_ExitRoutine before it initializes the type-0x60 exit actor. Its exact compressed extent ends at 0x0012BE16.
+  description: RNC-compressed Genesis tile payload loaded to VRAM C000 by Level08_ExitCallback before it initializes the type-0x60 exit actor. Its exact compressed extent ends at 0x0012BE16.
   evidence:
     - scene_rnc_graphics_blocks_static_v1
     - level08_exit_resource_loader
@@ -1759,7 +1759,7 @@
   type: palette_data
   size: 0x20
   confidence: decompiled
-  description: Fixed 16-word Level 00 palette source uploaded to palette band 2 by Level00_EnterRoutine.
+  description: Fixed 16-word Level 00 palette source uploaded to palette band 2 by Level00_FrameCallback.
   evidence: [ghidra_palette_band2_consumers, fixed_palette_source_extents_static_v1]
 
 0x001290B2:
@@ -2651,7 +2651,7 @@
   size: 0x3D4
   terminator: 0x24FA
   confidence: decompiled
-  description: Level-02 timed event stream installed by Level02_ExitRoutine into LEVEL_EVENT_SCRIPT_CURSOR. Its 163 six-byte delay/command/coordinate records end at 0x000024F9, followed by the zero-duration terminator at 0x000024FA and one alignment byte before the Level-06 stream.
+  description: Level-02 timed event stream installed by Level02_ExitCallback into LEVEL_EVENT_SCRIPT_CURSOR. Its 163 six-byte delay/command/coordinate records end at 0x000024F9, followed by the zero-duration terminator at 0x000024FA and one alignment byte before the Level-06 stream.
   evidence:
     - level_event_stream_static_decompilation
     - ghidra_disassembly_001B634E
@@ -2665,7 +2665,7 @@
   size: 0x133
   terminator: 0x262E
   confidence: decompiled
-  description: Level-06 timed event stream installed by Level06_ExitRoutine into LEVEL_EVENT_SCRIPT_CURSOR. Its 51 six-byte delay/command/coordinate records end at 0x0000262D, followed by the zero-duration terminator at 0x0000262E immediately before the Level-08 event command stream selected from 0x0000262F.
+  description: Level-06 timed event stream installed by Level06_ExitCallback into LEVEL_EVENT_SCRIPT_CURSOR. Its 51 six-byte delay/command/coordinate records end at 0x0000262D, followed by the zero-duration terminator at 0x0000262E immediately before the Level-08 event command stream selected from 0x0000262F.
   evidence:
     - level_event_stream_static_decompilation
     - ghidra_disassembly_001B634E
@@ -2678,7 +2678,7 @@
   count: 443
   size: 0x376
   confidence: decompiled
-  description: Exact 443-record, two-byte Level-08 event command stream installed by Level08_ExitRoutine at 0x001B64D8 into LEVEL08_EVENT_COMMAND_CURSOR at 0x00FFF12E. Level08_EnterRoutine consumes each command/parameter pair, dispatches commands through LEVEL_EVENT_COMMAND_DISPATCH_TABLE, and ends with F2 01 at 0x000029A3-0x000029A4; a zero alignment byte at 0x000029A5 separates it from HUD_INTERACTION_FRAME_SEQUENCE.
+  description: Exact 443-record, two-byte Level-08 event command stream installed by Level08_ExitCallback at 0x001B64D8 into LEVEL08_EVENT_COMMAND_CURSOR at 0x00FFF12E. Level08_FrameCallback consumes each command/parameter pair, dispatches commands through LEVEL_EVENT_COMMAND_DISPATCH_TABLE, and ends with F2 01 at 0x000029A3-0x000029A4; a zero alignment byte at 0x000029A5 separates it from HUD_INTERACTION_FRAME_SEQUENCE.
   evidence:
     - ghidra_level08_exit_routine
     - ghidra_level08_enter_routine
@@ -2702,7 +2702,7 @@
   count: 16
   size: 0x60
   confidence: decompiled
-  description: Exact sixteen-entry Level-08 rotating VDP record table consumed by Level08_EnterRoutine and VDP_WriteRotatingCommandRecord. Each six-byte record stores a longword VDP control word followed by one data word; the runtime advances by six bytes and wraps at the exclusive offset 0x60, ending immediately before SCENE_HEADER_VDP_WORDS at 0x00002A40.
+  description: Exact sixteen-entry Level-08 rotating VDP record table consumed by Level08_FrameCallback and VDP_WriteRotatingCommandRecord. Each six-byte record stores a longword VDP control word followed by one data word; the runtime advances by six bytes and wraps at the exclusive offset 0x60, ending immediately before SCENE_HEADER_VDP_WORDS at 0x00002A40.
   evidence:
     - level08_rotating_vdp_record_table_static_decompilation
     - ghidra_disassembly_001B6066
@@ -3808,7 +3808,7 @@
   type: movement_stream
   size: 8
   confidence: decompiled
-  description: Type-0x50 Level-09 spawn movement root written by Level09_EnterRoutine at 0x001B619C into the newly initialized actor movement field. Its exact 8-byte stream applies a (+2, 0) delta and loops unconditionally back to 0x001203F2.
+  description: Type-0x50 Level-09 spawn movement root written by Level09_FrameCallback at 0x001B619C into the newly initialized actor movement field. Its exact 8-byte stream applies a (+2, 0) delta and loops unconditionally back to 0x001203F2.
   evidence:
     - shared-movement-root-family-static-decompilation
     - level09_type50_template_static_decompilation
@@ -4307,7 +4307,7 @@
   name: ACTOR_ANIM_TYPE2F_LEVEL12_TERMINAL_EVENT
   size: 70
   confidence: decompiled
-  description: Type-0x2F Level-12 terminal-event animation selected by Level12_EnterRoutine. Its packed 70-byte body presents the 0x1AEE/0x1AF2/0x1AF6/0x1AFA/0x1AFE sequence, delays through timer 0x0D, clears the actor, publishes type 0x84, clears actor movement, and loops through the terminal frame tail.
+  description: Type-0x2F Level-12 terminal-event animation selected by Level12_FrameCallback. Its packed 70-byte body presents the 0x1AEE/0x1AF2/0x1AF6/0x1AFA/0x1AFE sequence, delays through timer 0x0D, clears the actor, publishes type 0x84, clears actor movement, and loops through the terminal frame tail.
   evidence:
     - type2f_animation_static_decompilation
     - actor_template_type2f_level12_event
@@ -4964,7 +4964,7 @@
   type: movement_stream
   size: 226
   confidence: decompiled
-  description: Level-09 Type-0x52 movement stream installed by ACTOR_TEMPLATE_TYPE_52_LEVEL09 during Level09_EnterRoutine. Its exact 226-byte owner contains the signed rise/fall trajectory, actor-field gates, Type-0x84 child-spawn response, and the terminal jump at 0x001213DC back to the root.
+  description: Level-09 Type-0x52 movement stream installed by ACTOR_TEMPLATE_TYPE_52_LEVEL09 during Level09_FrameCallback. Its exact 226-byte owner contains the signed rise/fall trajectory, actor-field gates, Type-0x84 child-spawn response, and the terminal jump at 0x001213DC back to the root.
   evidence:
     - type52_level09_animation_static_decompilation
     - movement_stream_decoder
@@ -5091,7 +5091,7 @@
   type: movement_stream
   size: 110
   confidence: decompiled
-  description: Type-0x60 Level-08 exit-presentation movement root supplied by ACTOR_TEMPLATE_TYPE_60_LEVEL08_EXIT at 0x001B7DC8 and selected by Level08_ExitRoutine. Its exact 110-byte region follows the fixed approach/settle profile and loops from 0x00121590 back to 0x0012152A, ending immediately before the defined pointer data at 0x00121598.
+  description: Type-0x60 Level-08 exit-presentation movement root supplied by ACTOR_TEMPLATE_TYPE_60_LEVEL08_EXIT at 0x001B7DC8 and selected by Level08_ExitCallback. Its exact 110-byte region follows the fixed approach/settle profile and loops from 0x00121590 back to 0x0012152A, ending immediately before the defined pointer data at 0x00121598.
   evidence:
     - level08_exit_movement_stream_static_decompilation
     - level08_exit_type60_template_static_decompilation
@@ -5545,7 +5545,7 @@
   alias_of: ACTOR_ANIM_TYPE84_PLAYER_COLLISION_RESPONSE
   entry_offset: 38
   confidence: decompiled
-  description: Embedded Level-09 type-0x50 response entry installed by Level09_EnterRoutine. It begins at offset 38 inside ACTOR_ANIM_TYPE84_PLAYER_COLLISION_RESPONSE and therefore does not claim a second ROM ownership range.
+  description: Embedded Level-09 type-0x50 response entry installed by Level09_FrameCallback. It begins at offset 38 inside ACTOR_ANIM_TYPE84_PLAYER_COLLISION_RESPONSE and therefore does not claim a second ROM ownership range.
   evidence:
     - level09_type50_template_static_decompilation
     - actor_animation_stream_family_static_decompilation
@@ -6092,7 +6092,7 @@
   type: animation_stream
   size: 14
   confidence: confirmed
-  description: Player terrain-block stop/alignment response prelude selected by TerrainHandler_StopAndAlignPlayerBlock for behavior 0x2B. Its exact 14-byte region presents frame 0x07BA, loops while PLAYER_TRANSITION_GATE is clear, and enters dynamic player-state selection at 0x00121826; PLAYER_VERTICAL_ANIMATION_TABLE begins immediately at 0x00121828.
+  description: Player terrain-block stop/alignment response prelude selected by TerrainHandler_StopAndAlignPlayer for behavior 0x2B. Its exact 14-byte region presents frame 0x07BA, loops while PLAYER_TRANSITION_GATE is clear, and enters dynamic player-state selection at 0x00121826; PLAYER_VERTICAL_ANIMATION_TABLE begins immediately at 0x00121828.
   evidence:
     - ghidra_disassembly_001B5502
     - player_terrain_experiments
@@ -6350,7 +6350,7 @@
   name: PLAYER_ANIM_TERRAIN_LAUNCH_RESPONSE
   size: 48
   confidence: confirmed
-  description: Terrain-launch response stream selected by TerrainHandler_LaunchPlayerBlock after it applies the -0x0500/-0x0400 player launch. It gates the opening on actor field 0x7E5A and flag byte 0x1A, sets player animation field 0xF0C0 to 1, presents the 0x093A/0x093E/0x0942 response frames, and enters dynamic state selection.
+  description: Terrain-launch response stream selected by TerrainHandler_LaunchPlayer after it applies the -0x0500/-0x0400 player launch. It gates the opening on actor field 0x7E5A and flag byte 0x1A, sets player animation field 0xF0C0 to 1, presents the 0x093A/0x093E/0x0942 response frames, and enters dynamic state selection.
   evidence:
     - ghidra_terrain_launch_player_block
     - animation_stream_decoder
@@ -6438,7 +6438,7 @@
   name: PLAYER_ANIM_LEVEL08_EXIT_RESPONSE
   size: 82
   confidence: confirmed
-  description: Level 08 exit presentation stream installed by Level08_ExitRoutine at 0x001B6524 through PLAYER_ANIMATION_PC. Its exact 82-byte region presents the 0x08BA-0x08CA opening, compares the level-event state field 0x00FFF10B against zero and one to control the directional phase, presents the 0x0862-0x087A return sequence with EE 0x82 timing commands, and loops from 0x0012239C to 0x00122352.
+  description: Level 08 exit presentation stream installed by Level08_ExitCallback at 0x001B6524 through PLAYER_ANIMATION_PC. Its exact 82-byte region presents the 0x08BA-0x08CA opening, compares the level-event state field 0x00FFF10B against zero and one to control the directional phase, presents the 0x0862-0x087A return sequence with EE 0x82 timing commands, and loops from 0x0012239C to 0x00122352.
   evidence:
     - ghidra_level08_exit_routine
     - level_table_enter_exit_decomp
@@ -7681,7 +7681,7 @@
   type: actor_template
   size: 20
   confidence: decompiled
-  description: Type-0x7B Level 11 event template selected by Level11_EnterRoutine at 0x001B6258 inside its coordinate-window spawn path; it uses movement stream 0x0012120E, animation stream ACTOR_ANIM_TYPE7B_LEVEL11_EVENT at 0x001243E2, and owns ten resources before the caller publishes position (0x04C0,0x01B0).
+  description: Type-0x7B Level 11 event template selected by Level11_FrameCallback at 0x001B6258 inside its coordinate-window spawn path; it uses movement stream 0x0012120E, animation stream ACTOR_ANIM_TYPE7B_LEVEL11_EVENT at 0x001243E2, and owns ten resources before the caller publishes position (0x04C0,0x01B0).
   evidence:
     - ghidra_level_table_enter_exit_targeted_decompile
     - level_table_enter_exit_decompilation
@@ -8083,7 +8083,7 @@
   type: actor_template
   size: 20
   confidence: decompiled
-  description: Type-0x84 Level 08 entry template initialized by Level08_EnterRoutine; it uses ACTOR_ANIM_LEVEL08_TYPE84_ENTRY at 0x001245E4.
+  description: Type-0x84 Level 08 entry template initialized by Level08_FrameCallback; it uses ACTOR_ANIM_LEVEL08_TYPE84_ENTRY at 0x001245E4.
   evidence:
     - ghidra_level08_entry_routine
     - level01_upper_frontier_initializer_targets
@@ -8103,7 +8103,7 @@
   type: actor_template
   size: 20
   confidence: decompiled
-  description: Level-09 type-0x52 actor template initialized by Level09_EnterRoutine; it carries movement stream 0x00121300 and animation stream ACTOR_ANIM_TYPE52_LEVEL09_ENTRY at 0x001253E8, with four resources and the encoded post-initialization flag word.
+  description: Level-09 type-0x52 actor template initialized by Level09_FrameCallback; it carries movement stream 0x00121300 and animation stream ACTOR_ANIM_TYPE52_LEVEL09_ENTRY at 0x001253E8, with four resources and the encoded post-initialization flag word.
   evidence:
     - type52_level09_animation_static_decompilation
     - level_callback_family_targets
@@ -8367,7 +8367,7 @@
   type: actor_template
   size: 20
   confidence: decompiled
-  description: Type-0x60 Level 08 exit-presentation template selected by Level08_ExitRoutine; it uses ACTOR_MOVE_TYPE60_LEVEL08_EXIT_PRESENTATION at 0x0012152A, default animation entry 0x00123130, owns eleven resources, and carries trailing flags 0x0200 before the caller copies the player position and publishes PLAYER_ANIM_LEVEL08_EXIT_RESPONSE at 0x00122350.
+  description: Type-0x60 Level 08 exit-presentation template selected by Level08_ExitCallback; it uses ACTOR_MOVE_TYPE60_LEVEL08_EXIT_PRESENTATION at 0x0012152A, default animation entry 0x00123130, owns eleven resources, and carries trailing flags 0x0200 before the caller copies the player position and publishes PLAYER_ANIM_LEVEL08_EXIT_RESPONSE at 0x00122350.
   evidence:
     - ghidra_level08_exit_routine
     - level08_exit_template_targets
@@ -8859,7 +8859,7 @@
   type: actor_template
   size: 20
   confidence: decompiled
-  description: Type-0x74 template selected by Level06_ExitRoutine at 0x001B644E after a reverse-slot availability check; it has no movement stream, uses ACTOR_ANIM_TYPE74_TERRAIN_EXIT_RESPONSE at 0x001244E6, and owns five resources before the caller initializes position (0x00A0,0x01C0), facing, and transition flags.
+  description: Type-0x74 template selected by Level06_ExitCallback at 0x001B644E after a reverse-slot availability check; it has no movement stream, uses ACTOR_ANIM_TYPE74_TERRAIN_EXIT_RESPONSE at 0x001244E6, and owns five resources before the caller initializes position (0x00A0,0x01C0), facing, and transition flags.
   evidence:
     - ghidra_level_table_enter_exit_targeted_decompile
     - actor_template_grid_xrefs
@@ -8963,7 +8963,7 @@
   type: actor_template
   size: 20
   confidence: decompiled
-  description: Type-0x50 Level-09 spawn base selected by Level09_EnterRoutine at 0x001B6186; its template supplies the type, base flags, template word 0x4000, and eleven resources, while the callback installs ACTOR_MOVE_TYPE50_LEVEL09_SPAWN at 0x001203F2, animation 0x00124B94, facing 0xFF, response byte 2, and the level-relative position.
+  description: Type-0x50 Level-09 spawn base selected by Level09_FrameCallback at 0x001B6186; its template supplies the type, base flags, template word 0x4000, and eleven resources, while the callback installs ACTOR_MOVE_TYPE50_LEVEL09_SPAWN at 0x001203F2, animation 0x00124B94, facing 0xFF, response byte 2, and the level-relative position.
   evidence:
     - ghidra_decompile_001B614C
     - level09_type50_template_targets
@@ -8984,7 +8984,7 @@
   type: actor_template
   size: 20
   confidence: decompiled
-  description: Type-0x2F final-scene event template selected by Level12_EnterRoutine at 0x001B62B6 when its event byte is 0x0D; it uses ACTOR_MOVE_TYPE2F_LEVEL12_TERMINAL_EVENT at 0x001203D0, animation stream ACTOR_ANIM_TYPE2F_LEVEL12_TERMINAL_EVENT, and four resources before the caller initializes position (0x02B1,0x022A).
+  description: Type-0x2F final-scene event template selected by Level12_FrameCallback at 0x001B62B6 when its event byte is 0x0D; it uses ACTOR_MOVE_TYPE2F_LEVEL12_TERMINAL_EVENT at 0x001203D0, animation stream ACTOR_ANIM_TYPE2F_LEVEL12_TERMINAL_EVENT, and four resources before the caller initializes position (0x02B1,0x022A).
   evidence:
     - ghidra_level_table_enter_exit_targeted_decompile
     - actor_template_grid_xrefs
@@ -9094,7 +9094,7 @@
   type: actor_template
   size: 20
   confidence: decompiled
-  description: Type-0x7C level-event template selected by the timed/cadence spawn path in Level05_EnterRoutine at 0x001B5C20; it uses movement stream 0x0012118A, animation stream 0x00125916, and three resources before the caller supplies the level-relative position and facing condition.
+  description: Type-0x7C level-event template selected by the timed/cadence spawn path in Level05_FrameCallback at 0x001B5C20; it uses movement stream 0x0012118A, animation stream 0x00125916, and three resources before the caller supplies the level-relative position and facing condition.
   evidence:
     - ghidra_level_table_enter_exit_targeted_decompile
     - actor_template_grid_xrefs
@@ -9115,7 +9115,7 @@
   type: actor_template
   size: 20
   confidence: decompiled
-  description: Type-0x7C Level-07 callback spawn template selected at three direct sites in Level07_EnterRoutine; it uses movement stream 0x0012118A, animation stream 0x00125916, template word 0x2000, and three resources, while the callback supplies one of the level-relative positions and sets actor word +0x1A to 0x0400.
+  description: Type-0x7C Level-07 callback spawn template selected at three direct sites in Level07_FrameCallback; it uses movement stream 0x0012118A, animation stream 0x00125916, template word 0x2000, and three resources, while the callback supplies one of the level-relative positions and sets actor word +0x1A to 0x0400.
   evidence:
     - ghidra_decompile_001B5D68
     - level07_type7c_template_targets

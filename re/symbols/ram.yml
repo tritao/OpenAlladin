@@ -2967,7 +2967,7 @@
   type: u8
   format: boolean
   confidence: decompiled
-  description: Type-0x11 actor-collision block consumed by TerrainHandler_SurfaceInteractionBlock in scene state 0x0B. ActorType11_ActorCollisionHandler sets it on its alternate response path, causing the terrain handler to skip surface-interaction publication for that pass.
+  description: Type-0x11 actor-collision block consumed by TerrainHandler_ApplySurfaceInteraction in scene state 0x0B. ActorType11_ActorCollisionHandler sets it on its alternate response path, causing the terrain handler to skip surface-interaction publication for that pass.
   evidence:
     - ghidra_disassembly_001AC4E8
     - ghidra_disassembly_001B5320

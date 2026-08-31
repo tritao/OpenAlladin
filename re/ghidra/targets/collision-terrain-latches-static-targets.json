@@ -59,7 +59,7 @@
       "name": "ACTOR_TYPE11_SURFACE_INTERACTION_BLOCK",
       "width": 1,
       "producer": "ActorType11_ActorCollisionHandler at 0x001AC5A4",
-      "consumers": ["TerrainHandler_SurfaceInteractionBlock at 0x001B532A"],
+      "consumers": ["TerrainHandler_ApplySurfaceInteraction at 0x001B532A"],
       "effect": "Suppresses the scene-state-0x0B surface-interaction branch while set."
     },
     {

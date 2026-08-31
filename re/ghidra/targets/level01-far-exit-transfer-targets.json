@@ -12,19 +12,19 @@
     "generated_report": "build/re/level01-far-exit-transfer-targeted-decompile-v1.json"
   },
   "targets": [
-    { "address": "0x001B6406", "name": "Level01_ExitRoutine" },
+    { "address": "0x001B6406", "name": "Level01_ExitCallback" },
     { "address": "0x001B2E9A", "name": "VDP_SetControl9001AndBuildTileRows" },
     { "address": "0x001B5B4A", "name": "Level01_EnterAndExitPredicate" },
-    { "address": "0x001B5318", "name": "TerrainHandler_SetTerminalCollisionBlock" },
-    { "address": "0x001B5320", "name": "TerrainHandler_SurfaceInteractionBlock" },
-    { "address": "0x001B537A", "name": "TerrainHandler_LandingResponseBlock" },
-    { "address": "0x001B53A2", "name": "TerrainHandler_HorizontalResponseBlock" },
+    { "address": "0x001B5318", "name": "TerrainHandler_SetTerminalCollisionFlag" },
+    { "address": "0x001B5320", "name": "TerrainHandler_ApplySurfaceInteraction" },
+    { "address": "0x001B537A", "name": "TerrainHandler_ApplyLandingResponse" },
+    { "address": "0x001B53A2", "name": "TerrainHandler_PushPlayerLeft" },
     { "address": "0x001B5440", "name": "TerrainHandler_ClearTransitionFlag" },
     { "address": "0x001B5448", "name": "TerrainHandler_SetTransitionFlag" },
     { "address": "0x001B5492", "name": "TerrainHandler_ClearSurfaceMode" },
     { "address": "0x001B549C", "name": "TerrainHandler_SetSurfaceMode" },
     { "address": "0x001B54D8", "name": "TerrainHandler_QueryStateA" },
-    { "address": "0x001B557E", "name": "TerrainHandler_0x29_Launch" },
-    { "address": "0x001B56B6", "name": "TerrainHandler_0x2D_Bounce" }
+    { "address": "0x001B557E", "name": "TerrainHandler_LaunchPlayer" },
+    { "address": "0x001B56B6", "name": "TerrainHandler_BouncePlayer" }
   ]
 }

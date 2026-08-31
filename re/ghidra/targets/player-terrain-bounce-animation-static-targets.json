@@ -9,7 +9,7 @@
     { "address": "0x00121AD8", "name": "PLAYER_ANIM_TERRAIN_BOUNCE_ROOT" },
     { "address": "0x00125E72", "name": "PLAYER_ANIM_TERRAIN_RESPONSE_SHARED" },
     { "address": "0x00121BB6", "name": "PLAYER_ANIM_INTERACTION_PAIR_SETUP" },
-    { "address": "0x001B56B6", "name": "TerrainHandler_BouncePlayerBlock" },
+    { "address": "0x001B56B6", "name": "TerrainHandler_BouncePlayer" },
     { "address": "0x001AD150", "name": "Player_ResetAnimationResponseGate" }
   ],
   "memory_references": [

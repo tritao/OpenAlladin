@@ -12,7 +12,7 @@
     { "address": "0x001B55D8", "name": "TerrainHandler_Unknown2A" },
     { "address": "0x001B56F4", "name": "TerrainHandler_Unknown12" },
     { "address": "0x001B536C", "name": "TerrainHandler_Unknown40" },
-    { "address": "0x001B53A2", "name": "TerrainHandler_Unknown41" },
+    { "address": "0x001B53A2", "name": "TerrainHandler_PushPlayerLeft" },
     { "address": "0x001B1F28", "name": "PlayerTerrainResponseCaller" },
     { "address": "0x001A986E", "name": "PlayerTerrainVerticalResponse" },
     { "address": "0x001A99F0", "name": "PlayerTerrainGroundResponse" }

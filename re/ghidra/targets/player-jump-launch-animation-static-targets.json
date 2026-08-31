@@ -13,7 +13,7 @@
     { "address": "0x001221B8", "name": "PLAYER_ANIM_TERRAIN_LAUNCH_RESPONSE" },
     { "address": "0x001A9716", "name": "Player_HandleJumpAndVerticalState" },
     { "address": "0x001AD7B4", "name": "Player_TerrainLandingResolver" },
-    { "address": "0x001B557E", "name": "TerrainHandler_LaunchPlayerBlock" },
+    { "address": "0x001B557E", "name": "TerrainHandler_LaunchPlayer" },
     { "address": "0x001B7ECC", "name": "ACTOR_TEMPLATE_F5_TYPE_84" }
   ],
   "memory_references": [

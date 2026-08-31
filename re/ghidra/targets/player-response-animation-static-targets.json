@@ -13,7 +13,7 @@
     { "address": "0x001258A6", "name": "ACTOR_ANIM_TYPE84_LEVEL_EVENT_CHILD_OPENING" },
     { "address": "0x00125C26", "name": "ACTOR_ANIM_TYPE84_TERMINAL_TERRAIN" },
     { "address": "0x001B781A", "name": "LevelEvent_ArmPlayerPresentation" },
-    { "address": "0x001B56B6", "name": "TerrainHandler_BouncePlayerBlock" },
+    { "address": "0x001B56B6", "name": "TerrainHandler_BouncePlayer" },
     { "address": "0x001AD150", "name": "Player_ResetAnimationResponseGate" }
   ],
   "memory_references": [

@@ -9,7 +9,7 @@
     { "address": "0x00121964", "name": "PLAYER_ANIM_TERRAIN_ALIGNMENT_RESPONSE" },
     { "address": "0x00121AC8", "name": "Player terrain response dynamic state selection" },
     { "address": "0x00121AD8", "name": "PLAYER_ANIM_TERRAIN_BOUNCE_ROOT" },
-    { "address": "0x001B55E8", "name": "TerrainHandler_SnapToGridBlock" },
+    { "address": "0x001B55E8", "name": "TerrainHandler_SnapPlayerToGrid" },
     { "address": "0x001AD150", "name": "Player_ResetAnimationResponseGate" }
   ],
   "memory_references": [

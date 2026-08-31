@@ -512,6 +512,36 @@ def test_level_table_callbacks_have_phase_accurate_names_and_legacy_aliases():
         assert symbol.aliases == (alias,)
 
 
+def test_terrain_handler_actions_have_semantic_names_and_legacy_aliases():
+    expected = {
+        0x001B5318: ("TerrainHandler_SetTerminalCollisionFlag", "TerrainHandler_SetTerminalCollisionBlock"),
+        0x001B5320: ("TerrainHandler_ApplySurfaceInteraction", "TerrainHandler_SurfaceInteractionBlock"),
+        0x001B537A: ("TerrainHandler_ApplyLandingResponse", "TerrainHandler_LandingResponseBlock"),
+        0x001B53A2: ("TerrainHandler_PushPlayerLeft", "TerrainHandler_HorizontalResponseBlock"),
+        0x001B5492: ("TerrainHandler_ClearSurfaceMode", "TerrainHandler_ClearSurfaceModeBlock"),
+        0x001B549C: ("TerrainHandler_SetSurfaceMode", "TerrainHandler_SetSurfaceModeBlock"),
+        0x001B54E0: ("TerrainHandler_SetTerrainState", "TerrainHandler_SetTerrainStateBlock"),
+        0x001B5502: ("TerrainHandler_StopAndAlignPlayer", "TerrainHandler_StopAndAlignPlayerBlock"),
+        0x001B557E: ("TerrainHandler_LaunchPlayer", "TerrainHandler_LaunchPlayerBlock"),
+        0x001B55E8: ("TerrainHandler_SnapPlayerToGrid", "TerrainHandler_SnapToGridBlock"),
+        0x001B56B6: ("TerrainHandler_BouncePlayer", "TerrainHandler_BouncePlayerBlock"),
+    }
+    symbols = SymbolStore()
+    for address, (name, alias) in expected.items():
+        symbol = symbols.at(address, include_ranges=False)
+        assert symbol is not None
+        assert symbol.name == name
+        assert symbol.aliases == (alias,)
+        assert symbol.confidence == "confirmed"
+
+    finding = json.loads(
+        Path("re/mame/findings/20260831-terrain-handler-identities-semantic-v1.json")
+        .read_text(encoding="utf-8")
+    )
+    assert finding["promoted_symbol_count"] == len(expected)
+    assert finding["status"] == "recorded-semantic-promotion"
+
+
 def test_type84_base_interaction_spawn_handlers_have_semantic_names_and_aliases():
     expected = {
         0x001B70F8: ("InteractionSpawn_CreateType84Base_B6", "InteractionSpawn_Type84Base_B6"),

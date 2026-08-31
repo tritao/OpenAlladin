@@ -1,0 +1,55 @@
+{
+  "format": "openaladdin-recorded-semantic-promotion-v1",
+  "recorded_at": "2026-08-31",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "target_manifest": "re/ghidra/targets/terrain-handler-action-identities-targets.json",
+  "promoted_symbol_count": 11,
+  "promoted_symbols": [
+    "TerrainHandler_SetTerminalCollisionFlag",
+    "TerrainHandler_ApplySurfaceInteraction",
+    "TerrainHandler_ApplyLandingResponse",
+    "TerrainHandler_PushPlayerLeft",
+    "TerrainHandler_ClearSurfaceMode",
+    "TerrainHandler_SetSurfaceMode",
+    "TerrainHandler_SetTerrainState",
+    "TerrainHandler_StopAndAlignPlayer",
+    "TerrainHandler_LaunchPlayer",
+    "TerrainHandler_SnapPlayerToGrid",
+    "TerrainHandler_BouncePlayer"
+  ],
+  "legacy_aliases": [
+    "TerrainHandler_SetTerminalCollisionBlock",
+    "TerrainHandler_SurfaceInteractionBlock",
+    "TerrainHandler_LandingResponseBlock",
+    "TerrainHandler_HorizontalResponseBlock",
+    "TerrainHandler_ClearSurfaceModeBlock",
+    "TerrainHandler_SetSurfaceModeBlock",
+    "TerrainHandler_SetTerrainStateBlock",
+    "TerrainHandler_StopAndAlignPlayerBlock",
+    "TerrainHandler_LaunchPlayerBlock",
+    "TerrainHandler_SnapToGridBlock",
+    "TerrainHandler_BouncePlayerBlock"
+  ],
+  "contracts": [
+    "The 11 promoted entries retain their exact fixed-ROM addresses and non-overlapping function ranges.",
+    "The names now identify the direct player, surface-mode, terrain-state, and terminal-response effects already established by static bodies and dispatch-table evidence.",
+    "TerrainHandler_BouncePlayer retains its event-0x27 queue side effect under the existing VDP-update gate.",
+    "Every historical generic Block label remains available as a canonical-symbol alias."
+  ],
+  "evidence": [
+    "terrain-handler-action-identities-targets",
+    "TERRAIN_RESPONSE_HANDLER_TABLE at 0x004554",
+    "Exact 68000 function boundaries and instruction bodies",
+    "Existing player-terrain and Level 01 runtime findings"
+  ],
+  "limitations": [
+    "The canonical names describe direct handler effects, not complete level-specific reachability.",
+    "No new indirect selector or runtime coverage claim is made by this promotion."
+  ],
+  "conclusion": "The 11 confirmed terrain-response handlers now have action-accurate canonical identities while retaining historical labels as aliases and preserving the existing dispatch contracts.",
+  "confidence": "confirmed",
+  "status": "recorded-semantic-promotion"
+}

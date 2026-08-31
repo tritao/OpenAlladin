@@ -7,7 +7,7 @@
   },
   "targets": [
     { "address": "0x0012181A", "name": "PLAYER_ANIM_TERRAIN_STOP_ALIGNMENT" },
-    { "address": "0x001B5502", "name": "TerrainHandler_StopAndAlignPlayerBlock" },
+    { "address": "0x001B5502", "name": "TerrainHandler_StopAndAlignPlayer" },
     { "address": "0x00121828", "name": "PLAYER_VERTICAL_ANIMATION_TABLE" }
   ],
   "memory_references": [
