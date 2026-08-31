@@ -31,6 +31,7 @@ struct CoreTrace {
     RamAddress interaction_handler = 0;
     std::uint16_t interaction_index = 0;
     std::size_t interaction_spawn_slot = 0;
+    RamAddress camera_callback = 0;
     bool frame_atomic = false;
 };
 

@@ -3,6 +3,7 @@
 #include "core/interaction.hpp"
 #include "core/ram.hpp"
 #include "core/rom.hpp"
+#include "core/trace.hpp"
 
 namespace openaladdin::core {
 namespace {
@@ -10,6 +11,15 @@ namespace {
 constexpr std::size_t kHorizontalDampingTable = 0x00002A52;
 constexpr std::size_t kVerticalDampingTable = 0x00002BA4;
 constexpr RamAddress kScrollDeltaTable = 0x0000693E;
+constexpr RamAddress kLevelCallbackLevels00To02 = 0x001AAA88;
+constexpr RamAddress kLevelCallbackLevel03 = 0x001AAC14;
+constexpr RamAddress kLevelCallbackLevel10 = 0x001AAD96;
+constexpr RamAddress kLevelCallbackLevel08 = 0x001AAEFC;
+constexpr RamAddress kLevelCallbackLevels11To12 = 0x001AAFE8;
+constexpr RamAddress kLevelCallbackLevel07 = 0x001AB066;
+constexpr RamAddress kLevelCallbackLevel09 = 0x001AB184;
+constexpr RamAddress kLevelCallbackLevels05To06 = 0x001AB22E;
+constexpr RamAddress kLevelCallbackLevel04 = 0x001AB2BC;
 
 std::uint16_t add_word(std::uint16_t value, std::uint16_t delta) {
     return static_cast<std::uint16_t>(value + delta);
@@ -130,6 +140,41 @@ std::int16_t camera_consume_scroll_delta(CoreRuntime& core) {
     return delta;
 }
 
+void camera_invoke_level_scroll_callback(
+    CoreRuntime& core,
+    CoreTrace* trace
+) {
+    const RamAddress callback = read32(
+        core.ram, kLevelCameraScrollCallback);
+    if (trace != nullptr) trace->camera_callback = callback;
+
+    if (callback == kLevelCallbackLevels00To02) {
+        write16(core.ram, kCameraScrollRenderOffset,
+                static_cast<std::uint16_t>(
+                    read16(core.ram, kCameraScrollRenderOffset) - 1));
+    } else if (callback == kLevelCallbackLevel03
+               || callback == kLevelCallbackLevel10) {
+        write16(core.ram, kCameraScrollRenderOffset,
+                static_cast<std::uint16_t>(
+                    read16(core.ram, kCameraScrollRenderOffset) + 1));
+    } else if (callback == kLevelCallbackLevel07) {
+        const std::uint8_t phase = read8(core.ram, kFramePhaseCounter);
+        write_i16(core.ram, kActorRenderYOffset, 0);
+        if (phase < 0x20) {
+            write_i16(core.ram, kActorRenderYOffset,
+                      static_cast<std::int16_t>(phase & 3U));
+        }
+        (void)camera_consume_scroll_delta(core);
+    } else if (callback == kLevelCallbackLevels05To06) {
+        (void)camera_consume_scroll_delta(core);
+    } else if (callback == kLevelCallbackLevel08
+               || callback == kLevelCallbackLevels11To12
+               || callback == kLevelCallbackLevel09
+               || callback == kLevelCallbackLevel04) {
+        // These callbacks only emit VDP writes in this core boundary.
+    }
+}
+
 void camera_update_follow(CoreRuntime& core) {
     GenesisRam& ram = core.ram;
     const std::uint8_t delay = read8(ram, kCameraUpdateDelay);
@@ -246,7 +291,7 @@ bool camera_scroll_up_and_refill(CoreRuntime& core, CoreTrace* trace) {
 }
 
 void camera_publish_scroll(CoreRuntime& core, CoreTrace* trace) {
-    (void) trace;
+    camera_invoke_level_scroll_callback(core, trace);
     if (read8(core.ram, kCameraScrollApplyGate) != 0) return;
     if (read8(core.ram, kCameraScrollLeftPending) != 0) {
         (void)camera_scroll_left_and_refill(core, trace);

@@ -1,4 +1,5 @@
 #include "core/camera.hpp"
+#include "core/trace.hpp"
 
 #include <cassert>
 #include <cstddef>
@@ -62,6 +63,24 @@ int main() {
     camera_select_scroll_delta_profile(
         core, CameraScrollDeltaProfile::Tail);
     assert(read32(core.ram, kCameraScrollDataCursor) == 0x695A);
+
+    CoreTrace callback_trace;
+    write16(core.ram, kCameraScrollRenderOffset, 5);
+    write32(core.ram, kLevelCameraScrollCallback, 0x001AAA88);
+    camera_invoke_level_scroll_callback(core, &callback_trace);
+    assert(read16(core.ram, kCameraScrollRenderOffset) == 4);
+    assert(callback_trace.camera_callback == 0x001AAA88);
+    write32(core.ram, kLevelCameraScrollCallback, 0x001AAC14);
+    camera_invoke_level_scroll_callback(core);
+    assert(read16(core.ram, kCameraScrollRenderOffset) == 5);
+    camera_select_scroll_delta_profile(
+        core, CameraScrollDeltaProfile::Full);
+    write8(core.ram, kFramePhaseCounter, 3);
+    write32(core.ram, kLevelCameraScrollCallback, 0x001AB066);
+    camera_invoke_level_scroll_callback(core);
+    assert(read_i16(core.ram, kActorRenderYOffset) == 3);
+    assert(read_i16(core.ram, kActorRenderXOffset) == -4);
+    assert(read32(core.ram, kCameraScrollDataCursor) == 0x6940);
 
     write16(core.ram, kPlayerX, 0x0054);
     write16(core.ram, kPlayerY, 0x0054);

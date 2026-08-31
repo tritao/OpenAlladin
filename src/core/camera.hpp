@@ -28,6 +28,13 @@ void camera_select_scroll_delta_profile(
 // cursor by one word and is published to ACTOR_RENDER_X_OFFSET.
 std::int16_t camera_consume_scroll_delta(CoreRuntime& core);
 
+// Level_InvokeCameraScrollCallback at 0x001AAA80. The callback identity is
+// already published in LEVEL_CAMERA_SCROLL_CALLBACK by level setup.
+void camera_invoke_level_scroll_callback(
+    CoreRuntime& core,
+    CoreTrace* trace = nullptr
+);
+
 // Camera_UpdateFollow at the recovered frame boundary.
 void camera_update_follow(CoreRuntime& core);
 
