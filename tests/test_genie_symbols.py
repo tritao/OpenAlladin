@@ -1151,6 +1151,16 @@ def test_real_level04_event45_has_animation_vm_producers():
     assert "0x001253A6" in event.description
 
 
+def test_real_level04_event38_has_exact_callback_clear_and_open_setter():
+    symbols = SymbolStore()
+
+    event = symbols.at(0x00FFF11A, include_ranges=False)
+    assert event is not None
+    assert event.name == "LEVEL04_EVENT_38_PENDING"
+    assert "0x001B5BC6" in event.description
+    assert "upstream setter is not present" in event.description
+
+
 def test_real_interaction_anchor_pair_has_canonical_roles():
     symbols = SymbolStore()
 

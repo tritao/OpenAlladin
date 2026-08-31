@@ -2782,9 +2782,10 @@
   type: u8
   format: boolean
   confidence: decompiled
-  description: Level-04 pending event latch consumed by Level04_EnterRoutine. When set, the callback optionally sends audio/event command 0x38 under SCENE_VDP_UPDATE_FLAG and then clears the latch; its indirect event producer is not yet identified.
+  description: Level-04 pending event latch consumed by Level04_EnterRoutine at 0x001B5B9C. When set, the callback optionally sends audio/event command 0x38 under SCENE_VDP_UPDATE_FLAG and unconditionally clears the latch at 0x001B5BC6; its upstream setter is not present in the exported absolute-reference corpus.
   evidence:
     - ghidra_disassembly_001B5B9C
+    - level04_event38_latch_static_v1
     - level-callback-family-targets
     - level-table-enter-exit-targets
 

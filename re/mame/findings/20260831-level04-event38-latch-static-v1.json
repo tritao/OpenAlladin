@@ -1,0 +1,28 @@
+{
+  "format": "openaladdin-recorded-static-decompilation-v1",
+  "recorded_at": "2026-08-31",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "target_manifest": "re/ghidra/targets/level04-event38-latch-static-targets.json",
+  "contracts": [
+    {
+      "address": "0x00FFF11A",
+      "name": "LEVEL04_EVENT_38_PENDING",
+      "evidence": "Level04_EnterRoutine tests the latch at 0x001B5B9C, optionally sends command 0x38 when SCENE_VDP_UPDATE_FLAG is set, and clears the latch unconditionally at 0x001B5BC6."
+    }
+  ],
+  "conclusion": "The Level-04 event-0x38 pending-latch consumer and clear policy are statically closed; its upstream setter remains unresolved.",
+  "evidence": [
+    "Exact instructions exported in build/re/full-rom/instructions.json",
+    "Level04_EnterRoutine decompilation at 0x001B5B9C",
+    "Direct writer/reader query for 0x00FFF11A"
+  ],
+  "limitations": [
+    "No direct upstream setter appears in the exported absolute-reference corpus.",
+    "Runtime reachability of the latch-setting path is not established."
+  ],
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}
