@@ -1807,6 +1807,7 @@ def test_real_collision_geometry_and_event_latches_have_canonical_roles():
         0x00FFF08E: ("PLAYER_COLLISION_X_RIGHT", "pixels"),
         0x00FFF0DA: ("PLAYER_ACTION_ANIMATION_STATE", "boolean"),
         0x00FFF0F6: ("PLAYER_COLLISION_CURRENT_ACTOR_TYPE", "integer"),
+        0x00FFF10B: ("LEVEL_EVENT_PRESENTATION_STATE", "integer"),
         0x00FFF112: ("PLAYER_COLLISION_TYPE18_19_PAIR_SPAWN_GATE", "boolean"),
         0x00FFF11A: ("LEVEL04_EVENT_38_PENDING", "boolean"),
         0x00FFF11C: ("PLAYER_COLLISION_TYPE29_SPAWN_GATE", "boolean"),

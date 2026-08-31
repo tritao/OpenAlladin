@@ -2435,6 +2435,18 @@
     - player-collision-direct-entry-family-targets
     - 20260829-player-collision-direct-entry-family-static-v1
 
+0xFFF10B:
+  name: LEVEL_EVENT_PRESENTATION_STATE
+  type: u8
+  format: integer
+  confidence: decompiled
+  description: Level-event presentation selector published by LevelEvent_SetPresentationStateByte from the event-side D6 byte. The Level-08 exit presentation stream tests this field for zero and one to select its directional phase; no broader scene-state meaning is assigned.
+  evidence:
+    - ghidra_disassembly_001B5B32
+    - level_event_command_family_targets
+    - player-level08-terminal-terrain-animation-static-targets
+    - 20260829-player-level08-terminal-terrain-animation-static-decompilation-v1
+
 0xFFF110:
   name: PLAYER_INTERACTION_TYPE1C_LATCH
   type: u8
