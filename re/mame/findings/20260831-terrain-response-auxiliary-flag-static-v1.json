@@ -1,0 +1,30 @@
+{
+  "format": "openaladdin-recorded-semantic-promotion-v1",
+  "recorded_at": "2026-08-31",
+  "repository_commit_at_capture": "5bc3bd384a94ac895a5d361742490c2c3deff547",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "target_manifest": "re/ghidra/targets/terrain-response-auxiliary-flag-static-targets.json",
+  "promoted_symbols": [
+    "TERRAIN_RESPONSE_AUXILIARY_FLAG"
+  ],
+  "contracts": [
+    "The terrain response table entry at 0x00004594 dispatches behavior 0x10 to 0x001B5450.",
+    "TerrainHandler_SetResponseFlag_FFF0E4 writes byte 0x00FFF0E4.",
+    "The exported whole-ROM database has no direct reader for 0x00FFF0E4."
+  ],
+  "evidence": [
+    "Terrain response dispatch table entry at 0x00004594",
+    "Exact 68000 write at 0x001B5450",
+    "Whole-ROM writer and reader queries"
+  ],
+  "limitations": [
+    "Only the setter and auxiliary-flag role are established; downstream meaning is unresolved.",
+    "No runtime reachability or higher-level gameplay effect is claimed."
+  ],
+  "conclusion": "The generated Unknown_00FFF0E4 identity is replaced by a stable conservative terrain-response flag name while preserving the unresolved-reader limitation.",
+  "confidence": "decompiled",
+  "status": "recorded-semantic-promotion"
+}

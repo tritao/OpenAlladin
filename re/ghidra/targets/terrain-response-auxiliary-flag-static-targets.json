@@ -1,0 +1,24 @@
+{
+  "format": "openaladdin-targeted-decompile-request-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "focus": {
+    "name": "terrain-response-auxiliary-flag-static",
+    "purpose": "Name the isolated terrain behavior flag at 0x00FFF0E4 without claiming an unresolved reader or gameplay role."
+  },
+  "targets": [
+    {
+      "address": "0x001B5450",
+      "name": "TerrainHandler_SetResponseFlag_FFF0E4"
+    },
+    {
+      "address": "0x00FFF0E4",
+      "name": "TERRAIN_RESPONSE_AUXILIARY_FLAG"
+    }
+  ],
+  "contracts": [
+    "The terrain response table entry at 0x00004594 dispatches behavior 0x10 to 0x001B5450.",
+    "TerrainHandler_SetResponseFlag_FFF0E4 writes byte 0x00FFF0E4.",
+    "No current whole-ROM reader, caller, runtime sample, or higher-level gameplay role is claimed."
+  ],
+  "conclusion": "0x00FFF0E4 has a stable conservative terrain-response flag identity while its downstream semantics remain explicitly open."
+}
