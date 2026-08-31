@@ -719,6 +719,18 @@ def test_scene_presentation_streams_have_stable_state_names():
         assert legacy in symbol.aliases
 
 
+def test_shared_scene_resources_have_stable_consumer_names():
+    expected = {
+        0x0012622E: ("SCENE_TRANSITION_MODE_PRESENTATION_STREAM", "SCENE_TRANSITION_PRESENTATION_STREAM_12622E"),
+        0x0013030B: ("SCENE_ACTIVE_RESET_SHARED_GRAPHICS", "SCENE_RNC_GRAPHICS_0013030B"),
+    }
+    for address, (name, legacy) in expected.items():
+        symbol = SymbolStore().at(address, include_ranges=False)
+        assert symbol is not None
+        assert symbol.name == name
+        assert legacy in symbol.aliases
+
+
 def test_symbol_review_queue_keeps_named_open_questions_actionable(tmp_path):
     database_root = tmp_path / "full-rom"
     _write_database(database_root)

@@ -675,11 +675,12 @@
   evidence: [rnc_graphics_resource_static_v1]
 
 0x0013030B:
-  name: SCENE_RNC_GRAPHICS_0013030B
+  name: SCENE_ACTIVE_RESET_SHARED_GRAPHICS
+  aliases: [SCENE_RNC_GRAPHICS_0013030B]
   type: graphics_data
   size: 0x164
   confidence: decompiled
-  description: Exact RNC-compressed Genesis graphics payload shared by Camera_InitializeCoordinateState and Scene_ResetToState0.
+  description: Exact RNC-compressed Genesis graphics payload shared by the active-scene initialization path loaded to VRAM C000 and Scene_ResetToState0 loaded to VRAM E000.
   evidence: [rnc_graphics_resource_static_v1]
 
 0x0013046F:
@@ -1028,7 +1029,8 @@
     - scene_resource_presentation_stream_extents_static_v1
 
 0x0012622E:
-  name: SCENE_TRANSITION_PRESENTATION_STREAM_12622E
+  name: SCENE_TRANSITION_MODE_PRESENTATION_STREAM
+  aliases: [SCENE_TRANSITION_PRESENTATION_STREAM_12622E]
   type: scene_resource_stream
   size: 0x2E4
   confidence: decompiled
