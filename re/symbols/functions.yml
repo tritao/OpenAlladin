@@ -4901,9 +4901,10 @@
     - terrain_response_family_targets
     - terrain_response_family_static_decompilation
 0x001B5450:
-  name: TerrainHandler_SetResponseFlag_FFF0E4
+  name: TerrainHandler_SetAuxiliaryResponseFlag
+  aliases: [TerrainHandler_SetResponseFlag_FFF0E4]
   confidence: decompiled
-  description: Terrain behavior 0x10 handler that sets the byte at 0x00FFF0E4; its downstream consumer is not present in the current whole-ROM reference set, so the address-qualified name is intentional.
+  description: Terrain behavior 0x10 handler that sets TERRAIN_RESPONSE_AUXILIARY_FLAG at 0x00FFF0E4; its downstream consumer is not present in the current whole-ROM reference set, so only the conservative auxiliary-response role is claimed.
   evidence:
     - ghidra_disassembly_001B5450
     - terrain_response_family_targets

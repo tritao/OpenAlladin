@@ -8,11 +8,15 @@
   },
   "target_manifest": "re/ghidra/targets/terrain-response-auxiliary-flag-static-targets.json",
   "promoted_symbols": [
-    "TERRAIN_RESPONSE_AUXILIARY_FLAG"
+    "TERRAIN_RESPONSE_AUXILIARY_FLAG",
+    "TerrainHandler_SetAuxiliaryResponseFlag"
+  ],
+  "legacy_aliases": [
+    "TerrainHandler_SetResponseFlag_FFF0E4"
   ],
   "contracts": [
     "The terrain response table entry at 0x00004594 dispatches behavior 0x10 to 0x001B5450.",
-    "TerrainHandler_SetResponseFlag_FFF0E4 writes byte 0x00FFF0E4.",
+    "TerrainHandler_SetAuxiliaryResponseFlag writes byte 0x00FFF0E4.",
     "The exported whole-ROM database has no direct reader for 0x00FFF0E4."
   ],
   "evidence": [
@@ -24,7 +28,7 @@
     "Only the setter and auxiliary-flag role are established; downstream meaning is unresolved.",
     "No runtime reachability or higher-level gameplay effect is claimed."
   ],
-  "conclusion": "The generated Unknown_00FFF0E4 identity is replaced by a stable conservative terrain-response flag name while preserving the unresolved-reader limitation.",
+  "conclusion": "The generated Unknown_00FFF0E4 identity and address-qualified setter name are replaced by stable conservative terrain-response identities while preserving the unresolved-reader limitation and legacy alias.",
   "confidence": "decompiled",
   "status": "recorded-semantic-promotion"
 }
