@@ -17,7 +17,17 @@ from genie.ghidra.worklist import (
     unresolved_symbol_queue,
 )
 from genie.runtime import ROOT, default_rom, resolve
-from genie.symbols import Symbol, SymbolStore, edit_symbol, mechanical_name
+from genie.symbols import (
+    Symbol,
+    SymbolStore,
+    edit_symbol,
+    load_entity_mappings,
+    mechanical_name,
+    numeric_type_inventory,
+    numeric_type_work_queue,
+    validate_entity_mappings,
+)
+from genie.symbols.type_worklist import render_type_worklist
 
 
 def _store() -> SymbolStore:
@@ -88,6 +98,10 @@ def command_symbols_validate(args: argparse.Namespace) -> int:
     rom_size = rom.stat().st_size if rom.is_file() else None
     store = _store()
     errors = store.validate(rom_size=rom_size)
+    try:
+        errors.extend(validate_entity_mappings(load_entity_mappings(root=ROOT)))
+    except (OSError, TypeError, ValueError) as error:
+        errors.append(str(error))
     if args.json_output:
         print(json.dumps({"valid": not errors, "errors": errors}, indent=2, sort_keys=True))
     elif errors:
@@ -99,7 +113,10 @@ def command_symbols_validate(args: argparse.Namespace) -> int:
 
 
 def command_symbols_stats(args: argparse.Namespace) -> int:
-    stats: dict[str, Any] = _store().stats()
+    store = _store()
+    stats: dict[str, Any] = store.stats()
+    stats["numeric_type"] = numeric_type_inventory(store.symbols)
+    stats["semantic_mappings"] = len(load_entity_mappings(root=ROOT))
     if args.json_output:
         print(json.dumps(stats, indent=2, sort_keys=True))
     else:
@@ -108,6 +125,53 @@ def command_symbols_stats(args: argparse.Namespace) -> int:
             print(f"{kind:<10} {count}")
         print(f"aliases   {stats['aliases']}")
         print(f"ranged    {stats['ranged']}")
+    return 0
+
+
+def command_symbols_type_worklist(args: argparse.Namespace) -> int:
+    store = _store()
+    database = None
+    database_available = False
+    database_error = None
+    try:
+        database = AnalysisDatabase(resolve(args.database))
+        database.load("metadata.json")
+        database_available = True
+    except (OSError, TypeError, ValueError, json.JSONDecodeError) as error:
+        database_error = str(error)
+    try:
+        mappings = load_entity_mappings(root=ROOT)
+        queue = numeric_type_work_queue(
+            database,
+            store,
+            mappings=mappings,
+            coverage_path=resolve(args.coverage) if args.coverage else None,
+            kind=args.kind,
+        )
+    except (OSError, TypeError, ValueError, json.JSONDecodeError) as error:
+        print(f"ERROR {error}")
+        return 1
+    limit = args.limit if args.limit > 0 else len(queue)
+    inventory = numeric_type_inventory(store.symbols)
+    inventory["curated_mappings"] = len(mappings)
+    if args.json_output:
+        render_type_worklist(
+            queue[:limit],
+            total=len(queue),
+            inventory=inventory,
+            json_output=True,
+            database_available=database_available,
+        )
+        return 0
+    if database_error:
+        print(f"Note: analysis evidence unavailable: {database_error}")
+    render_type_worklist(
+        queue[:limit],
+        total=len(queue),
+        inventory=inventory,
+        json_output=False,
+        database_available=database_available,
+    )
     return 0
 
 

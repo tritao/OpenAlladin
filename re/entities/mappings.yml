@@ -1,0 +1,3 @@
+# Curated semantic mappings from technical actor/event selectors.
+# Keep technical_types and symbol_addresses even when a semantic name is added.
+mappings: []

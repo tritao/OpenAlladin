@@ -277,6 +277,17 @@ def build_parser() -> argparse.ArgumentParser:
     symbols_stats.add_argument("--json", action="store_true", dest="json_output")
     symbols_stats.set_defaults(function=command_symbols_stats)
 
+    symbols_type_worklist = symbol_commands.add_parser(
+        "type-worklist",
+        help="rank numeric actor/event names for semantic mapping",
+    )
+    symbols_type_worklist.add_argument("--kind", choices=("function", "ram", "data"))
+    symbols_type_worklist.add_argument("--database", type=Path, default=ROOT / "build/re/full-rom")
+    symbols_type_worklist.add_argument("--coverage", type=Path)
+    symbols_type_worklist.add_argument("--limit", type=int, default=25, help="maximum rows; zero means all")
+    symbols_type_worklist.add_argument("--json", action="store_true", dest="json_output")
+    symbols_type_worklist.set_defaults(function=command_symbols_type_worklist)
+
     symbols_unknown = symbol_commands.add_parser(
         "unknown",
         help="list mechanically named functions ranked by analysis evidence",

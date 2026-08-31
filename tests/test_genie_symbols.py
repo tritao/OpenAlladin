@@ -16,6 +16,13 @@ from genie.symbols import (
     mechanical_name,
     name_for,
 )
+from genie.symbols.entities import SemanticMapping, validate_entity_mappings
+from genie.symbols.type_worklist import (
+    candidate_class,
+    numeric_type_ids,
+    numeric_type_inventory,
+    numeric_type_work_queue,
+)
 
 
 def _write_symbol_tree(root: Path) -> None:
@@ -92,6 +99,7 @@ def test_symbols_cli_surface_dispatches():
     rename = build_parser().parse_args(["symbols", "rename", "0x20", "Scene_Init"])
     describe = build_parser().parse_args(["symbols", "describe", "0x20", "entry point"])
     confidence = build_parser().parse_args(["symbols", "confidence", "0x20", "decompiled"])
+    type_worklist = build_parser().parse_args(["symbols", "type-worklist", "--kind", "data", "--limit", "4", "--json"])
     assert show.address == 0x1AC784
     assert find.kind == "function"
     assert stats.json_output is True
@@ -106,6 +114,92 @@ def test_symbols_cli_surface_dispatches():
     assert rename.name == "Scene_Init"
     assert describe.description == "entry point"
     assert confidence.confidence == "decompiled"
+    assert type_worklist.kind == "data"
+    assert type_worklist.limit == 4
+    assert type_worklist.json_output is True
+
+
+def test_numeric_type_inventory_extracts_technical_selectors_without_renaming():
+    assert numeric_type_ids("ACTOR_ANIM_TYPE2D_GUARD_SWORD_ATTACK") == (0x2D,)
+    assert numeric_type_ids("InteractionSpawn_RuntimeType17_2D_2E_2F_4E_4F") == (0x17, 0x2D, 0x2E, 0x2F, 0x4E, 0x4F)
+    assert numeric_type_ids("ACTOR_TEMPLATE_TYPE_7F_TYPE36_CHILD") == (0x7F, 0x36)
+    assert numeric_type_ids("InteractionSpawn_Type84Base_B6") == (0x84, 0xB6)
+    assert candidate_class("ACTOR_ANIM_TYPE2D_GUARD_SWORD_ATTACK") == "entity"
+    assert candidate_class("ACTOR_MOVE_TYPE75_LEVEL_EXIT") == "event"
+    assert candidate_class("ACTOR_TYPE42_COLLISION_STEP") == "event"
+    assert candidate_class("ACTOR_TEMPLATE_TYPE01") == "technical_only"
+
+    symbols = SymbolStore(symbols=(
+        Symbol(0x10, "ACTOR_ANIM_TYPE2D_GUARD_SWORD_ATTACK", "data"),
+        Symbol(0x20, "ACTOR_TEMPLATE_TYPE01", "data"),
+        Symbol(0x30, "KnownName", "data"),
+    ))
+    inventory = numeric_type_inventory(symbols.symbols)
+    assert inventory["numeric_canonical_names"] == 2
+    assert inventory["by_kind"] == {"data": 2}
+    assert inventory["technical_only"] == 1
+
+
+def test_semantic_mapping_model_preserves_type_and_symbol_identity():
+    mapping = SemanticMapping.from_dict({
+        "name": "GUARD",
+        "scope": "actor",
+        "symbol_addresses": ["0x10"],
+        "technical_types": ["0x2D"],
+        "confidence": "trace_validated",
+        "evidence": ["guard-trace-v1"],
+    })
+    assert mapping.to_dict()["symbol_addresses"] == ["0x00000010"]
+    assert mapping.to_dict()["technical_types"] == ["0x2D"]
+    assert validate_entity_mappings([mapping]) == []
+    assert validate_entity_mappings([SemanticMapping(name="NoEvidence", scope="actor")]) == [
+        "semantic mapping has no technical identity: NoEvidence",
+        "semantic mapping has no evidence: NoEvidence",
+    ]
+
+
+def test_numeric_type_work_queue_uses_reference_and_runtime_evidence(tmp_path):
+    database_root = tmp_path / "full-rom"
+    _write_database(database_root)
+    (tmp_path / "coverage-ghidra.json").write_text(json.dumps({"functions": {
+        "0x00000010": {"pc_count": 3, "scenarios": ["game"]},
+    }}), encoding="utf-8")
+    (database_root / "memory_reads.json").write_text(json.dumps({"references": [
+        {"from": "0x00000012", "from_function": "0x00000010", "to": "0x00000040", "type": "READ"},
+    ]}), encoding="utf-8")
+    symbols = SymbolStore(symbols=(
+        Symbol(0x40, "ACTOR_ANIM_TYPE2D_GUARD_SWORD_ATTACK", "data", size=4),
+        Symbol(0x50, "ACTOR_TEMPLATE_TYPE01", "data", size=4),
+    ))
+    queue = numeric_type_work_queue(
+        AnalysisDatabase(database_root),
+        symbols,
+        coverage_path=tmp_path / "coverage-ghidra.json",
+    )
+    assert [item["name"] for item in queue] == [
+        "ACTOR_ANIM_TYPE2D_GUARD_SWORD_ATTACK",
+        "ACTOR_TEMPLATE_TYPE01",
+    ]
+    assert queue[0]["technical_type_ids"] == ["0x2D"]
+    assert queue[0]["runtime_observed"] is True
+    assert queue[0]["candidate_class"] == "entity"
+    assert queue[1]["mapping_status"] == "technical_only"
+
+    mapped = numeric_type_work_queue(
+        AnalysisDatabase(database_root),
+        symbols,
+        mappings=(SemanticMapping(
+            name="GUARD",
+            scope="actor",
+            symbol_addresses=(0x40,),
+            technical_types=(0x2D,),
+            confidence="trace_validated",
+            evidence=("guard-trace-v1",),
+        ),),
+    )
+    assert mapped[0]["candidate_class"] == "mapped"
+    assert mapped[0]["mapping_status"] == "mapped"
+    assert mapped[0]["mapping_matches"] == [{"match": "symbol", "name": "GUARD", "scope": "actor"}]
 
 
 def test_symbol_editor_promotes_and_annotates_a_tracked_symbol(tmp_path):
