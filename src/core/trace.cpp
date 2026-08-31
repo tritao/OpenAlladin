@@ -1,6 +1,7 @@
 #include "core/trace.hpp"
 
 #include "core/terrain.hpp"
+#include "core/collision.hpp"
 
 #include <ostream>
 
@@ -135,6 +136,9 @@ void trace_begin(
     trace.output = &output;
     trace.phase_count = 0;
     trace.write_count = 0;
+    trace.collision_contact_count = 0;
+    trace.collision_player_handler = 0;
+    trace.collision_actor_handler = 0;
     trace.frame_atomic = false;
     output << "{\"type\":\"header\",\"format\":\"openaladdin-core-trace-v1\""
            << ",\"state_boundary\":\"game-loop\""
@@ -249,6 +253,15 @@ void trace_state(
            << ",\"response_latch\":" << static_cast<unsigned>(read8(ram, kPlayerTerrainResponseLatch))
            << ",\"handler_pc\":" << terrain_handler_for_behavior(
                read8(ram, kPlayerTerrainBehavior))
+           << "}"
+           << ",\"collision\":{\"contact_count\":"
+           << trace.collision_contact_count
+           << ",\"player_handler_pc\":" << trace.collision_player_handler
+           << ",\"actor_handler_pc\":" << trace.collision_actor_handler
+           << ",\"current_actor_type\":"
+           << static_cast<unsigned>(read8(ram, kPlayerCollisionCurrentActorType))
+           << ",\"response_suppress\":"
+           << static_cast<unsigned>(read8(ram, kPlayerCollisionResponseSuppress))
            << "}"
            << ",\"ram_bytes\":";
     write_ram_bytes(output, ram);

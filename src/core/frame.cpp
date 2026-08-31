@@ -1,6 +1,7 @@
 #include "core/frame.hpp"
 
 #include "core/animation_vm.hpp"
+#include "core/collision.hpp"
 #include "core/movement_vm.hpp"
 #include "core/player.hpp"
 #include "core/terrain.hpp"
@@ -101,6 +102,9 @@ void step_frame(
     if (trace != nullptr) {
         trace->phase_count = 0;
         trace->write_count = 0;
+        trace->collision_contact_count = 0;
+        trace->collision_player_handler = 0;
+        trace->collision_actor_handler = 0;
         trace_phase(*trace, kFrameEntry);
     }
 
@@ -114,6 +118,12 @@ void step_frame(
             player_sample_input(core, input);
         } else if (service.ordinal == 8) {
             movement_vm_tick_actors(core);
+        } else if (service.ordinal == 10) {
+            const CollisionPassResult result = player_collision_pass(core);
+            if (trace != nullptr) {
+                trace->collision_contact_count += result.contact_count;
+                trace->collision_player_handler = result.dispatch.handler;
+            }
         } else if (service.ordinal == 15) {
             (void)terrain_resolve_player_cell(core);
         } else if (service.ordinal == 17) {
@@ -123,6 +133,12 @@ void step_frame(
             player_select_locomotion_or_action(core, input);
         } else if (service.ordinal == 21) {
             player_select_action_animation(core, input);
+        } else if (service.ordinal == 22) {
+            const CollisionPassResult result = actor_collision_pass(core);
+            if (trace != nullptr) {
+                trace->collision_contact_count += result.contact_count;
+                trace->collision_actor_handler = result.dispatch.handler;
+            }
         } else if (service.ordinal == 30) {
             animation_vm_tick_actors(core);
         }

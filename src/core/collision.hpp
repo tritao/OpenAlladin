@@ -22,6 +22,22 @@ struct CollisionDispatch {
     bool no_op = true;
 };
 
+struct CollisionBox {
+    bool valid = false;
+    int left = 0;
+    int top = 0;
+    int right = 0;
+    int bottom = 0;
+};
+
+struct CollisionPassResult {
+    std::size_t contact_count = 0;
+    std::size_t source_slot = 0;
+    std::size_t receiving_slot = 0;
+    CollisionDispatch dispatch{};
+    bool handler_applied = false;
+};
+
 CollisionDispatch player_collision_dispatch(
     const CoreRuntime& core,
     std::uint8_t actor_type
@@ -31,6 +47,26 @@ CollisionDispatch actor_collision_dispatch(
     const CoreRuntime& core,
     std::uint8_t receiving_type
 );
+
+CollisionBox collision_frame_box(
+    const CoreRuntime& core,
+    RamAddress frame_pointer,
+    int origin_x,
+    int origin_y,
+    std::uint8_t facing_x_flip
+);
+
+bool collision_overlaps(const CollisionBox& first, const CollisionBox& second);
+
+// Actor_PlayerCollisionPass scans common slots 1..24. It publishes the
+// current type immediately before table dispatch, matching the ROM's
+// transient latch contract. Handler bodies are added incrementally below
+// this boundary.
+CollisionPassResult player_collision_pass(CoreRuntime& core);
+
+// Actor_ActorCollisionPass scans auxiliary source slots 25..31 against
+// common receiving slots 1..24 and dispatches by receiving type.
+CollisionPassResult actor_collision_pass(CoreRuntime& core);
 
 // ActorCollision_ToggleFacing at 0x001AC60E delegates to the shared
 // Actor_ToggleHorizontalFacing helper. The flag gate is part of the ROM

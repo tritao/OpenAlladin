@@ -24,6 +24,9 @@ struct CoreTrace {
     std::size_t phase_count = 0;
     std::array<TraceWrite, 8> writes{};
     std::size_t write_count = 0;
+    std::size_t collision_contact_count = 0;
+    RamAddress collision_player_handler = 0;
+    RamAddress collision_actor_handler = 0;
     bool frame_atomic = false;
 };
 
