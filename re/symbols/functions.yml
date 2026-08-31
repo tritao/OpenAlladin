@@ -3663,11 +3663,13 @@
     - ghidra_interaction_anchor_targets
 
 0x001B6F0C:
-  name: InteractionSpawn_RuntimeType87_80
+  name: InteractionSpawn_CreateType87Response
+  aliases: [InteractionSpawn_RuntimeType87_80]
   confidence: confirmed
-  description: Interaction selector 0x80 handler that clears INTERACTION_RESPONSE_FLAG at 0x00FFF104, loads ACTOR_TEMPLATE_TYPE_87_INTERACTION_RESPONSE at 0x001B7C4C, and reverse-spawns the runtime type-0x87 actor through InteractionSpawn_ReverseSlot.
+  description: Interaction selector 0x80 handler that clears INTERACTION_RESPONSE_FLAG, loads ACTOR_TEMPLATE_TYPE_87_INTERACTION_RESPONSE, and reverse-spawns the runtime type-0x87 response actor through InteractionSpawn_ReverseSlot.
   evidence:
     - ghidra_level01_interaction_inventory_targeted_decompile
+    - interaction_spawn_response_family_semantic_v1
 0x001A9304:
   name: Player_SelectLocomotionOrAction
   confidence: trace_validated
@@ -5729,13 +5731,15 @@
     - interaction_spawn_type84-base-targets
     - interaction_spawn_type84-base-static-decompilation
 0x001B71E0:
-  name: InteractionSpawn_RuntimeType3B_66
+  name: InteractionSpawn_CreateType3BResponse
+  aliases: [InteractionSpawn_RuntimeType3B_66]
   confidence: decompiled
-  description: Interaction selector 0x66 handler that skips the spawn when 0x00FFEFE2 equals 0x3939; otherwise it uses the zero-type base, promotes the actor to runtime type 0x3B, installs animation root 0x00122BD8, and sets actor flag byte +0x29 to 1.
+  description: Interaction selector 0x66 handler that skips the spawn when INTERACTION_COUNTER_SECONDARY_DIGITS equals 0x3939; otherwise it uses ACTOR_TEMPLATE_BASE_ZERO, promotes the actor to runtime type 0x3B, installs ACTOR_ANIM_TYPE3A_3B_INTERACTION_RESPONSE, and sets actor flag byte +0x29 to 1.
   evidence:
     - ghidra_disassembly_001B71E0
     - interaction_spawn_runtime37-3b-type43-targets
     - interaction_spawn_runtime37-3b-type43-static-decompilation
+    - interaction_spawn_response_family_semantic_v1
 0x001B720C:
   name: InteractionSpawn_RuntimeType37_6B
   confidence: decompiled
@@ -5761,21 +5765,25 @@
     - interaction_spawn_runtime37-3b-type43-targets
     - interaction_spawn_runtime37-3b-type43-static-decompilation
 0x001B7258:
-  name: InteractionGate_RuntimeType3A_AC
+  name: InteractionGate_CreateType3AResponse
+  aliases: [InteractionGate_RuntimeType3A_AC]
   confidence: decompiled
-  description: Interaction selector 0xAC handler that requires 0x00FFF170 set and suppresses the spawn when 0x00FFEFE2 equals 0x3939; otherwise it uses the zero-type base, promotes the actor to runtime type 0x3A, installs animation root 0x00122BD8, and sets actor flag byte +0x29 to 1.
+  description: Interaction selector 0xAC gated response handler that requires INTERACTION_GATE_TYPE3A set and suppresses the spawn when INTERACTION_COUNTER_SECONDARY_DIGITS equals 0x3939; otherwise it uses ACTOR_TEMPLATE_BASE_ZERO, promotes the actor to runtime type 0x3A, installs ACTOR_ANIM_TYPE3A_3B_INTERACTION_RESPONSE, and sets actor flag byte +0x29 to 1.
   evidence:
     - ghidra_disassembly_001B7258
     - interaction_spawn_runtime3a-41-targets
     - interaction_spawn_runtime3a-41-static-decompilation
+    - interaction_spawn_response_family_semantic_v1
 0x001B728E:
-  name: InteractionSpawn_RuntimeType41_C8
+  name: InteractionSpawn_CreateType41Response
+  aliases: [InteractionSpawn_RuntimeType41_C8]
   confidence: decompiled
-  description: Interaction selector 0xC8 handler that uses the zero-type base through LevelObjectSpawnEntry, promotes the actor to runtime type 0x41, installs ACTOR_ANIM_TYPE41_INTERACTION_RESPONSE at 0x00125D7E, and sets actor flag byte +0x29 to 2.
+  description: Interaction selector 0xC8 handler that uses ACTOR_TEMPLATE_BASE_ZERO through LevelObjectSpawnEntry, promotes the actor to runtime type 0x41, installs ACTOR_ANIM_TYPE41_INTERACTION_RESPONSE, and sets actor flag byte +0x29 to 2.
   evidence:
     - ghidra_disassembly_001B728E
     - interaction_spawn_runtime3a-41-targets
     - interaction_spawn_runtime3a-41-static-decompilation
+    - interaction_spawn_response_family_semantic_v1
 0x001B72AE:
   name: InteractionSpawn_RuntimeType84_C9
   confidence: decompiled

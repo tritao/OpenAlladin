@@ -1,0 +1,38 @@
+{
+  "format": "openaladdin-recorded-semantic-promotion-v1",
+  "recorded_at": "2026-08-31",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "target_manifest": "re/ghidra/targets/interaction-spawn-response-family-semantic-targets.json",
+  "promoted_symbols": [
+    "InteractionSpawn_CreateType87Response",
+    "InteractionSpawn_CreateType3BResponse",
+    "InteractionGate_CreateType3AResponse",
+    "InteractionSpawn_CreateType41Response"
+  ],
+  "legacy_aliases": [
+    "InteractionSpawn_RuntimeType87_80",
+    "InteractionSpawn_RuntimeType3B_66",
+    "InteractionGate_RuntimeType3A_AC",
+    "InteractionSpawn_RuntimeType41_C8"
+  ],
+  "contracts": [
+    "Selector 0x80 clears INTERACTION_RESPONSE_FLAG before reverse-spawning ACTOR_TEMPLATE_TYPE_87_INTERACTION_RESPONSE.",
+    "Selectors 0x66 and 0xAC create Type-0x3B and Type-0x3A response actors respectively, sharing ACTOR_TEMPLATE_BASE_ZERO and ACTOR_ANIM_TYPE3A_3B_INTERACTION_RESPONSE with actor flag +0x29 = 1; selector 0xAC additionally requires INTERACTION_GATE_TYPE3A.",
+    "Selector 0xC8 creates a Type-0x41 response actor from ACTOR_TEMPLATE_BASE_ZERO, installs ACTOR_ANIM_TYPE41_INTERACTION_RESPONSE, and sets actor flag +0x29 = 2."
+  ],
+  "evidence": [
+    "Exact handler bodies at 0x001B6F0C, 0x001B71E0, 0x001B7258, and 0x001B728E",
+    "Existing interaction response-flag, runtime-3A/41, and runtime-37/3B/type-43 static findings",
+    "Canonical response template and animation identities"
+  ],
+  "limitations": [
+    "The promoted names identify response-actor creation roles but do not assign user-facing object names to the runtime types.",
+    "The legacy selector-qualified names remain aliases for historical findings and references."
+  ],
+  "conclusion": "Four late interaction response handlers now have stable creation identities tied to their exact selectors, gates, templates, response animations, and post-spawn state effects.",
+  "confidence": "decompiled",
+  "status": "recorded-semantic-promotion"
+}

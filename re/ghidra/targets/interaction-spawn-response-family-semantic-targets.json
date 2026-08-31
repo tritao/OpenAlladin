@@ -1,0 +1,59 @@
+{
+  "format": "openaladdin-semantic-promotion-target-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "focus": {
+    "name": "interaction-spawn-response-family-semantic",
+    "purpose": "Replace runtime-type-and-selector-only names with exact response-actor creation roles."
+  },
+  "handlers": [
+    {
+      "address": "0x001B6F0C",
+      "name": "InteractionSpawn_CreateType87Response",
+      "legacy_name": "InteractionSpawn_RuntimeType87_80",
+      "selector": "0x80",
+      "template": "ACTOR_TEMPLATE_TYPE_87_INTERACTION_RESPONSE",
+      "allocator": "InteractionSpawn_ReverseSlot",
+      "pre_spawn": "clear INTERACTION_RESPONSE_FLAG"
+    },
+    {
+      "address": "0x001B71E0",
+      "name": "InteractionSpawn_CreateType3BResponse",
+      "legacy_name": "InteractionSpawn_RuntimeType3B_66",
+      "selector": "0x66",
+      "gate": "INTERACTION_COUNTER_SECONDARY_DIGITS != 0x3939",
+      "template": "ACTOR_TEMPLATE_BASE_ZERO",
+      "runtime_type": "0x3B",
+      "animation": "ACTOR_ANIM_TYPE3A_3B_INTERACTION_RESPONSE",
+      "actor_flag_29": "0x01"
+    },
+    {
+      "address": "0x001B7258",
+      "name": "InteractionGate_CreateType3AResponse",
+      "legacy_name": "InteractionGate_RuntimeType3A_AC",
+      "selector": "0xAC",
+      "gates": ["INTERACTION_GATE_TYPE3A != 0", "INTERACTION_COUNTER_SECONDARY_DIGITS != 0x3939"],
+      "template": "ACTOR_TEMPLATE_BASE_ZERO",
+      "runtime_type": "0x3A",
+      "animation": "ACTOR_ANIM_TYPE3A_3B_INTERACTION_RESPONSE",
+      "actor_flag_29": "0x01"
+    },
+    {
+      "address": "0x001B728E",
+      "name": "InteractionSpawn_CreateType41Response",
+      "legacy_name": "InteractionSpawn_RuntimeType41_C8",
+      "selector": "0xC8",
+      "template": "ACTOR_TEMPLATE_BASE_ZERO",
+      "allocator": "LevelObjectSpawnEntry",
+      "runtime_type": "0x41",
+      "animation": "ACTOR_ANIM_TYPE41_INTERACTION_RESPONSE",
+      "actor_flag_29": "0x02"
+    }
+  ],
+  "evidence": [
+    "exact 68000 handler bodies",
+    "existing interaction selector manifests",
+    "canonical response templates and animation streams",
+    "direct gate, allocator, type, flag, and response-flag effects"
+  ],
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+}
