@@ -273,7 +273,16 @@ def numeric_type_work_queue(
         if not type_ids:
             continue
         mapping = by_symbol.get(symbol.address)
-        type_mappings = [item for value in type_ids for item in by_type.get(value, ())]
+        # A type-level mapping is useful only when the selector has one
+        # curated meaning. Shared temporary/response types such as 0x84 are
+        # intentionally allowed to map to several roles; those require an
+        # address-specific mapping and must not be auto-promoted here.
+        type_mappings = [
+            item
+            for value in type_ids
+            if len(by_type.get(value, ())) == 1
+            for item in by_type.get(value, ())
+        ]
         mapping_matches = []
         seen_mapping_names: set[str] = set()
         for item, match_kind in [(mapping, "symbol") for mapping in (mapping,)] + [
