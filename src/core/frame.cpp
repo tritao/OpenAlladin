@@ -113,6 +113,11 @@ void step_frame(
         trace->interaction_spawn_slot = 0;
         trace->camera_callback = 0;
         trace->frame_callback = 0;
+        trace->level_event_dispatched = false;
+        trace->level_event_command = 0;
+        trace->level_event_arg0 = 0;
+        trace->level_event_arg1 = 0;
+        trace->level_event_handler = 0;
         trace_phase(*trace, kFrameEntry);
     }
 

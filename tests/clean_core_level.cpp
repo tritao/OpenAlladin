@@ -1,5 +1,7 @@
 #include "core/level.hpp"
 
+#include "core/level_event.hpp"
+
 #include "core/trace.hpp"
 
 #include <cassert>
@@ -99,6 +101,44 @@ int main() {
 
     write8(core.ram, kSceneState, kLevelTableCount);
     assert(!level_load_from_scene_state(core));
+
+    // The timed VM increments its byte tick first and dispatches only when
+    // delay < tick. E8 + 0x1A wraps to table entry two.
+    const std::size_t stream = 0x0100;
+    write_rom32(rom, 0x20C0 + 2 * 4, 0x001B76AA);
+    rom[stream + 0] = 2;
+    rom[stream + 1] = 0xE8;
+    write_rom16(rom, stream + 2, 0x1234);
+    write_rom16(rom, stream + 4, 0xABCD);
+    write32(core.ram, kLevelEventScriptCursor, stream);
+    write8(core.ram, kLevelEventTick, 0);
+    CoreTrace event_trace;
+    assert(!level_event_dispatch_timed_command(core, &event_trace).dispatched);
+    assert(read8(core.ram, kLevelEventTick) == 1);
+    assert(!level_event_dispatch_timed_command(core, &event_trace).dispatched);
+    assert(read8(core.ram, kLevelEventTick) == 2);
+    const LevelEventDispatchResult event =
+        level_event_dispatch_timed_command(core, &event_trace);
+    assert(event.dispatched);
+    assert(event.command == 0xE8);
+    assert(event.arg0 == 0x1234);
+    assert(event.arg1 == 0xABCD);
+    assert(event.handler == 0x001B76AA);
+    assert(read32(core.ram, kLevelEventScriptCursor) == stream + 6);
+    assert(read8(core.ram, kLevelEventTick) == 0);
+    assert(event_trace.level_event_dispatched);
+    assert(event_trace.level_event_handler == 0x001B76AA);
+
+    // A zero-delay terminator is observed in place; the ROM helper does not
+    // clear or advance the cursor when it reaches it.
+    assert(!level_event_dispatch_timed_command(core).dispatched);
+    assert(read32(core.ram, kLevelEventScriptCursor) == stream + 6);
+
+    write32(core.ram, kLevelFrameCallback, 0x001B5B94);
+    write32(core.ram, kLevelEventScriptCursor, stream);
+    write8(core.ram, kLevelEventTick, 2);
+    level_invoke_frame_callback(core, &event_trace);
+    assert(read32(core.ram, kLevelEventScriptCursor) == stream + 6);
 
     return 0;
 }

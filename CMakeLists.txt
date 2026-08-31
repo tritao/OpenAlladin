@@ -136,6 +136,8 @@ add_library(openaladdin_clean_core STATIC
     src/core/interaction.hpp
     src/core/level.cpp
     src/core/level.hpp
+    src/core/level_event.cpp
+    src/core/level_event.hpp
     src/core/movement_vm.cpp
     src/core/movement_vm.hpp
     src/core/player.cpp

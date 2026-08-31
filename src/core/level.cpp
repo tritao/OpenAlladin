@@ -1,5 +1,6 @@
 #include "core/level.hpp"
 
+#include "core/level_event.hpp"
 #include "core/ram.hpp"
 #include "core/rom.hpp"
 #include "core/trace.hpp"
@@ -22,6 +23,7 @@ constexpr std::size_t kLevelCameraCallbackOffset = 0x34;
 
 constexpr RamAddress kLevelCallback00 = 0x001B5B66;
 constexpr RamAddress kLevelCallback01 = 0x001B5B4A;
+constexpr RamAddress kLevelCallback02 = 0x001B5B94;
 constexpr RamAddress kLevelCallback03 = 0x001B5B9A;
 constexpr RamAddress kLevelCallback06 = 0x001B5D3A;
 constexpr RamAddress kLevelCallback10 = 0x001B623A;
@@ -127,9 +129,13 @@ void level_invoke_frame_callback(CoreRuntime& core, CoreTrace* trace) {
         }
         decrement_level_timer(core);
         break;
+    case kLevelCallback02:
+        (void)level_event_dispatch_timed_command(core, trace);
+        break;
     case kLevelCallback03:
         break;
     case kLevelCallback06:
+        (void)level_event_dispatch_timed_command(core, trace);
         write8(core.ram, kPlayerTerrainBounceAnimationState, 0);
         break;
     case kLevelCallback10:
