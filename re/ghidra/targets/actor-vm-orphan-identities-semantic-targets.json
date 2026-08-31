@@ -1,0 +1,53 @@
+{
+  "format": "openaladdin-actor-vm-orphan-identities-semantic-v1",
+  "recorded_at": "2026-08-31",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "objects": [
+    {
+      "address": "0x001203E8",
+      "name": "ACTOR_MOVE_DRIFT_PLUS2_PLUS1_LOOP",
+      "legacy_alias": "ACTOR_MOVE_UNREFERENCED_SELF_LOOP_1203E8",
+      "range": ["0x001203E8", "0x001203F1"],
+      "size": 10,
+      "bytes": "020001008000001203E8",
+      "decoded_behavior": "MovementVM (+2, 0) followed by (+1, 0), then unconditional jump to the root",
+      "reachability": "No external template, producer, instruction reference, or runtime consumer currently selects this entry."
+    },
+    {
+      "address": "0x001B7990",
+      "name": "ACTOR_TEMPLATE_TYPE84_RESOURCE10_NO_DEFAULT_VM",
+      "legacy_alias": "ACTOR_TEMPLATE_TYPE_84_UNREFERENCED_RESOURCE10",
+      "range": ["0x001B7990", "0x001B79A3"],
+      "size": 20,
+      "bytes": "840008000000000000006000000000000A000000",
+      "decoded_behavior": "Type-0x84 template with initializer payload 0x08000000, no default VM roots, template word 0x6000, and ten owned resources",
+      "reachability": "No external producer, consumer, or runtime sample currently references this record."
+    },
+    {
+      "address": "0x001B7A58",
+      "name": "ACTOR_TEMPLATE_TYPE84_EMPTY_INIT_40001400",
+      "legacy_alias": "ACTOR_TEMPLATE_TYPE_84_UNREFERENCED_PAYLOAD_40001400",
+      "range": ["0x001B7A58", "0x001B7A6B"],
+      "size": 20,
+      "bytes": "8401400014000000000060000000000000000000",
+      "decoded_behavior": "Type-0x84 template with initializer payload 0x40001400, no default VM roots, template word 0x6000, and zero owned resources",
+      "reachability": "No external producer, consumer, or runtime sample currently references this record."
+    }
+  ],
+  "evidence": [
+    "Exact gap-free layout ownership",
+    "MovementDecoder output for the ten-byte stream",
+    "Actor template field map and exact 20-byte record inspection",
+    "Adjacent canonical stream/template boundaries"
+  ],
+  "limitations": [
+    "The promoted identities describe decoded behavior and fields only; they do not establish a live selector.",
+    "The old address/provisional names remain aliases for historical findings and downstream references."
+  ],
+  "conclusion": "The standalone actor VM-shaped objects now have stable behavior-based identities while their external reachability remains explicitly unresolved.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

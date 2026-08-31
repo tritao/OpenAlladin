@@ -661,6 +661,21 @@ def test_unresolved_vm_stream_runtime_finding_keeps_negative_evidence_bounded():
     assert any("not an exhaustive reachability proof" in item for item in finding["limitations"])
 
 
+def test_actor_vm_orphan_objects_have_behavior_names_and_legacy_aliases():
+    expected = {
+        0x001203E8: ("ACTOR_MOVE_DRIFT_PLUS2_PLUS1_LOOP", "ACTOR_MOVE_UNREFERENCED_SELF_LOOP_1203E8"),
+        0x001B7990: ("ACTOR_TEMPLATE_TYPE84_RESOURCE10_NO_DEFAULT_VM", "ACTOR_TEMPLATE_TYPE_84_UNREFERENCED_RESOURCE10"),
+        0x001B7A58: ("ACTOR_TEMPLATE_TYPE84_EMPTY_INIT_40001400", "ACTOR_TEMPLATE_TYPE_84_UNREFERENCED_PAYLOAD_40001400"),
+    }
+    symbols = SymbolStore()
+    for address, (name, legacy) in expected.items():
+        symbol = symbols.at(address, include_ranges=False)
+        assert symbol is not None
+        assert symbol.name == name
+        assert legacy in symbol.aliases
+        assert symbol.confidence == "decompiled"
+
+
 def test_scene_graphics_resources_have_stable_state_and_destination_names():
     expected = {
         0x0012DA04: ("SCENE_STATE04_C000_GRAPHICS", "SCENE_RNC_GRAPHICS_0012DA04"),

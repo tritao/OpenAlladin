@@ -1,0 +1,31 @@
+{
+  "format": "openaladdin-recorded-static-decompilation-v1",
+  "recorded_at": "2026-08-31",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "target_manifest": "re/ghidra/targets/actor-vm-orphan-identities-semantic-targets.json",
+  "promoted_symbols": [
+    "ACTOR_MOVE_DRIFT_PLUS2_PLUS1_LOOP",
+    "ACTOR_TEMPLATE_TYPE84_RESOURCE10_NO_DEFAULT_VM",
+    "ACTOR_TEMPLATE_TYPE84_EMPTY_INIT_40001400"
+  ],
+  "legacy_aliases": [
+    "ACTOR_MOVE_UNREFERENCED_SELF_LOOP_1203E8",
+    "ACTOR_TEMPLATE_TYPE_84_UNREFERENCED_RESOURCE10",
+    "ACTOR_TEMPLATE_TYPE_84_UNREFERENCED_PAYLOAD_40001400"
+  ],
+  "contracts": [
+    "0x001203E8-0x001203F1 is a ten-byte (+2,0)/(+1,0) MovementVM self-loop bounded between the shared Type-0x84 roots and the Type-0x50 Level-09 spawn root.",
+    "0x001B7990-0x001B79A3 is a complete Type-0x84 ten-resource template with no default movement or animation root.",
+    "0x001B7A58-0x001B7A6B is a complete Type-0x84 zero-resource template with initializer payload 0x40001400 and no default movement or animation root."
+  ],
+  "limitations": [
+    "No current exported producer, consumer, instruction reference, or runtime sample establishes external reachability for these three objects.",
+    "These names are behavior/field promotions, not claims that the objects are live in the verified Level 01 route."
+  ],
+  "conclusion": "Three actor VM-shaped objects were promoted from address/provisional identities to stable behavior-based names while preserving exact byte ownership and unresolved reachability status.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

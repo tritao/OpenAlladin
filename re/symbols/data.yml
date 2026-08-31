@@ -3787,13 +3787,15 @@
     - movement_stream_decoder
 
 0x001203E8:
-  name: ACTOR_MOVE_UNREFERENCED_SELF_LOOP_1203E8
+  name: ACTOR_MOVE_DRIFT_PLUS2_PLUS1_LOOP
+  aliases: [ACTOR_MOVE_UNREFERENCED_SELF_LOOP_1203E8]
   type: movement_stream
   size: 10
   confidence: decompiled
-  description: Ten-byte MovementVM self-loop between ACTOR_MOVE_TYPE84_SHARED_STEP_1 and ACTOR_MOVE_TYPE50_LEVEL09_SPAWN. Its exact body applies a (+2, 0) step followed by a (+1, 0) step and an unconditional jump back to 0x001203E8; no external template, producer, or instruction reference currently selects this entry.
+  description: Ten-byte MovementVM linear-drift loop between ACTOR_MOVE_TYPE84_SHARED_STEP_1 and ACTOR_MOVE_TYPE50_LEVEL09_SPAWN. Its exact body applies a (+2, 0) step followed by a (+1, 0) step and an unconditional jump back to its own root; no external template, producer, or instruction reference currently selects this entry.
   evidence:
     - unreferenced_movement_streams_static_v1
+    - actor_vm_orphan_identities_semantic_v1
     - movement_stream_decoder
 
 0x001203F2:
@@ -7955,16 +7957,18 @@
     - ghidra_actor_template_initializer_001AE30A
 
 0x001B7990:
-  name: ACTOR_TEMPLATE_TYPE_84_UNREFERENCED_RESOURCE10
+  name: ACTOR_TEMPLATE_TYPE84_RESOURCE10_NO_DEFAULT_VM
+  aliases: [ACTOR_TEMPLATE_TYPE_84_UNREFERENCED_RESOURCE10]
   type: actor_template
   size: 20
   confidence: decompiled
-  description: "Exact 20-byte Type-0x84 actor-template record with initializer payload 0x08000000, no movement or default animation root, template word 0x6000, ten owned resources, and no trailing flags. Its compact initializer fields are decoded; no current exported producer, consumer, or runtime sample references this record, so it is retained as a complete unreferenced template."
+  description: "Exact 20-byte Type-0x84 actor-template record with initializer payload 0x08000000, no movement or default animation root, template word 0x6000, ten owned resources, and no trailing flags. Its compact initializer fields are decoded; no current exported producer, consumer, or runtime sample references this record, so its external reachability remains unresolved."
   evidence:
     - actor_template_record_layout_static_decompilation
     - ghidra_actor_template_initializer_001AE30A
     - actor_template_unreferenced_records_static_decompilation
     - actor_template_body_confidence_static_v1
+    - actor_vm_orphan_identities_semantic_v1
 
 0x001B7918:
   name: ACTOR_TEMPLATE_PLAYER_ACTION_TRANSITION_CHILD
@@ -7999,16 +8003,18 @@
     - level01_upper_frontier_initializer_targets
 
 0x001B7A58:
-  name: ACTOR_TEMPLATE_TYPE_84_UNREFERENCED_PAYLOAD_40001400
+  name: ACTOR_TEMPLATE_TYPE84_EMPTY_INIT_40001400
+  aliases: [ACTOR_TEMPLATE_TYPE_84_UNREFERENCED_PAYLOAD_40001400]
   type: actor_template
   size: 20
   confidence: decompiled
-  description: "Exact 20-byte Type-0x84 actor-template record with initializer payload 0x40001400, no movement or default animation root, template word 0x6000, zero resources, and no trailing flags. Its compact initializer fields are decoded; no current exported producer, consumer, or runtime sample references this record, so it is retained as a complete unreferenced template."
+  description: "Exact 20-byte Type-0x84 actor-template record with initializer payload 0x40001400, no movement or default animation root, template word 0x6000, zero resources, and no trailing flags. Its compact initializer fields are decoded; no current exported producer, consumer, or runtime sample references this record, so its external reachability remains unresolved."
   evidence:
     - actor_template_record_layout_static_decompilation
     - ghidra_actor_template_initializer_001AE30A
     - actor_template_unreferenced_records_static_decompilation
     - actor_template_body_confidence_static_v1
+    - actor_vm_orphan_identities_semantic_v1
 
 0x001B7E04:
   name: ACTOR_TEMPLATE_EXIT_TYPE_84

@@ -1010,7 +1010,7 @@ def test_type0f_child_and_type6e_default_animation_ranges_are_exact():
     symbols = SymbolStore()
     expected = {
         0x00123D34: (0x00123DE1, "ACTOR_ANIM_TYPE84_TYPE0F_CHILD"),
-        0x00123DE2: (0x00123DE9, "ACTOR_ANIM_UNREFERENCED_SELF_LOOP_123DE2"),
+            0x00123DE2: (0x00123DE9, "ACTOR_ANIM_SINGLE_FRAME_SELF_LOOP"),
         0x00123DEA: (0x00123E35, "ACTOR_ANIM_TYPE6E_73_BASE_DEFAULT"),
         0x00123E36: (0x00123E75, "ACTOR_ANIM_TYPE84_RUNTIME47_4C"),
         0x00123E76: (0x00123E7D, "ACTOR_ANIM_TYPE84_INTERACTION_RESPONSE"),
@@ -1318,8 +1318,8 @@ def test_unindexed_movement_stream_bands_are_exact_with_evidence_confidence():
 def test_unreferenced_movement_streams_are_exact_and_decompiled():
     symbols = SymbolStore()
     expected = [
-        (0x0011F800, 0x0011F8A3, "ACTOR_MOVE_UNREFERENCED_GRID_RESPONSE_11F800", 164),
-        (0x001203E8, 0x001203F1, "ACTOR_MOVE_UNREFERENCED_SELF_LOOP_1203E8", 10),
+        (0x0011F800, 0x0011F8A3, "ACTOR_MOVE_INTERACTION_ANCHOR_GRID_RESPONSE", 164),
+        (0x001203E8, 0x001203F1, "ACTOR_MOVE_DRIFT_PLUS2_PLUS1_LOOP", 10),
     ]
     rom_path = Path(__file__).resolve().parents[1] / "rom/Disneys_Aladdin_U_p1.bin"
     decoder = MovementDecoder(load_animation_decoder().RomReader(rom_path.read_bytes()))
@@ -2042,7 +2042,8 @@ def test_shared_movement_root_family_is_exact():
     assert symbols.at(0x00120428, include_ranges=False).metadata["entry_offset"] == 46
     unresolved_loop = symbols.at(0x001203E8, include_ranges=False)
     assert unresolved_loop is not None
-    assert unresolved_loop.name == "ACTOR_MOVE_UNREFERENCED_SELF_LOOP_1203E8"
+    assert unresolved_loop.name == "ACTOR_MOVE_DRIFT_PLUS2_PLUS1_LOOP"
+    assert "ACTOR_MOVE_UNREFERENCED_SELF_LOOP_1203E8" in unresolved_loop.aliases
     assert unresolved_loop.confidence == "decompiled"
 
 
@@ -2120,8 +2121,8 @@ def test_type84_0f22_response_family_is_exact_with_template_reachability_unresol
 def test_unreferenced_actor_template_records_are_exact_and_decoded():
     symbols = SymbolStore()
     expected = {
-        0x001B7990: ("ACTOR_TEMPLATE_TYPE_84_UNREFERENCED_RESOURCE10", 0x001B79A3),
-        0x001B7A58: ("ACTOR_TEMPLATE_TYPE_84_UNREFERENCED_PAYLOAD_40001400", 0x001B7A6B),
+        0x001B7990: ("ACTOR_TEMPLATE_TYPE84_RESOURCE10_NO_DEFAULT_VM", 0x001B79A3),
+        0x001B7A58: ("ACTOR_TEMPLATE_TYPE84_EMPTY_INIT_40001400", 0x001B7A6B),
         0x001B82DC: ("ACTOR_TEMPLATE_TYPE_84_TYPE_1A_PRESENTATION_VARIANT", 0x001B82EF),
     }
     rom = (Path(__file__).resolve().parents[1] / "rom/Disneys_Aladdin_U_p1.bin").read_bytes()
@@ -2139,6 +2140,8 @@ def test_unreferenced_actor_template_records_are_exact_and_decoded():
         assert symbol.metadata["type"] == "actor_template"
         assert symbol.confidence == "decompiled"
         assert rom[address:end + 1] == bytes.fromhex(expected_bytes[address])
+    assert "ACTOR_TEMPLATE_TYPE_84_UNREFERENCED_RESOURCE10" in symbols.at(0x001B7990, include_ranges=False).aliases
+    assert "ACTOR_TEMPLATE_TYPE_84_UNREFERENCED_PAYLOAD_40001400" in symbols.at(0x001B7A58, include_ranges=False).aliases
 
 
 def test_omitted_palette_and_transition_digit_code_islands_are_exact():
