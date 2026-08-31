@@ -1818,7 +1818,7 @@ def test_type7c_type7d_level_event_movement_family_is_exact():
     symbols = SymbolStore()
     prelude = symbols.at(0x00121180, include_ranges=False)
     assert prelude is not None
-    assert prelude.name == "ACTOR_MOVE_TYPE7C_WIDE_RANDOM_OFFSETS_PRELUDE"
+    assert prelude.name == "ACTOR_MOVE_LEVEL_EVENT_WIDE_RANDOM_OFFSETS_PRELUDE"
     assert prelude.end == 0x00121189
     assert prelude.size == 10
     assert prelude.metadata["type"] == "movement_stream"
@@ -1839,7 +1839,7 @@ def test_type7c_type7d_level_event_movement_family_is_exact():
 
     template = symbols.at(0x001B81B0, include_ranges=False)
     assert template is not None
-    assert template.name == "ACTOR_TEMPLATE_TYPE_7C_WIDE_RANDOM_EVENT"
+    assert template.name == "ACTOR_TEMPLATE_WIDE_RANDOM_EVENT"
     assert template.end == 0x001B81C3
     assert template.size == 20
     assert template.metadata["type"] == "actor_template"
@@ -1847,7 +1847,7 @@ def test_type7c_type7d_level_event_movement_family_is_exact():
 
     animation = symbols.at(0x00125916, include_ranges=False)
     assert animation is not None
-    assert animation.name == "ACTOR_ANIM_TYPE7C_LEVEL_EVENT_SHARED"
+    assert animation.name == "ACTOR_ANIM_LEVEL_EVENT_SHARED"
     assert animation.end == 0x0012593F
     assert animation.size == 42
 

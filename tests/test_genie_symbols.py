@@ -1843,16 +1843,41 @@ def test_direct_palette_sources_have_stable_loader_names():
 def test_type84_scene_templates_and_terminal_animation_have_stable_names():
     expected = {
         0x00122FA2: ("ACTOR_ANIM_TYPE84_TERMINAL_DEATH", "ACTOR_ANIM_DEATH_122FA2"),
-        0x001B83E0: ("ACTOR_TEMPLATE_TYPE84_SCENE_RESOURCE_OPENING", "ACTOR_TEMPLATE_SCENE_RESOURCE_TYPE_84_12609E"),
-        0x001B83F4: ("ACTOR_TEMPLATE_TYPE84_SCENE_RESOURCE_REBUILD", "ACTOR_TEMPLATE_SCENE_RESOURCE_TYPE_84_1260EA"),
+        0x0012609E: ("ACTOR_ANIM_SCENE_RESOURCE_OPENING", "ACTOR_ANIM_TYPE84_SCENE_RESOURCE_OPENING"),
+        0x001260DA: ("ACTOR_ANIM_SCENE_REBUILD", "ACTOR_ANIM_TYPE84_SCENE_REBUILD"),
+        0x001260EA: ("ACTOR_ANIM_SCENE_REBUILD_ENTRY", "ACTOR_ANIM_TYPE84_SCENE_REBUILD_ENTRY"),
+        0x001B83E0: ("ACTOR_TEMPLATE_SCENE_RESOURCE_OPENING", "ACTOR_TEMPLATE_SCENE_RESOURCE_TYPE_84_12609E"),
+        0x001B83F4: ("ACTOR_TEMPLATE_SCENE_RESOURCE_REBUILD", "ACTOR_TEMPLATE_SCENE_RESOURCE_TYPE_84_1260EA"),
         0x001B8408: ("ACTOR_TEMPLATE_TYPE84_COLLISION_RESPONSE", "ACTOR_TEMPLATE_SCENE_RESOURCE_TYPE_84_123E7E"),
         0x001B841C: ("ACTOR_TEMPLATE_TYPE84_SCENE_RESOURCE_RESPONSE", "ACTOR_TEMPLATE_SCENE_RESOURCE_TYPE_84_123F7E"),
+        0x001B8430: ("ACTOR_TEMPLATE_SCENE_REBUILD_PRIMARY", "ACTOR_TEMPLATE_TYPE_84_SCENE_REBUILD_A"),
+        0x001B8444: ("ACTOR_TEMPLATE_SCENE_REBUILD_WALL", "ACTOR_TEMPLATE_TYPE_84_SCENE_REBUILD_WALL"),
     }
     for address, (name, legacy) in expected.items():
         symbol = SymbolStore().at(address, include_ranges=False)
         assert symbol is not None
         assert symbol.name == name
         assert legacy in symbol.aliases
+
+
+def test_level_event_names_promote_known_level05_level07_roles():
+    symbols = SymbolStore()
+    expected = {
+        0x00121180: ("ACTOR_MOVE_LEVEL_EVENT_WIDE_RANDOM_OFFSETS_PRELUDE", "ACTOR_MOVE_TYPE7C_WIDE_RANDOM_OFFSETS_PRELUDE"),
+        0x00125916: ("ACTOR_ANIM_LEVEL_EVENT_SHARED", "ACTOR_ANIM_TYPE7C_LEVEL_EVENT_SHARED"),
+        0x001B819C: ("ACTOR_TEMPLATE_LEVEL05_TIMED_SPAWN", "ACTOR_TEMPLATE_TYPE_7C_LEVEL05_TIMED_SPAWN"),
+        0x001B81B0: ("ACTOR_TEMPLATE_WIDE_RANDOM_EVENT", "ACTOR_TEMPLATE_TYPE_7C_WIDE_RANDOM_EVENT"),
+        0x001B81C4: ("ACTOR_TEMPLATE_LEVEL07_CALLBACK_SPAWN", "ACTOR_TEMPLATE_TYPE_7C_LEVEL07_CALLBACK_SPAWN"),
+    }
+    for address, (name, alias) in expected.items():
+        symbol = symbols.at(address, include_ranges=False)
+        assert symbol is not None
+        assert symbol.name == name
+        assert alias in symbol.aliases
+
+    level_events = next(mapping for mapping in load_entity_mappings() if mapping.name == "LEVEL_EVENT_SHARED")
+    assert set(expected) - {0x00121180, 0x001B81B0} <= set(level_events.symbol_addresses)
+    assert level_events.scope == "role"
 
 
 def test_scene_resource_coordinate_stream_has_stable_name():

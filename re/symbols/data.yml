@@ -4123,12 +4123,13 @@
     - movement_stream_decoder
 
 0x00121180:
-  name: ACTOR_MOVE_TYPE7C_WIDE_RANDOM_OFFSETS_PRELUDE
+  name: ACTOR_MOVE_LEVEL_EVENT_WIDE_RANDOM_OFFSETS_PRELUDE
+  aliases: [ACTOR_MOVE_TYPE7C_WIDE_RANDOM_OFFSETS_PRELUDE]
   type: movement_stream
   size: 10
   confidence: decompiled
   review_status: closed
-  description: Type-0x7C wide-random-offset event prelude selected by the adjacent template record at 0x001B81B0. Its exact ten-byte body applies a (0,-4) step, pushes ActorEvent_ApplyWideRandomOffsets at 0x001ACD5A, clears the actor state through opcode 0x82, and falls through into ACTOR_MOVE_LEVEL_EVENT_SHARED at 0x0012118A. The template link is static but no runtime sample reaches this family, so the stream is retained as a complete unreferenced variant.
+  description: Wide-random-offset level-event prelude selected by the adjacent template record at 0x001B81B0. Its exact ten-byte body applies a (0,-4) step, pushes ActorEvent_ApplyWideRandomOffsets at 0x001ACD5A, clears the actor state through opcode 0x82, and falls through into ACTOR_MOVE_LEVEL_EVENT_SHARED at 0x0012118A. The template link is static but no runtime sample reaches this family, so the stream is retained as a complete unreferenced variant.
   evidence:
     - actor_template_level_event_record_partition
     - movement_stream_decoder
@@ -4139,7 +4140,7 @@
   type: movement_stream
   size: 132
   confidence: decompiled
-  description: Shared Type-0x7C level-event movement stream selected by ACTOR_TEMPLATE_TYPE_7C_LEVEL05_TIMED_SPAWN and ACTOR_TEMPLATE_TYPE_7C_LEVEL07_CALLBACK_SPAWN. Its exact 132-byte owner contains the flag-gated zero and (+3, 0) phases, event-parameter pushes, sound/event commands, timer setup, and the terminal 0x00121200 jump into the shared continuation at 0x001211FA; the owner ends immediately before ACTOR_MOVE_LEVEL11_EVENT.
+  description: Shared level-event movement stream selected by ACTOR_TEMPLATE_LEVEL05_TIMED_SPAWN and ACTOR_TEMPLATE_LEVEL07_CALLBACK_SPAWN. Its exact 132-byte owner contains the flag-gated zero and (+3, 0) phases, event-parameter pushes, sound/event commands, timer setup, and the terminal 0x00121200 jump into the shared continuation at 0x001211FA; the owner ends immediately before ACTOR_MOVE_LEVEL11_EVENT.
   evidence:
     - actor_template_level05_timed_static_decompilation
     - level07_type7c_template_targets
@@ -4985,7 +4986,7 @@
   type: movement_stream
   size: 0x82
   confidence: decompiled
-  description: Exact decoder-bounded movement response stream in the unindexed 0x001210FE-0x0012117F band. Its body publishes ActorEvent_SetFlag20 and ActorEvent_ClearFlag20 through the shared AnimationVM callback parameter, compares the 0x00FFF07C terrain-query state before each timed phase, applies the encoded (-124,-113), (-111,+26), and leftward (-1..-12,0) response steps with timer 0x83, and clears the actor before ACTOR_MOVE_TYPE7C_WIDE_RANDOM_OFFSETS_PRELUDE; no direct template or producer reference has been recovered.
+  description: Exact decoder-bounded movement response stream in the unindexed 0x001210FE-0x0012117F band. Its body publishes ActorEvent_SetFlag20 and ActorEvent_ClearFlag20 through the shared AnimationVM callback parameter, compares the 0x00FFF07C terrain-query state before each timed phase, applies the encoded (-124,-113), (-111,+26), and leftward (-1..-12,0) response steps with timer 0x83, and clears the actor before ACTOR_MOVE_LEVEL_EVENT_WIDE_RANDOM_OFFSETS_PRELUDE; no direct template or producer reference has been recovered.
   evidence:
     - unindexed_movement_stream_bands_static_disassembly
     - actor_animation_callback_family_extended_static_v1
@@ -5194,10 +5195,11 @@
     - animation_stream_decoder
 
 0x00125916:
-  name: ACTOR_ANIM_TYPE7C_LEVEL_EVENT_SHARED
+  name: ACTOR_ANIM_LEVEL_EVENT_SHARED
+  aliases: [ACTOR_ANIM_TYPE7C_LEVEL_EVENT_SHARED]
   size: 42
   confidence: decompiled
-  description: Shared Type-0x7C level-event animation installed by ACTOR_TEMPLATE_TYPE_7C_LEVEL05_TIMED_SPAWN, ACTOR_TEMPLATE_TYPE_7C_WIDE_RANDOM_EVENT, and ACTOR_TEMPLATE_TYPE_7C_LEVEL07_CALLBACK_SPAWN. It presents the exact 0x0F9A-0x0FB2 sequence, writes actor type 0x84 through the VM write command at 0x00125932, and clears the actor at 0x0012593E before the adjacent ACTOR_ANIM_TYPE7D_LEVEL_ENTRY owner.
+  description: Shared level-event animation installed by ACTOR_TEMPLATE_LEVEL05_TIMED_SPAWN, ACTOR_TEMPLATE_WIDE_RANDOM_EVENT, and ACTOR_TEMPLATE_LEVEL07_CALLBACK_SPAWN. It presents the exact 0x0F9A-0x0FB2 sequence, writes actor type 0x84 through the VM write command at 0x00125932, and clears the actor at 0x0012593E before the adjacent ACTOR_ANIM_TYPE7D_LEVEL_ENTRY owner.
   evidence:
     - actor_template_level_entry_family_static_decompilation
     - animation_stream_decoder
@@ -7397,30 +7399,33 @@
     - animation_stream_decoder
 
 0x0012609E:
-  name: ACTOR_ANIM_TYPE84_SCENE_RESOURCE_OPENING
+  name: ACTOR_ANIM_SCENE_RESOURCE_OPENING
+  aliases: [ACTOR_ANIM_TYPE84_SCENE_RESOURCE_OPENING]
   size: 60
   confidence: decompiled
-  description: Type-0x84 scene-resource opening animation selected by ACTOR_TEMPLATE_SCENE_RESOURCE_TYPE_84_12609E. Its exact 60-byte region presents the 0x0E02-0x0E1A sequence, plays sound 0x2D, loads timer 0x8F, reverses through the same frames, and clears the actor at 0x001260D8 before the separate 0x001260DA entry.
+  description: Scene-resource opening animation selected by ACTOR_TEMPLATE_SCENE_RESOURCE_OPENING. Its exact 60-byte region presents the 0x0E02-0x0E1A sequence, plays sound 0x2D, loads timer 0x8F, reverses through the same frames, and clears the actor at 0x001260D8 before the separate 0x001260DA entry.
   evidence:
     - actor_template_scene_resource_family_static_decompilation
     - animation_stream_decoder
 
 0x001260DA:
-  name: ACTOR_ANIM_TYPE84_SCENE_REBUILD
+  name: ACTOR_ANIM_SCENE_REBUILD
+  aliases: [ACTOR_ANIM_TYPE84_SCENE_REBUILD]
   size: 62
   confidence: decompiled
-  description: Type-0x84 scene/resource-rebuild animation installed by ACTOR_TEMPLATE_TYPE_84_SCENE_REBUILD_A during SceneResource_RebuildAfterInteraction. Its 62-byte region clears the actor between the 0x19A6-0x19B2 opening frames, enters the 0x0A0A-0x0A2E frame loop at 0x001260EE, and is optionally entered at 0x001260E6 by the fixed-slot initializer.
+  description: Scene/resource-rebuild animation installed by ACTOR_TEMPLATE_SCENE_REBUILD_PRIMARY during SceneResource_RebuildAfterInteraction. Its 62-byte region clears the actor between the 0x19A6-0x19B2 opening frames, enters the 0x0A0A-0x0A2E frame loop at 0x001260EE, and is optionally entered at 0x001260E6 by the fixed-slot initializer.
   evidence:
     - actor_template_scene_rebuild_static_decompilation
     - ghidra_scene_resource_rebuild
     - animation_stream_decoder
 
 0x001260EA:
-  name: ACTOR_ANIM_TYPE84_SCENE_REBUILD_ENTRY
-  alias_of: ACTOR_ANIM_TYPE84_SCENE_REBUILD
+  name: ACTOR_ANIM_SCENE_REBUILD_ENTRY
+  aliases: [ACTOR_ANIM_TYPE84_SCENE_REBUILD_ENTRY]
+  alias_of: ACTOR_ANIM_SCENE_REBUILD
   entry_offset: 16
   confidence: decompiled
-  description: Embedded scene/resource-rebuild entry selected by ACTOR_TEMPLATE_SCENE_RESOURCE_TYPE_84_1260EA. It begins at the 0x090A frame immediately before the shared 0x0A0A-0x0A2E loop and does not claim a second ROM ownership range.
+  description: Embedded scene/resource-rebuild entry selected by ACTOR_TEMPLATE_SCENE_RESOURCE_REBUILD. It begins at the 0x090A frame immediately before the shared 0x0A0A-0x0A2E loop and does not claim a second ROM ownership range.
   evidence:
     - actor_template_scene_resource_family_static_decompilation
     - animation_stream_decoder
@@ -8826,24 +8831,24 @@
     - ghidra_actor_template_initializer_001AE30A
 
 0x001B83E0:
-  name: ACTOR_TEMPLATE_TYPE84_SCENE_RESOURCE_OPENING
+  name: ACTOR_TEMPLATE_SCENE_RESOURCE_OPENING
   aliases: [ACTOR_TEMPLATE_SCENE_RESOURCE_TYPE_84_12609E]
   type: actor_template
   size: 20
   confidence: decompiled
-  description: Type-0x84 scene-resource actor record selected by command 0x0F at 0x0012766F in the 0x00127571 resource stream. It has no movement stream, uses ACTOR_ANIM_TYPE84_SCENE_RESOURCE_OPENING at 0x0012609E, owns three resources, and is instantiated at scene-resource position (0x00D0,0x0170).
+  description: Scene-resource actor record selected by command 0x0F at 0x0012766F in the 0x00127571 resource stream. It has no movement stream, uses ACTOR_ANIM_SCENE_RESOURCE_OPENING at 0x0012609E, owns three resources, and is instantiated at scene-resource position (0x00D0,0x0170).
   evidence:
     - actor_template_scene_resource_family_static_decompilation
     - scene_resource_command_table_static_decompilation
     - ghidra_actor_template_initializer_001AE30A
 
 0x001B83F4:
-  name: ACTOR_TEMPLATE_TYPE84_SCENE_RESOURCE_REBUILD
+  name: ACTOR_TEMPLATE_SCENE_RESOURCE_REBUILD
   aliases: [ACTOR_TEMPLATE_SCENE_RESOURCE_TYPE_84_1260EA]
   type: actor_template
   size: 20
   confidence: decompiled
-  description: Type-0x84 scene-resource actor record selected by command 0x0F at 0x0012719D in the 0x00127134 resource stream. It has no movement stream, uses the embedded ACTOR_ANIM_TYPE84_SCENE_REBUILD_ENTRY at 0x001260EA, owns nine resources, and is instantiated at scene-resource position (0x00A0,0x01C8).
+  description: Scene-resource actor record selected by command 0x0F at 0x0012719D in the 0x00127134 resource stream. It has no movement stream, uses the embedded ACTOR_ANIM_SCENE_REBUILD_ENTRY at 0x001260EA, owns nine resources, and is instantiated at scene-resource position (0x00A0,0x01C8).
   evidence:
     - actor_template_scene_resource_family_static_decompilation
     - scene_resource_command_table_static_decompilation
@@ -8876,18 +8881,20 @@
     - ghidra_actor_template_initializer_001AE30A
 
 0x001B8430:
-  name: ACTOR_TEMPLATE_TYPE_84_SCENE_REBUILD_A
+  name: ACTOR_TEMPLATE_SCENE_REBUILD_PRIMARY
+  aliases: [ACTOR_TEMPLATE_TYPE_84_SCENE_REBUILD_A]
   type: actor_template
   size: 20
   confidence: decompiled
-  description: Fixed Type-0x84 scene/resource-rebuild template loaded by SceneResource_RebuildAfterInteraction into actor slot 0x00FF7E82. It has no movement stream, defaults to ACTOR_ANIM_TYPE84_SCENE_REBUILD at 0x001260DA, owns thirteen resources, and the caller places it at (0x0126,0x0198) before entering the animation at 0x001260E6.
+  description: Fixed scene/resource-rebuild template loaded by SceneResource_RebuildAfterInteraction into actor slot 0x00FF7E82. It has no movement stream, defaults to ACTOR_ANIM_SCENE_REBUILD at 0x001260DA, owns thirteen resources, and the caller places it at (0x0126,0x0198) before entering the animation at 0x001260E6.
   evidence:
     - actor_template_scene_rebuild_static_decompilation
     - ghidra_scene_resource_rebuild
     - ghidra_actor_template_initializer_001AE30A
 
 0x001B8444:
-  name: ACTOR_TEMPLATE_TYPE_84_SCENE_REBUILD_WALL
+  name: ACTOR_TEMPLATE_SCENE_REBUILD_WALL
+  aliases: [ACTOR_TEMPLATE_TYPE_84_SCENE_REBUILD_WALL]
   type: actor_template
   size: 20
   confidence: decompiled
@@ -9160,32 +9167,35 @@
     - actor_template_grid_xrefs
 
 0x001B819C:
-  name: ACTOR_TEMPLATE_TYPE_7C_LEVEL05_TIMED_SPAWN
+  name: ACTOR_TEMPLATE_LEVEL05_TIMED_SPAWN
+  aliases: [ACTOR_TEMPLATE_TYPE_7C_LEVEL05_TIMED_SPAWN]
   type: actor_template
   size: 20
   confidence: decompiled
-  description: Type-0x7C level-event template selected by the timed/cadence spawn path in Level05_FrameCallback at 0x001B5C20; it uses movement stream 0x0012118A, animation stream 0x00125916, and three resources before the caller supplies the level-relative position and facing condition.
+  description: Level-05 event template selected by the timed/cadence spawn path in Level05_FrameCallback at 0x001B5C20; it uses ACTOR_MOVE_LEVEL_EVENT_SHARED at 0x0012118A, ACTOR_ANIM_LEVEL_EVENT_SHARED at 0x00125916, and three resources before the caller supplies the level-relative position and facing condition.
   evidence:
     - ghidra_level_table_enter_exit_targeted_decompile
     - actor_template_grid_xrefs
 
 0x001B81B0:
-  name: ACTOR_TEMPLATE_TYPE_7C_WIDE_RANDOM_EVENT
+  name: ACTOR_TEMPLATE_WIDE_RANDOM_EVENT
+  aliases: [ACTOR_TEMPLATE_TYPE_7C_WIDE_RANDOM_EVENT]
   type: actor_template
   size: 20
   confidence: decompiled
-  description: Exact Type-0x7C wide-random-offset event template between the established Level-05 and Level-07 records. Its movement pointer selects ACTOR_MOVE_TYPE7C_WIDE_RANDOM_OFFSETS_PRELUDE at 0x00121180, its animation pointer selects ACTOR_ANIM_TYPE7C_LEVEL_EVENT_SHARED at 0x00125916, and it carries three resources; no direct runtime producer for this specific record is claimed.
+  description: Exact wide-random-offset event template between the established Level-05 and Level-07 records. Its movement pointer selects ACTOR_MOVE_LEVEL_EVENT_WIDE_RANDOM_OFFSETS_PRELUDE at 0x00121180, its animation pointer selects ACTOR_ANIM_LEVEL_EVENT_SHARED at 0x00125916, and it carries three resources; no direct runtime producer for this specific record is claimed.
   evidence:
     - actor_template_grid_xrefs
     - unindexed_movement_stream_bands_static_disassembly
     - actor_template_body_confidence_static_v1
 
 0x001B81C4:
-  name: ACTOR_TEMPLATE_TYPE_7C_LEVEL07_CALLBACK_SPAWN
+  name: ACTOR_TEMPLATE_LEVEL07_CALLBACK_SPAWN
+  aliases: [ACTOR_TEMPLATE_TYPE_7C_LEVEL07_CALLBACK_SPAWN]
   type: actor_template
   size: 20
   confidence: decompiled
-  description: Type-0x7C Level-07 callback spawn template selected at three direct sites in Level07_FrameCallback; it uses movement stream 0x0012118A, animation stream 0x00125916, template word 0x2000, and three resources, while the callback supplies one of the level-relative positions and sets actor word +0x1A to 0x0400.
+  description: Level-07 callback spawn template selected at three direct sites in Level07_FrameCallback; it uses ACTOR_MOVE_LEVEL_EVENT_SHARED at 0x0012118A, ACTOR_ANIM_LEVEL_EVENT_SHARED at 0x00125916, template word 0x2000, and three resources, while the callback supplies one of the level-relative positions and sets actor word +0x1A to 0x0400.
   evidence:
     - ghidra_decompile_001B5D68
     - level07_type7c_template_targets

@@ -290,7 +290,7 @@ def test_data_context_exposes_canonical_actor_template_stream_pointer(tmp_path):
     symbols = SymbolStore(symbols=(
         Symbol(
             0x121180,
-            "ACTOR_MOVE_TYPE7C_WIDE_RANDOM_OFFSETS_PRELUDE",
+            "ACTOR_MOVE_LEVEL_EVENT_WIDE_RANDOM_OFFSETS_PRELUDE",
             "data",
             confidence="provisional",
             size=10,
@@ -298,7 +298,7 @@ def test_data_context_exposes_canonical_actor_template_stream_pointer(tmp_path):
         ),
         Symbol(
             0x1B81B0,
-            "ACTOR_TEMPLATE_TYPE_7C_WIDE_RANDOM_EVENT",
+            "ACTOR_TEMPLATE_WIDE_RANDOM_EVENT",
             "data",
             confidence="provisional",
             size=20,
@@ -314,7 +314,7 @@ def test_data_context_exposes_canonical_actor_template_stream_pointer(tmp_path):
 
     value = index.context(0x121180)
     assert value is not None
-    assert value["consumers"][0]["name"] == "ACTOR_TEMPLATE_TYPE_7C_WIDE_RANDOM_EVENT"
+    assert value["consumers"][0]["name"] == "ACTOR_TEMPLATE_WIDE_RANDOM_EVENT"
     assert value["references"][0]["type"] == "ACTOR_TEMPLATE_MOVEMENT_POINTER"
 
 

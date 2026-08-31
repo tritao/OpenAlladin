@@ -81,11 +81,11 @@ mappings:
 
   - name: LEVEL_EVENT_SHARED
     scope: role
-    symbol_addresses: [0x0012118A, 0x001211C4]
+    symbol_addresses: [0x0012118A, 0x001211C4, 0x00125916, 0x001B819C, 0x001B81C4]
     technical_types: [0x7C, 0x7D]
     confidence: decompiled
     evidence: [actor-template-level05-timed-static-decompilation, level07-type7c-template-targets]
-    description: Shared Level 05/07 event movement and Level-entry alias.
+    description: Shared Level 05/07 event movement, animation, and template family.
 
   - name: LEVEL11_EVENT
     scope: event
@@ -308,6 +308,26 @@ mappings:
       - ghidra_level_actor_spawn_block
       - actor_template_grid_xrefs
     description: Shared zero-resource level-object template used by the Type-0x5A source and its Type-0x5C/0x5D promoted variants.
+
+  - name: SCENE_RESOURCE_OPENING
+    scope: role
+    symbol_addresses: [0x0012609E, 0x001B83E0]
+    technical_types: [0x84]
+    confidence: decompiled
+    evidence:
+      - actor_template_scene_resource_family_static_decompilation
+      - scene_resource_command_table_static_decompilation
+    description: Scene-resource opening animation and its actor template.
+
+  - name: SCENE_REBUILD
+    scope: role
+    symbol_addresses: [0x001260DA, 0x001260EA, 0x001B83F4, 0x001B8430, 0x001B8444]
+    technical_types: [0x84]
+    confidence: decompiled
+    evidence:
+      - actor_template_scene_rebuild_static_decompilation
+      - ghidra_scene_resource_rebuild
+    description: Scene/resource-rebuild animation, embedded entry, and fixed-slot actor templates.
 
   - name: INTERACTION_PAIR_COMPANION
     scope: role

@@ -1,0 +1,33 @@
+{
+  "status": "recorded-semantic-promotion",
+  "scope": "level-event-and-scene-resource-role-identities",
+  "promotions": [
+    "ACTOR_MOVE_LEVEL_EVENT_WIDE_RANDOM_OFFSETS_PRELUDE",
+    "ACTOR_ANIM_LEVEL_EVENT_SHARED",
+    "ACTOR_TEMPLATE_LEVEL05_TIMED_SPAWN",
+    "ACTOR_TEMPLATE_WIDE_RANDOM_EVENT",
+    "ACTOR_TEMPLATE_LEVEL07_CALLBACK_SPAWN",
+    "ACTOR_ANIM_SCENE_RESOURCE_OPENING",
+    "ACTOR_ANIM_SCENE_REBUILD",
+    "ACTOR_ANIM_SCENE_REBUILD_ENTRY",
+    "ACTOR_TEMPLATE_SCENE_RESOURCE_OPENING",
+    "ACTOR_TEMPLATE_SCENE_RESOURCE_REBUILD",
+    "ACTOR_TEMPLATE_SCENE_REBUILD_PRIMARY",
+    "ACTOR_TEMPLATE_SCENE_REBUILD_WALL"
+  ],
+  "evidence": [
+    "actor-template-level05-timed-static-decompilation",
+    "level07-type7c-template-targets",
+    "actor-template-scene-resource-family-static-decompilation",
+    "scene-resource-command-table-static-decompilation",
+    "actor-template-scene-rebuild-static-decompilation",
+    "ghidra_scene_resource_rebuild"
+  ],
+  "policy": {
+    "old_numeric_names_retained_as_aliases": true,
+    "technical_type_ids_retained": true,
+    "byte_ranges_changed": false,
+    "deasm_ownership_changed": false,
+    "unreferenced_variants_remain_provisional": true
+  }
+}
