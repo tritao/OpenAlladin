@@ -757,6 +757,39 @@ mappings:
       - movement_stream_decoder
     description: Compact follow-up player-collision movement response entered after the Type-0x2D action path publishes its transient response state.
 
+  - name: PLAYER_COLLISION_GATED_RESPONSE
+    scope: role
+    symbol_addresses: [0x001AF21E, 0x001DAA]
+    technical_types: [0x3B]
+    confidence: decompiled
+    evidence:
+      - rom_player_collision_handler_table_001CBE
+      - ghidra_disassembly_001AF21E
+      - player_collision_handler_family_extended_static_decompilation
+    description: Player-collision gated response handler and its Type-0x3B dispatch entry.
+
+  - name: PLAYER_COLLISION_COUNTED_GATE_RESPONSE
+    scope: role
+    symbol_addresses: [0x001AF384, 0x001DB2]
+    technical_types: [0x3D]
+    confidence: decompiled
+    evidence:
+      - rom_player_collision_handler_table_001CBE
+      - ghidra_disassembly_001AF384
+      - player_collision_handler_family_extended_static_decompilation
+    description: Player-collision counted gate response handler and its Type-0x3D dispatch entry.
+
+  - name: PLAYER_COLLISION_SCENE_TRANSITION
+    scope: event
+    symbol_addresses: [0x001AFE1C, 0x001EB6]
+    technical_types: [0x7E]
+    confidence: decompiled
+    evidence:
+      - rom_player_collision_handler_table_001CBE
+      - ghidra_disassembly_001AFE1C
+      - player_collision_handler_family_extended_static_decompilation
+    description: Player-collision scene-transition handler and its Type-0x7E dispatch entry.
+
   - name: RANDOM_SPAWN_VARIANT
     scope: role
     symbol_addresses: [0x001241F8, 0x001B7DA0]

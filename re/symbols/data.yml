@@ -3131,10 +3131,11 @@
     - player_collision_handler_family_extended_static_decompilation
 
 0x001DAA:
-  name: PLAYER_COLLISION_HANDLER_TYPE_3B
+  name: PLAYER_COLLISION_HANDLER_GATED_RESPONSE
+  aliases: [PLAYER_COLLISION_HANDLER_TYPE_3B]
   type: rom_pointer
   confidence: decompiled
-  description: Player-collision dispatch pointer for actor type 0x3B; its big-endian ROM value is 0x001AF21E.
+  description: Player-collision dispatch pointer for the gated response entry; its technical actor-type selector is 0x3B and its big-endian ROM value is 0x001AF21E.
   evidence:
     - rom_handler_table_decode
     - player_collision_handler_family_extended_static_decompilation
@@ -3149,10 +3150,11 @@
     - player_collision_handler_family_extended_static_decompilation
 
 0x001DB2:
-  name: PLAYER_COLLISION_HANDLER_TYPE_3D
+  name: PLAYER_COLLISION_HANDLER_COUNTED_GATE_RESPONSE
+  aliases: [PLAYER_COLLISION_HANDLER_TYPE_3D]
   type: rom_pointer
   confidence: decompiled
-  description: Player-collision dispatch pointer for actor type 0x3D; its big-endian ROM value is 0x001AF384.
+  description: Player-collision dispatch pointer for the counted gate response entry; its technical actor-type selector is 0x3D and its big-endian ROM value is 0x001AF384.
   evidence:
     - rom_handler_table_decode
     - player_collision_handler_family_extended_static_decompilation
@@ -3293,10 +3295,11 @@
     - player_collision_handler_family_extended_static_decompilation
 
 0x001EB6:
-  name: PLAYER_COLLISION_HANDLER_TYPE_7E
+  name: PLAYER_COLLISION_HANDLER_SCENE_TRANSITION
+  aliases: [PLAYER_COLLISION_HANDLER_TYPE_7E]
   type: rom_pointer
   confidence: decompiled
-  description: Player-collision dispatch pointer for actor type 0x7E; its big-endian ROM value is 0x001AFE1C.
+  description: Player-collision dispatch pointer for the scene-transition entry; its technical actor-type selector is 0x7E and its big-endian ROM value is 0x001AFE1C.
   evidence:
     - rom_handler_table_decode
     - player_collision_handler_family_extended_static_decompilation

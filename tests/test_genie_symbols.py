@@ -3863,6 +3863,31 @@ def test_remaining_numeric_stream_and_template_names_promote_evidence_backed_rol
     assert 0x00120A00 in mappings["INTERACTION_RANDOM_RESPONSE"].symbol_addresses
 
 
+def test_distinct_player_collision_dispatch_entries_promote_semantic_roles():
+    symbols = SymbolStore()
+    expected = {
+        0x001DAA: ("PLAYER_COLLISION_HANDLER_GATED_RESPONSE", "PLAYER_COLLISION_HANDLER_TYPE_3B"),
+        0x001DB2: ("PLAYER_COLLISION_HANDLER_COUNTED_GATE_RESPONSE", "PLAYER_COLLISION_HANDLER_TYPE_3D"),
+        0x001EB6: ("PLAYER_COLLISION_HANDLER_SCENE_TRANSITION", "PLAYER_COLLISION_HANDLER_TYPE_7E"),
+    }
+    for address, (name, alias) in expected.items():
+        symbol = symbols.at(address, include_ranges=False)
+        assert symbol is not None
+        assert symbol.name == name
+        assert alias in symbol.aliases
+
+    mappings = {mapping.name: mapping for mapping in load_entity_mappings()}
+    assert validate_entity_mappings(mappings.values()) == []
+    assert {
+        "PLAYER_COLLISION_GATED_RESPONSE",
+        "PLAYER_COLLISION_COUNTED_GATE_RESPONSE",
+        "PLAYER_COLLISION_SCENE_TRANSITION",
+    } <= mappings.keys()
+    assert 0x001DAA in mappings["PLAYER_COLLISION_GATED_RESPONSE"].symbol_addresses
+    assert 0x001DB2 in mappings["PLAYER_COLLISION_COUNTED_GATE_RESPONSE"].symbol_addresses
+    assert 0x001EB6 in mappings["PLAYER_COLLISION_SCENE_TRANSITION"].symbol_addresses
+
+
 def test_analysis_database_function_references_use_sparse_ranges(tmp_path):
     database_root = tmp_path / "full-rom"
     _write_database(database_root)
