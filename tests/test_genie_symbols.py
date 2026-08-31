@@ -3888,6 +3888,17 @@ def test_distinct_player_collision_dispatch_entries_promote_semantic_roles():
     assert 0x001EB6 in mappings["PLAYER_COLLISION_SCENE_TRANSITION"].symbol_addresses
 
 
+def test_type2a_collision_entry_uses_vertical_bob_object_role():
+    symbol = SymbolStore().at(0x001D66, include_ranges=False)
+    assert symbol is not None
+    assert symbol.name == "PLAYER_COLLISION_HANDLER_VERTICAL_BOB_OBJECT"
+    assert "PLAYER_COLLISION_HANDLER_TYPE_2A" in symbol.aliases
+
+    mappings = {mapping.name: mapping for mapping in load_entity_mappings()}
+    assert validate_entity_mappings(mappings.values()) == []
+    assert 0x001D66 in mappings["VERTICAL_BOB_OBJECT"].symbol_addresses
+
+
 def test_analysis_database_function_references_use_sparse_ranges(tmp_path):
     database_root = tmp_path / "full-rom"
     _write_database(database_root)

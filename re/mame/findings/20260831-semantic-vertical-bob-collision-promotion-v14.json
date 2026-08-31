@@ -1,0 +1,37 @@
+{
+  "format": "openaladdin-recorded-semantic-promotion-v1",
+  "finding": "semantic-vertical-bob-collision-promotion-v14",
+  "recorded_at": "2026-08-31",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "promoted_symbols": [
+    "PLAYER_COLLISION_HANDLER_VERTICAL_BOB_OBJECT"
+  ],
+  "contracts": [
+    "The Type-0x2A player-collision dispatch entry at 0x001D66 points to the shared ActorShared_PlayerCollisionHandler body at 0x001AE9C6.",
+    "The same technical type is independently established by the upper-route movement stream, animation stream, and actor template, so the dispatch pointer is attached to VERTICAL_BOB_OBJECT.",
+    "The original numeric dispatch name remains an alias."
+  ],
+  "evidence": [
+    "rom_handler_table_decode",
+    "player_collision_table_correction",
+    "level01_actor_type2a_decomp",
+    "actor_type2a_movement_stream_static_decode",
+    "actor_type2a_animation_stream_static_decode"
+  ],
+  "policy": {
+    "old_numeric_names_retained_as_aliases": true,
+    "technical_type_ids_retained": true,
+    "byte_ranges_changed": false,
+    "deasm_ownership_changed": false,
+    "user_facing_entity_names_invented": false,
+    "semantic_scope": "evidence-backed upper-route vertical-bob collision role"
+  },
+  "limitations": [
+    "The shared handler body is also selected by other technical dispatch entries; those entries remain numeric until selector-specific behavior or entity evidence distinguishes them.",
+    "Vertical-bob is a recovered behavioral role, not a claim about an official in-game name."
+  ],
+  "status": "recorded-semantic-promotion"
+}

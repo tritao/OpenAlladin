@@ -642,14 +642,14 @@ mappings:
 
   - name: VERTICAL_BOB_OBJECT
     scope: role
-    symbol_addresses: [0x00120F76, 0x001231DC, 0x001B7AF8]
+    symbol_addresses: [0x00120F76, 0x001231DC, 0x001B7AF8, 0x001D66]
     technical_types: [0x2A]
     confidence: decompiled
     evidence:
       - actor_type2a_movement_stream_static_decode
       - actor_type2a_animation_stream_static_decode
       - level01_actor_type2a_decomp
-    description: Upper-route moving object with a fixed vertical bob movement and animation pair.
+    description: Upper-route moving object with a fixed vertical bob movement and animation pair, including its player-collision dispatch entry.
 
   - name: VERTICAL_BOB_INTERACTION
     scope: role
