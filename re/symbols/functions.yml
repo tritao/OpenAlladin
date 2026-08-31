@@ -697,40 +697,55 @@
     - ghidra_scene_resource_variant_targets
     - scene_resource_variant_loader_identity_promotion_static_v1
 0x001B498A:
-  name: SceneResource_LoadC000Resource12D870
+  name: SceneResource_LoadState07C000AndPrepareFrame
+  aliases:
+    - SceneResource_LoadC000Resource12D870
   confidence: decompiled
-  description: Publishes ROM source 0x0012D870 as the C000 resource, decompresses it to VRAM 0xC000, and prepares the render frame with palette sources 0x00129912 and 0x00129AB2.
+  description: State-07 scene-resource wrapper that publishes SCENE_STATE07_C000_GRAPHICS, decompresses it to VRAM C000, and prepares the render frame with the state-07 band-0 and shared band-1 palettes.
   evidence:
     - ghidra_disassembly_001B498A
     - ghidra_scene_resource_c000_targets
+    - scene_resource_c000_loader_identity_promotion_static_v1
 0x001B49B2:
-  name: SceneResource_LoadC000Resource12DA04
+  name: SceneResource_LoadState04C000AndPrepareFrame
+  aliases:
+    - SceneResource_LoadC000Resource12DA04
   confidence: decompiled
-  description: Publishes ROM source 0x0012DA04 as the C000 resource, decompresses it to VRAM 0xC000, and prepares the render frame with palette sources 0x00129932 and 0x00129AB2.
+  description: State-04 scene-resource wrapper that publishes SCENE_STATE04_C000_GRAPHICS, decompresses it to VRAM C000, and prepares the render frame with the state-04 band-0 and shared band-1 palettes.
   evidence:
     - ghidra_disassembly_001B49B2
     - ghidra_scene_resource_c000_targets
+    - scene_resource_c000_loader_identity_promotion_static_v1
 0x001B4A02:
-  name: SceneResource_LoadC000Resource12DF6C
+  name: SceneResource_LoadState0BC000AndPrepareFrame
+  aliases:
+    - SceneResource_LoadC000Resource12DF6C
   confidence: decompiled
-  description: Publishes ROM source 0x0012DF6C as the C000 resource, decompresses it to VRAM 0xC000, and prepares the render frame with palette sources 0x00129972 and 0x00129AB2.
+  description: State-0B scene-resource wrapper that publishes SCENE_STATE0B_C000_GRAPHICS, decompresses it to VRAM C000, and prepares the render frame with the state-0B band-0 and shared band-1 palettes.
   evidence:
     - ghidra_disassembly_001B4A02
     - ghidra_scene_resource_c000_targets
+    - scene_resource_c000_loader_identity_promotion_static_v1
 0x001B4A2A:
-  name: SceneResource_LoadC000Resource12E176
+  name: SceneResource_LoadState01SecondaryC000AndPrepareFrame
+  aliases:
+    - SceneResource_LoadC000Resource12E176
   confidence: decompiled
-  description: Publishes ROM source 0x0012E176 as the C000 resource, decompresses it to VRAM 0xC000, and prepares the render frame with palette sources 0x00129992 and 0x00129A92.
+  description: State-01 secondary scene-resource wrapper that publishes SCENE_STATE01_C000_GRAPHICS_SECONDARY, decompresses it to VRAM C000, and prepares the render frame with the state-01 secondary band-0 and shared state-01 band-1 palettes.
   evidence:
     - ghidra_disassembly_001B4A2A
     - ghidra_scene_resource_c000_targets
+    - scene_resource_c000_loader_identity_promotion_static_v1
 0x001B4A52:
-  name: SceneResource_LoadC000Resource12E34A
+  name: SceneResource_LoadState01PrimaryC000AndPrepareFrame
+  aliases:
+    - SceneResource_LoadC000Resource12E34A
   confidence: decompiled
-  description: Publishes ROM source 0x0012E34A as the C000 resource, decompresses it to VRAM 0xC000, and prepares the render frame with palette sources 0x001299B2 and 0x00129A92.
+  description: State-01 primary scene-resource wrapper that publishes SCENE_STATE01_C000_GRAPHICS_PRIMARY, decompresses it to VRAM C000, and prepares the render frame with the state-01 primary band-0 and shared state-01 band-1 palettes.
   evidence:
     - ghidra_disassembly_001B4A52
     - ghidra_scene_resource_c000_targets
+    - scene_resource_c000_loader_identity_promotion_static_v1
 0x001B4BB8:
   name: SceneResource_Run12E34AStream1270A8
   confidence: decompiled

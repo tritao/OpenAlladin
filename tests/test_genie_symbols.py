@@ -1960,6 +1960,36 @@ def test_scene_resource_variant_loaders_have_stable_transfer_identities():
         assert legacy in symbol.aliases
 
 
+def test_scene_resource_c000_loaders_have_stable_state_identities():
+    expected = {
+        0x001B498A: (
+            "SceneResource_LoadState07C000AndPrepareFrame",
+            "SceneResource_LoadC000Resource12D870",
+        ),
+        0x001B49B2: (
+            "SceneResource_LoadState04C000AndPrepareFrame",
+            "SceneResource_LoadC000Resource12DA04",
+        ),
+        0x001B4A02: (
+            "SceneResource_LoadState0BC000AndPrepareFrame",
+            "SceneResource_LoadC000Resource12DF6C",
+        ),
+        0x001B4A2A: (
+            "SceneResource_LoadState01SecondaryC000AndPrepareFrame",
+            "SceneResource_LoadC000Resource12E176",
+        ),
+        0x001B4A52: (
+            "SceneResource_LoadState01PrimaryC000AndPrepareFrame",
+            "SceneResource_LoadC000Resource12E34A",
+        ),
+    }
+    for address, (name, legacy) in expected.items():
+        symbol = SymbolStore().at(address, include_ranges=False)
+        assert symbol is not None
+        assert symbol.name == name
+        assert legacy in symbol.aliases
+
+
 def test_analysis_database_function_references_use_sparse_ranges(tmp_path):
     database_root = tmp_path / "full-rom"
     _write_database(database_root)

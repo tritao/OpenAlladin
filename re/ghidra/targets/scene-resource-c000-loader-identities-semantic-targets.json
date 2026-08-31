@@ -1,0 +1,95 @@
+{
+  "format": "openaladdin-semantic-promotion-target-v1",
+  "rom": "rom/Disneys_Aladdin_U_p1.bin",
+  "focus": {
+    "name": "scene-resource-c000-loader-identities",
+    "purpose": "Replace source-address-bearing C000 loader names with stable scene-state, resource, and render-frame identities."
+  },
+  "targets": [
+    {
+      "address": "0x001B498A",
+      "name": "SceneResource_LoadState07C000AndPrepareFrame",
+      "legacy_name": "SceneResource_LoadC000Resource12D870",
+      "range": "0x001B498A-0x001B49B1",
+      "size": 40,
+      "scene_state": "0x07",
+      "resource": "SCENE_STATE07_C000_GRAPHICS",
+      "destination": "0x00C000",
+      "palettes": [
+        "SCENE_RESOURCE_PALETTE_BAND0_FOR_STATE07_C000_GRAPHICS",
+        "SCENE_RESOURCE_PALETTE_BAND1_FOR_STATE07_04_0B_C000_GRAPHICS"
+      ],
+      "wrapper": "SceneResource_Run12D870Stream12772D"
+    },
+    {
+      "address": "0x001B49B2",
+      "name": "SceneResource_LoadState04C000AndPrepareFrame",
+      "legacy_name": "SceneResource_LoadC000Resource12DA04",
+      "range": "0x001B49B2-0x001B49D9",
+      "size": 40,
+      "scene_state": "0x04",
+      "resource": "SCENE_STATE04_C000_GRAPHICS",
+      "destination": "0x00C000",
+      "palettes": [
+        "SCENE_RESOURCE_PALETTE_BAND0_FOR_STATE04_C000_GRAPHICS",
+        "SCENE_RESOURCE_PALETTE_BAND1_FOR_STATE07_04_0B_C000_GRAPHICS"
+      ],
+      "wrapper": "SceneResource_Run12DA04Stream1273E9"
+    },
+    {
+      "address": "0x001B4A02",
+      "name": "SceneResource_LoadState0BC000AndPrepareFrame",
+      "legacy_name": "SceneResource_LoadC000Resource12DF6C",
+      "range": "0x001B4A02-0x001B4A29",
+      "size": 40,
+      "scene_state": "0x0B",
+      "resource": "SCENE_STATE0B_C000_GRAPHICS",
+      "destination": "0x00C000",
+      "palettes": [
+        "SCENE_RESOURCE_PALETTE_BAND0_FOR_STATE0B_C000_GRAPHICS",
+        "SCENE_RESOURCE_PALETTE_BAND1_FOR_STATE07_04_0B_C000_GRAPHICS"
+      ],
+      "wrapper": "SceneResource_Run12DF6CStream12792B"
+    },
+    {
+      "address": "0x001B4A2A",
+      "name": "SceneResource_LoadState01SecondaryC000AndPrepareFrame",
+      "legacy_name": "SceneResource_LoadC000Resource12E176",
+      "range": "0x001B4A2A-0x001B4A51",
+      "size": 40,
+      "scene_state": "0x01",
+      "branch": "secondary",
+      "resource": "SCENE_STATE01_C000_GRAPHICS_SECONDARY",
+      "destination": "0x00C000",
+      "palettes": [
+        "SCENE_RESOURCE_PALETTE_BAND0_FOR_STATE01_SECONDARY_C000_GRAPHICS",
+        "SCENE_RESOURCE_PALETTE_BAND1_FOR_SHARED_STATE01_C000_GRAPHICS"
+      ],
+      "wrapper": "SceneResource_Run12E176Stream127134"
+    },
+    {
+      "address": "0x001B4A52",
+      "name": "SceneResource_LoadState01PrimaryC000AndPrepareFrame",
+      "legacy_name": "SceneResource_LoadC000Resource12E34A",
+      "range": "0x001B4A52-0x001B4A79",
+      "size": 40,
+      "scene_state": "0x01",
+      "branch": "primary",
+      "resource": "SCENE_STATE01_C000_GRAPHICS_PRIMARY",
+      "destination": "0x00C000",
+      "palettes": [
+        "SCENE_RESOURCE_PALETTE_BAND0_FOR_STATE01_PRIMARY_C000_GRAPHICS",
+        "SCENE_RESOURCE_PALETTE_BAND1_FOR_SHARED_STATE01_C000_GRAPHICS"
+      ],
+      "wrapper": "SceneResource_Run12E34AStream1270A8"
+    }
+  ],
+  "evidence": [
+    "exact C000 loader instruction bodies",
+    "explicit C000 source and destination operands",
+    "canonical scene-state graphics and palette identities",
+    "direct scene-resource wrapper callers"
+  ],
+  "rom_sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6",
+  "ghidra_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365"
+}
