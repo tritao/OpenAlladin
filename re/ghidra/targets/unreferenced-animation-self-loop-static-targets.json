@@ -8,7 +8,8 @@
   "stream": {
     "address": "0x00123DE2",
     "end": "0x00123DE9",
-    "name": "ACTOR_ANIM_UNREFERENCED_SELF_LOOP_123DE2",
+    "name": "ACTOR_ANIM_SINGLE_FRAME_SELF_LOOP",
+    "legacy_alias": "ACTOR_ANIM_UNREFERENCED_SELF_LOOP_123DE2",
     "bytes": "1ADEEA0000123DE2",
     "frame": "0x001FD478",
     "terminal": "EA -> 0x00123DE2"

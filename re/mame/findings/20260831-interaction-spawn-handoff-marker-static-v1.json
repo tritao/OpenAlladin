@@ -1,0 +1,20 @@
+{
+  "format": "openaladdin-recorded-static-decompilation-v1",
+  "recorded_at": "2026-08-31",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "target_manifest": "re/ghidra/targets/interaction-spawn-handoff-marker-static-targets.json",
+  "promoted_symbols": [
+    "INTERACTION_SPAWN_HANDOFF_MARKER"
+  ],
+  "contract": "0x00FFF0E5 is set to 0x01 by terminal commands in the 0x0011F800 and 0x0011F8A4 paired movement banks. Nine Type-0x5E/Type-0x84 interaction-spawn handlers clear it with clr.b after successful allocation paths.",
+  "limitations": [
+    "No direct static reader is present in the exported database; the upstream consumer remains unresolved.",
+    "The two movement stream writers are exact global ED-mode commands and do not imply a single fixed actor slot."
+  ],
+  "conclusion": "The previously untracked 0x00FFF0E5 byte now has a stable handoff identity and exact MovementVM/direct-clear producer inventory.",
+  "confidence": "decompiled",
+  "status": "recorded-static-decompilation"
+}

@@ -1,0 +1,38 @@
+{
+  "format": "openaladdin-vm-stream-semantic-naming-static-v1",
+  "recorded_at": "2026-08-31",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "streams": [
+    {
+      "address": "0x0011F800",
+      "name": "ACTOR_MOVE_INTERACTION_ANCHOR_GRID_RESPONSE",
+      "legacy_alias": "ACTOR_MOVE_UNREFERENCED_GRID_RESPONSE_11F800",
+      "range": ["0x0011F800", "0x0011F8A3"],
+      "size": 164,
+      "behavior": "28 MovementVM steps with the signed displacement grid, twelve pushes of Actor_SetInteractionAnchorFromActor at 0x001B58BA, timer parameters 0x93/0x89, a terminal interaction-state write of 0x01, and actor-state clear.",
+      "reachability": "The stream's external template or producer remains unresolved."
+    },
+    {
+      "address": "0x00123DE2",
+      "name": "ACTOR_ANIM_SINGLE_FRAME_SELF_LOOP",
+      "legacy_alias": "ACTOR_ANIM_UNREFERENCED_SELF_LOOP_123DE2",
+      "range": ["0x00123DE2", "0x00123DE9"],
+      "size": 8,
+      "behavior": "One frame reference to 0x001FD478 through frame word 0x001ADE followed by an unconditional EA loop back to 0x00123DE2.",
+      "reachability": "The external template or producer selecting this default loop remains unresolved."
+    }
+  ],
+  "evidence": [
+    "Lossless MovementDecoder and AnimationDecoder output",
+    "Actor_SetInteractionAnchorFromActor callback contract at 0x001B58BA",
+    "Independent canonical boundaries on both sides of both streams"
+  ],
+  "limitations": [
+    "Behavioral names do not imply a recovered external selector or runtime reachability.",
+    "The legacy address/provisional labels remain aliases for downstream references."
+  ],
+  "conclusion": "Two formerly unreferenced VM ranges now have stable behavior-based identities without claiming unsupported producers: the 0x0011F800 interaction-anchor grid response and the 0x00123DE2 single-frame self-loop."
+}

@@ -944,6 +944,16 @@
   evidence:
     - player_vertical_interaction_response_animation_static
     - ghidra_decompile_player_movement_collision_targets
+0xFFF0E5:
+  name: INTERACTION_SPAWN_HANDOFF_MARKER
+  type: u8
+  format: boolean
+  confidence: decompiled
+  description: Interaction spawn handoff marker set by terminal MovementVM commands in the paired anchor-response streams at 0x0011F89C and 0x0011FAA0. The Type-0x5E/Type-0x84 pair handlers and threshold handler clear it on successful allocation; no direct static reader is currently exported.
+  evidence:
+    - vm_stream_semantic_naming_static_v1
+    - interaction_spawn_type5e84_pair_static_decompilation
+    - interaction_spawn_type5e_threshold_static_decompilation
 0xFFF0E6:
   name: PLAYER_TERMINAL_TRANSITION
   type: u8

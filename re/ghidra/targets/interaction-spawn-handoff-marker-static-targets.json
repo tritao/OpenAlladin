@@ -1,0 +1,50 @@
+{
+  "format": "openaladdin-interaction-spawn-handoff-marker-static-v1",
+  "recorded_at": "2026-08-31",
+  "rom": {
+    "path": "rom/Disneys_Aladdin_U_p1.bin",
+    "sha256": "8199d016f7bb88ea73b635dcc072c126b40f01c662707ed3f67d865fd86c0ab6"
+  },
+  "ghidra_submodule_commit": "8b4c91d4d5bd1549622bfbade0df199585b98365",
+  "symbol": {
+    "address": "0x00FFF0E5",
+    "name": "INTERACTION_SPAWN_HANDOFF_MARKER",
+    "width": 1,
+    "role": "interaction spawn handoff marker"
+  },
+  "movement_writers": [
+    {
+      "address": "0x0011F89C",
+      "stream": "ACTOR_MOVE_INTERACTION_ANCHOR_GRID_RESPONSE",
+      "bytes": "8301F0E50001",
+      "effect": "write 0x01"
+    },
+    {
+      "address": "0x0011FAA0",
+      "stream": "ACTOR_MOVE_TYPE5E84_PAIR_E1E2",
+      "bytes": "8301F0E50001",
+      "effect": "write 0x01"
+    }
+  ],
+  "direct_clearers": [
+    { "address": "0x001B690E", "function": "InteractionSpawn_Type5E84Pair_E0", "bytes": "423900FFF0E5" },
+    { "address": "0x001B6964", "function": "InteractionSpawn_Type5E84Pair_E1E2", "bytes": "423900FFF0E5" },
+    { "address": "0x001B69BE", "function": "InteractionSpawn_Type5E84Pair_AnchorResponse", "bytes": "423900FFF0E5" },
+    { "address": "0x001B6A18", "function": "InteractionSpawn_Type5E84Pair_E3E5", "bytes": "423900FFF0E5" },
+    { "address": "0x001B6A72", "function": "InteractionSpawn_Type5E84Pair_E8", "bytes": "423900FFF0E5" },
+    { "address": "0x001B6ACC", "function": "InteractionSpawn_Type5E84Pair_E9", "bytes": "423900FFF0E5" },
+    { "address": "0x001B6B1A", "function": "InteractionSpawn_Type5E84Pair_E6", "bytes": "423900FFF0E5" },
+    { "address": "0x001B6B70", "function": "InteractionSpawn_Type5E84Pair_F9WhenReady", "bytes": "423900FFF0E5" },
+    { "address": "0x001B6BD0", "function": "InteractionSpawn_Type5E_Threshold2646", "bytes": "423900FFF0E5" }
+  ],
+  "evidence": [
+    "Lossless MovementDecoder output over all 85 layout-bounded movement streams",
+    "Canonical instruction bytes for all nine direct clr.b sites",
+    "InteractionSpawn_Type5E84Pair handler family static decompilation"
+  ],
+  "limitations": [
+    "The current database exports no direct reader for this byte, so the name describes the exact set/clear handoff contract without assigning an unseen consumer.",
+    "The movement writes are global ED-mode commands; they are distinct from actor-relative +0x1A MovementVM writes."
+  ],
+  "conclusion": "0x00FFF0E5 is a one-byte interaction spawn handoff marker set by two terminal paired movement streams and cleared by the successful Type-0x5E/Type-0x84 spawn family."
+}

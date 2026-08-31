@@ -629,6 +629,24 @@ def test_remaining_data_identities_have_stable_names_and_legacy_aliases():
         assert legacy in symbol.aliases
 
 
+def test_vm_stream_promotions_and_spawn_handoff_marker_have_stable_names():
+    symbols = SymbolStore()
+    streams = {
+        0x0011F800: ("ACTOR_MOVE_INTERACTION_ANCHOR_GRID_RESPONSE", "ACTOR_MOVE_UNREFERENCED_GRID_RESPONSE_11F800"),
+        0x00123DE2: ("ACTOR_ANIM_SINGLE_FRAME_SELF_LOOP", "ACTOR_ANIM_UNREFERENCED_SELF_LOOP_123DE2"),
+    }
+    for address, (name, legacy) in streams.items():
+        symbol = symbols.at(address, include_ranges=False)
+        assert symbol is not None
+        assert symbol.name == name
+        assert legacy in symbol.aliases
+
+    marker = symbols.at(0x00FFF0E5, include_ranges=False)
+    assert marker is not None
+    assert marker.name == "INTERACTION_SPAWN_HANDOFF_MARKER"
+    assert marker.metadata["format"] == "boolean"
+
+
 def test_scene_graphics_resources_have_stable_state_and_destination_names():
     expected = {
         0x0012DA04: ("SCENE_STATE04_C000_GRAPHICS", "SCENE_RNC_GRAPHICS_0012DA04"),

@@ -3629,13 +3629,15 @@
     - movement_stream_decoder
 
 0x0011F800:
-  name: ACTOR_MOVE_UNREFERENCED_GRID_RESPONSE_11F800
+  name: ACTOR_MOVE_INTERACTION_ANCHOR_GRID_RESPONSE
+  aliases: [ACTOR_MOVE_UNREFERENCED_GRID_RESPONSE_11F800]
   type: movement_stream
   size: 164
   confidence: decompiled
-  description: 164-byte MovementVM stream immediately after LEVEL_F800_TILEMAP_SOURCE and before ACTOR_MOVE_TYPE5E84_PAIR_E1E2. Its exact decoder coverage contains the signed displacement grid, timer-parameter phases, and terminal clear-state step through 0x0011F8A3; no external template, producer, or runtime consumer currently selects this entry.
+  description: 164-byte MovementVM interaction-anchor grid response immediately after LEVEL_F800_TILEMAP_SOURCE and before ACTOR_MOVE_TYPE5E84_PAIR_E1E2. Its exact decoder coverage contains the signed displacement grid, twelve pushes of Actor_SetInteractionAnchorFromActor, timer-parameter phases, a terminal write of 0x01 to INTERACTION_SPAWN_HANDOFF_MARKER at 0x0011F89C, and the clear-state step through 0x0011F8A3; its external template or producer remains unresolved.
   evidence:
     - unreferenced_movement_streams_static_v1
+    - vm_stream_semantic_naming_static_v1
     - movement_stream_decoder
 
 0x0011FD18:
@@ -3653,7 +3655,7 @@
   type: movement_stream
   size: 0x204
   confidence: decompiled
-  description: Type-0x5E interaction-pair movement stream selected by InteractionSpawn_Type5E84Pair_E1E2 for selectors 0xE1 and 0xE2. Its exact 516-byte owner performs the shared parameter/timer phases, traverses the signed movement trajectory, and ends with the clear-state command at 0x0011FAA6-0x0011FAA7 immediately before the following independent movement entry.
+  description: Type-0x5E interaction-pair movement stream selected by InteractionSpawn_Type5E84Pair_E1E2 for selectors 0xE1 and 0xE2. Its exact 516-byte owner performs the shared parameter/timer phases, traverses the signed movement trajectory, sets INTERACTION_SPAWN_HANDOFF_MARKER at 0x0011FAA0, and ends with the clear-state command at 0x0011FAA6-0x0011FAA7 immediately before the following independent movement entry.
   evidence:
     - interaction_spawn_type5e84_pair_static_decompilation
     - interaction_spawn_type5e84_pair_e1e2_movement_static_v1
@@ -4397,14 +4399,16 @@
     - animation_stream_decoder
 
 0x00123DE2:
-  name: ACTOR_ANIM_UNREFERENCED_SELF_LOOP_123DE2
+  name: ACTOR_ANIM_SINGLE_FRAME_SELF_LOOP
+  aliases: [ACTOR_ANIM_UNREFERENCED_SELF_LOOP_123DE2]
   type: animation_stream
   size: 8
   confidence: decompiled
-  description: Eight-byte AnimationVM self-loop containing frame reference 0x001ADE followed by EA back to its own entry. Its exact range is bounded between ACTOR_ANIM_TYPE84_TYPE0F_CHILD and ACTOR_ANIM_TYPE6E_73_BASE_DEFAULT, but no external template or producer currently establishes runtime reachability.
+  description: Eight-byte AnimationVM single-frame self-loop containing frame reference 0x001ADE followed by EA back to its own entry. Its exact range is bounded between ACTOR_ANIM_TYPE84_TYPE0F_CHILD and ACTOR_ANIM_TYPE6E_73_BASE_DEFAULT; the external template or producer that selects this default loop remains unresolved.
   evidence:
     - type0f_child_and_type6e_default_animation_static_v1
     - unreferenced_animation_self_loop_static_v1
+    - vm_stream_semantic_naming_static_v1
     - animation_stream_decoder
 
 0x00123DEA:

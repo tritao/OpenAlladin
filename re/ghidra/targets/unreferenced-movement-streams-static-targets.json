@@ -9,7 +9,8 @@
   "streams": [
     {
       "address": "0x0011F800",
-      "name": "ACTOR_MOVE_UNREFERENCED_GRID_RESPONSE_11F800",
+      "name": "ACTOR_MOVE_INTERACTION_ANCHOR_GRID_RESPONSE",
+      "legacy_alias": "ACTOR_MOVE_UNREFERENCED_GRID_RESPONSE_11F800",
       "range": ["0x0011F800", "0x0011F8A3"],
       "size": 164,
       "confidence": "decompiled",
