@@ -21,6 +21,12 @@ constexpr RamAddress kActorTemplateCollisionResponse = 0x001B7940;
 constexpr RamAddress kActorAnimationType2B = 0x00123FF8;
 constexpr RamAddress kActorAnimationType30 = 0x00123024;
 constexpr RamAddress kActorAnimationType2D2E31 = 0x00122B6E;
+constexpr RamAddress kPlayerHandlerType0C = 0x001AE9A8;
+constexpr RamAddress kPlayerHandlerType1A = 0x001AE9E0;
+constexpr RamAddress kPlayerHandlerType1B = 0x001AEA00;
+constexpr RamAddress kPlayerHandlerType1C = 0x001AEA24;
+constexpr RamAddress kPlayerTemplateCollisionType84 = 0x001B7CC4;
+constexpr RamAddress kPlayerTemplateDeathType84 = 0x001B7940;
 constexpr RamAddress kPlayerCollisionNoopType0D = 0x001AEB7A;
 constexpr RamAddress kPlayerCollisionNoopType2B = 0x001AEBFE;
 constexpr RamAddress kPlayerCollisionNoopType04 = 0x001AEDA6;
@@ -65,6 +71,26 @@ int signed_frame_byte(std::uint8_t value) {
 
 std::uint8_t negated_frame_byte(std::uint8_t value) {
     return static_cast<std::uint8_t>(-signed_frame_byte(value));
+}
+
+void clear_map_words_for_behaviors(
+    GenesisRam& ram,
+    std::uint8_t first_behavior,
+    std::uint8_t second_behavior
+) {
+    // The two ROM helpers walk 0x3840 map words from FF0000 and use the
+    // shifted map value as an index into the loaded behavior table at
+    // FFAE86. Matching words are cleared in place.
+    for (std::size_t offset = 0; offset < 0x7080; offset += 2) {
+        const RamAddress map_address = kWorkRamBase
+            + static_cast<RamAddress>(offset);
+        const std::size_t behavior_index = read16(ram, map_address) >> 1;
+        const std::uint8_t behavior = read8(
+            ram, 0x00FFAE86 + static_cast<RamAddress>(behavior_index));
+        if (behavior == first_behavior || behavior == second_behavior) {
+            write16(ram, map_address, 0);
+        }
+    }
 }
 
 CollisionDispatch read_dispatch(
@@ -158,8 +184,8 @@ CollisionPassResult player_collision_pass(CoreRuntime& core) {
     const RamAddress player_frame = actor_read32(
         player, kActorFramePointerOffset);
     const CollisionBox player_box = collision_frame_box(
-        core, player_frame, read16(core.ram, kPlayerWorldX),
-        read16(core.ram, kPlayerWorldY),
+        core, player_frame, read16(core.ram, kPlayerX),
+        read16(core.ram, kPlayerY),
         actor_read8(player, kActorFacingXOffset));
     if (!player_box.valid) return result;
 
@@ -179,6 +205,8 @@ CollisionPassResult player_collision_pass(CoreRuntime& core) {
         result.source_slot = 0;
         result.receiving_slot = slot;
         result.dispatch = player_collision_dispatch(core, type);
+        result.handler_applied = player_collision_apply(
+            core, slot, result.dispatch);
     }
     return result;
 }
@@ -234,6 +262,48 @@ bool actor_collision_toggle_facing(CoreRuntime& core, std::size_t actor_slot) {
                  static_cast<std::uint8_t>(
                      actor_read8(actor, kActorFacingXOffset) ^ 0xFFU));
     return true;
+}
+
+bool player_collision_apply(
+    CoreRuntime& core,
+    std::size_t actor_slot,
+    const CollisionDispatch& dispatch
+) {
+    if (!is_actor_slot(actor_slot) || !dispatch.in_range || dispatch.no_op) {
+        return false;
+    }
+
+    if (dispatch.handler == kPlayerHandlerType0C) {
+        if (read8(core.ram, kPlayerActionResponseField) == 0) return false;
+        actor_clear_and_release(core, actor_slot);
+        return actor_initialize_from_template(
+            core, actor_slot, kPlayerTemplateCollisionType84);
+    }
+
+    if (dispatch.handler == kPlayerHandlerType1A) {
+        if (read8(core.ram, kPlayerActionResponseField) == 0) return false;
+        write8(core.ram, kPlayerInteractionType1ALatch, 0xFF);
+        actor_clear_and_release(core, actor_slot);
+        return actor_initialize_from_template(
+            core, actor_slot, kPlayerTemplateDeathType84);
+    }
+
+    if (dispatch.handler == kPlayerHandlerType1B
+        || dispatch.handler == kPlayerHandlerType1C) {
+        if (read8(core.ram, kPlayerActionResponseField) == 0) return false;
+        if (dispatch.handler == kPlayerHandlerType1B) {
+            clear_map_words_for_behaviors(core.ram, 0x4F, 0xFE);
+            write8(core.ram, kPlayerInteractionType1BLatch, 0xFF);
+        } else {
+            clear_map_words_for_behaviors(core.ram, 0x4E, 0xFD);
+            write8(core.ram, kPlayerInteractionType1CLatch, 0xFF);
+        }
+        actor_clear_and_release(core, actor_slot);
+        return actor_initialize_from_template(
+            core, actor_slot, kPlayerTemplateDeathType84);
+    }
+
+    return false;
 }
 
 bool actor_collision_reinitialize_interaction(

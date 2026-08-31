@@ -64,6 +64,14 @@ bool collision_overlaps(const CollisionBox& first, const CollisionBox& second);
 // this boundary.
 CollisionPassResult player_collision_pass(CoreRuntime& core);
 
+// Apply a player-collision table body whose RAM contract is closed. The
+// actor slot is the overlapping common record selected by the pass.
+bool player_collision_apply(
+    CoreRuntime& core,
+    std::size_t actor_slot,
+    const CollisionDispatch& dispatch
+);
+
 // Actor_ActorCollisionPass scans auxiliary source slots 25..31 against
 // common receiving slots 1..24 and dispatches by receiving type.
 CollisionPassResult actor_collision_pass(CoreRuntime& core);

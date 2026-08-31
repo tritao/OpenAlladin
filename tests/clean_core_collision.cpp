@@ -39,12 +39,26 @@ int main() {
               0x001AEB7A);
     write_u32(rom, kPlayerCollisionHandlerTable + 0x11 * 4,
               0x001AF110);
+    write_u32(rom, kPlayerCollisionHandlerTable + 0x0C * 4,
+              0x001AE9A8);
+    write_u32(rom, kPlayerCollisionHandlerTable + 0x1A * 4,
+              0x001AE9E0);
+    write_u32(rom, kPlayerCollisionHandlerTable + 0x1B * 4,
+              0x001AEA00);
+    write_u32(rom, kPlayerCollisionHandlerTable + 0x1C * 4,
+              0x001AEA24);
     write_u32(rom, kActorCollisionHandlerTable + 0x01 * 4,
               0x001ABF9A);
     write_u32(rom, kActorCollisionHandlerTable + 0x0D * 4,
               0x001AC60E);
     write_frame(rom, kPlayerFrame, 0xF0, 0xF0, 0x10, 0x10);
     write_frame(rom, kActorFrame, 0xF0, 0xF0, 0x10, 0x10);
+    for (const std::size_t template_address : {
+             std::size_t{0x001B7940}, std::size_t{0x001B7CC4},
+             std::size_t{0x001B792C}}) {
+        rom[template_address] = 0x84;
+        rom[template_address + 0x10] = 1;
+    }
 
     CoreRuntime core;
     bind_rom(core, RomView{rom.data(), rom.size()});
@@ -119,6 +133,30 @@ int main() {
     assert(actor_result.handler_applied);
     assert(actor_read8(source, kActorFacingXOffset) == 0xFF);
     assert(actor_read8(source, kActorMovementFlagsOffset) == 0x40);
+
+    // The first closed player-handler family uses the action-response gate,
+    // then clears/reinitializes the colliding source record in place.
+    const ActorView player_collision_actor = actor_view(core.ram, 6);
+    actor_write8(player_collision_actor, kActorTypeOffset, 0x0C);
+    write8(core.ram, kPlayerActionResponseField, 1);
+    assert(player_collision_apply(
+        core, 6, player_collision_dispatch(core, 0x0C)));
+    assert(actor_read8(player_collision_actor, kActorTypeOffset) == 0x84);
+
+    const ActorView type1a_actor = actor_view(core.ram, 7);
+    actor_write8(type1a_actor, kActorTypeOffset, 0x1A);
+    assert(player_collision_apply(
+        core, 7, player_collision_dispatch(core, 0x1A)));
+    assert(read8(core.ram, kPlayerInteractionType1ALatch) == 0xFF);
+
+    const ActorView type1b_actor = actor_view(core.ram, 8);
+    actor_write8(type1b_actor, kActorTypeOffset, 0x1B);
+    write16(core.ram, kWorkRamBase, 2);
+    write8(core.ram, 0x00FFAE87, 0x4F);
+    assert(player_collision_apply(
+        core, 8, player_collision_dispatch(core, 0x1B)));
+    assert(read16(core.ram, kWorkRamBase) == 0);
+    assert(read8(core.ram, kPlayerInteractionType1BLatch) == 0xFF);
 
     return 0;
 }
